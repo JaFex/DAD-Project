@@ -16,7 +16,7 @@ class ItemControllerAPI extends Controller
      */
     public function index()
     {
-        return ItemResource::collection(Item::paginate(8));
+        return ItemResource::collection(Item::orderBy('type', 'desc')->paginate(8));
 
     }
 

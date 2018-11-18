@@ -1,6 +1,6 @@
 <template>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light" style="margin-bottom:25px;">
-        <a class="navbar-brand" href="#">{{ title }}</a>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary" style="margin-bottom:20px;">
+        <a class="navbar-brand" href="#">Restaurant</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -15,6 +15,6 @@
 </template>
 <script>
 export default {
-    props: ['title'],
+    
 }
 </script>

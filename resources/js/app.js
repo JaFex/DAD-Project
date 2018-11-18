@@ -19,7 +19,7 @@ const axios = require('axios');
  * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
  */
 
-Vue.component('items-component', require('./components/index.vue'), {props: ['title', 'groupedItems', 'links']});
+Vue.component('items-component', require('./pages/index.vue'));
 
 // const files = require.context('./', true, /\.vue$/i)
 
@@ -34,32 +34,5 @@ Vue.component('items-component', require('./components/index.vue'), {props: ['ti
  */
 
 const app = new Vue({
-    el: '#app',
-    data: {
-        title: "Restaurant",
-        items: []
-    },
-    methods: {
-        loadItems: function(){
-            axios.get("/api/items")
-                 .then(response => {
-                    this.items = response.data.data;
-                 })
-                 .catch(function (error) {
-                    console.log(error);
-                });
-        }
-    },
-    computed:{
-        groupedItems() {
-            var items = [];
-            for (var i=0; i<this.items.length; i+=4) {
-                items.push(this.items.slice(i,i+4));
-           }  
-            return items
-          }
-    },
-    mounted(){
-        this.loadItems();
-    }
+    el: '#app'
 });
