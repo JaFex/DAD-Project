@@ -1,6 +1,8 @@
+
 <template>
     <div>
         <nav-bar></nav-bar>
+        <br>
         <div class="container">
             <div class="card-deck" v-for="groupItem in groupedItems">
                 <div v-for="item in groupItem" class="card bg-light border-secondary mb-3">
@@ -19,11 +21,7 @@
     </div>
 </template>
 <script>
-Vue.component('navBar', require('../components/navbar.vue'));
-Vue.component('pagination', require('../components/pagination.vue'));
-Vue.component('modal', require('../components/modal.vue'));
 export default {
-    
     data() {
         return {
             items: {},
@@ -48,7 +46,6 @@ export default {
                     console.log(error);
                 });
         },
-
         moreInfo: function(item){
             this.currentItem = item;
         }
@@ -61,6 +58,11 @@ export default {
            }  
             return items
           }
+    },
+    components:{
+        'nav-bar': require('../components/navbar.vue'),
+        'pagination': require('../components/pagination.vue'),
+        'modal': require('../components/modal.vue')
     },
     created() {
         this.loadItems('items');

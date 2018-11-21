@@ -15,7 +15,7 @@ class MealControllerAPI extends Controller
      */
     public function index()
     {
-        //return MealResource::collection(Meal::paginate(8));
+        return MealResource::collection(Meal::paginate(8));
     }
 
     /**

@@ -12,10 +12,8 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::post('login', 'LoginControllerAPI@login');
+Route::middleware('auth:api')->post('logout','LoginControllerAPI@logout');
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-Route::get('meals', 'MealControllerAPI@index');
+Route::middleware('auth:api')->get('meals', 'MealControllerAPI@index');
 Route::get('items', 'ItemControllerAPI@index');
