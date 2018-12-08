@@ -1,7 +1,23 @@
 
 <template>
     <div>
-        <nav-bar></nav-bar>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="#">Restaurant</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        
+                    </li>
+                </ul>
+
+                <router-link v-show="!this.$store.state.user" to="/login" tag="a" class="btn btn-outline-light">Login</router-link>
+                <router-link v-show="this.$store.state.user" to="/dashboard" tag="a" class="btn btn-outline-light mr-3">Dashboard</router-link>
+                <button v-show="this.$store.state.user" class="btn btn-outline-light" @click.prevent="logout">Logout</button>
+            </div>
+        </nav>
         <br>
         <div class="container">
             <div class="card-deck" v-for="groupItem in groupedItems">
@@ -17,7 +33,7 @@
             </div>
         </div>
         <pagination :method="loadItems" :links="links"></pagination>
-        <modal :object="currentItem"></modal>
+        <modal-item :object="currentItem"></modal-item>
     </div>
 </template>
 <script>
@@ -46,6 +62,18 @@ export default {
                     console.log(error);
                 });
         },
+        logout() {
+            this.showMessage = false;
+            axios.post('api/logout')
+                .then(response => {
+                    this.$store.commit('clearUserAndToken');
+                    this.$router.push("/");
+                })
+                .catch(error => {
+                    this.$store.commit('clearUserAndToken');
+                    console.log(error);
+                })            
+        },
         moreInfo: function(item){
             this.currentItem = item;
         }
@@ -60,11 +88,10 @@ export default {
           }
     },
     components:{
-        'nav-bar': require('../components/navbar.vue'),
-        'pagination': require('../components/pagination.vue'),
-        'modal': require('../components/modal.vue')
+        'modal-item': require('./modalItem.vue'),
+        'pagination': require('./pagination.vue'),
     },
-    created() {
+    mounted() {
         this.loadItems('items');
     }
 }
