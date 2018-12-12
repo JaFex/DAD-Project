@@ -16,4 +16,7 @@ Route::post('login', 'LoginControllerAPI@login');
 Route::middleware('auth:api')->post('logout','LoginControllerAPI@logout');
 
 Route::middleware('auth:api')->get('meals', 'MealControllerAPI@index');
+Route::get('items/{item_id}', 'ItemControllerAPI@show');
 Route::get('items', 'ItemControllerAPI@index');
+Route::put('orders/{order_id}', 'OrderControllerAPI@update');
+Route::get('orders', 'OrderControllerAPI@index');
