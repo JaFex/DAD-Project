@@ -19,7 +19,7 @@ class User extends JsonResource
             'username' => $this->username,
             'email' => $this->email,
             'name' => $this->name,
-            'function' => $this->type,
+            'type' => $this->type,
             'photo_url' => $this->photo_url
         ];
     }

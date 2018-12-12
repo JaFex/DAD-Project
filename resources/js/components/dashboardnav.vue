@@ -5,12 +5,16 @@
                 <li class="nav-item">
                     <router-link to="/dashboard" class="nav-link" tag="a">Dashboard</router-link>
                 </li>
-                <b-nav-item href="#">Items</b-nav-item>
-                <b-nav-item href="#">Tables</b-nav-item>
-                <li class="nav-item">
+                <li v-if="isAuthWater()" class="nav-item">
+                    <router-link to="/meals" class="nav-link" tag="a">Meals</router-link>
+                </li>
+                <li v-if="isAuthCashier()" class="nav-item">
+                    <router-link to="/cashier" class="nav-link" tag="a">Cashier</router-link>
+                </li>
+                <li v-if="isAuthCook()" class="nav-item">
                     <router-link to="/orders" class="nav-link" tag="a">Orders</router-link>
                 </li>
-                <b-nav-item-dropdown>
+                <b-nav-item-dropdown v-if="isAuthManager()">
                     <template slot="button-content">Users</template>
                     <router-link to="/new-user" tag="a" role="manuitem" class="dropdown-item">New User</router-link>
                 </b-nav-item-dropdown>
@@ -44,6 +48,18 @@ export default {
         },
         imagePath(img) {
             return 'storage/profiles/'+img;
+        },
+        isAuthCook() {
+            return this.$store.state.user.type  === 'cook';
+        },
+        isAuthWater() {
+            return this.$store.state.user.type  === 'waiter';
+        },
+        isAuthManager() {
+            return this.$store.state.user.type  === 'manager';
+        },
+        isAuthCashier() {
+            return this.$store.state.user.type  === 'cashier';
         }
     }
 }
