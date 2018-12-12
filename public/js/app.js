@@ -68974,6 +68974,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     methods: {
@@ -69038,6 +69041,19 @@ var render = function() {
           _c("b-nav-item", { attrs: { href: "#" } }, [_vm._v("Items")]),
           _vm._v(" "),
           _c("b-nav-item", { attrs: { href: "#" } }, [_vm._v("Tables")]),
+          _vm._v(" "),
+          _c(
+            "li",
+            { staticClass: "nav-item" },
+            [
+              _c(
+                "router-link",
+                { staticClass: "nav-link", attrs: { to: "/orders", tag: "a" } },
+                [_vm._v("Orders")]
+              )
+            ],
+            1
+          ),
           _vm._v(" "),
           _c(
             "b-nav-item-dropdown",
@@ -70727,6 +70743,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
@@ -70768,7 +70788,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this3 = this;
 
             order.state = state;
-            order.responsible_cook_id = '66';
+            order.responsible_cook_id = this.$store.state.user.id;
             var now = new Date();
             if (state === 'prepared') {
                 order.end = now.getUTCFullYear() + "/" + now.getUTCMonth() + "/" + now.getUTCDate() + " " + now.getUTCHours() + ":" + now.getUTCMinutes() + ":" + now.getUTCSeconds();
@@ -70817,6 +70837,14 @@ var render = function() {
     "div",
     [
       _c("nav-bar"),
+      _vm._v(" "),
+      _c("br"),
+      _vm._v(" "),
+      _c("br"),
+      _vm._v(" "),
+      _c("br"),
+      _vm._v(" "),
+      _c("br"),
       _vm._v(" "),
       _c("br"),
       _vm._v(" "),

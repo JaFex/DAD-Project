@@ -21,5 +21,5 @@ Route::middleware('auth:api')->put('users/{users}', 'UserControllerAPI@update');
 Route::middleware('auth:api')->get('meals', 'MealControllerAPI@index');
 Route::get('items/{item_id}', 'ItemControllerAPI@show');
 Route::get('items', 'ItemControllerAPI@index');
-Route::put('orders/{order_id}', 'OrderControllerAPI@update');
-Route::get('orders', 'OrderControllerAPI@index');
+Route::middleware('auth:api')->put('orders/{order_id}', 'OrderControllerAPI@update');
+Route::middleware('auth:api')->get('orders', 'OrderControllerAPI@index');

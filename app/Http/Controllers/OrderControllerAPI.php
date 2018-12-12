@@ -15,8 +15,8 @@ class OrderControllerAPI extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {//$request->user()->id
-        return OrderResource::collection(Order::whereIn('state', ['confirmed', 'in preparation'])->where('responsible_cook_id', '66')->orWhere('state', 'confirmed')->whereNull('responsible_cook_id')->orderBy('state', 'desc')->orderBy('start', 'asc')->paginate(10));
+    {
+        return OrderResource::collection(Order::whereIn('state', ['confirmed', 'in preparation'])->where('responsible_cook_id', \Auth::guard('api')->user()->id)->orWhere('state', 'confirmed')->whereNull('responsible_cook_id')->orderBy('state', 'desc')->orderBy('start', 'asc')->paginate(10));
     }
 
     /**
@@ -50,7 +50,6 @@ class OrderControllerAPI extends Controller
      */
     public function update(Request $request, $order_id)
     {
-        
         $order = Order::findOrFail($order_id);
         $order->update($request->all());
         return new OrderResource($order);

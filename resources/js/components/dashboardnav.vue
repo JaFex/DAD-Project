@@ -7,6 +7,9 @@
                 </li>
                 <b-nav-item href="#">Items</b-nav-item>
                 <b-nav-item href="#">Tables</b-nav-item>
+                <li class="nav-item">
+                    <router-link to="/orders" class="nav-link" tag="a">Orders</router-link>
+                </li>
                 <b-nav-item-dropdown>
                     <template slot="button-content">Users</template>
                     <router-link to="/new-user" tag="a" role="manuitem" class="dropdown-item">New User</router-link>

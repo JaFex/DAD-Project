@@ -2,6 +2,10 @@
     <div>
         <nav-bar></nav-bar>
         <br>
+        <br>
+        <br>
+        <br>
+        <br>
         <div class="container">
             <table class="table">
                 <thead>
@@ -73,7 +77,7 @@ export default {
         },
         changeStateOrder: function(order, state){
             order.state = state;
-            order.responsible_cook_id = '66';
+            order.responsible_cook_id = this.$store.state.user.id;
             var now = new Date;
             if(state === 'prepared') {
                 order.end = now.getUTCFullYear()+"/"+now.getUTCMonth()+"/"+now.getUTCDate()+" "+now.getUTCHours()+":"+now.getUTCMinutes()+":"+now.getUTCSeconds();
