@@ -17,16 +17,16 @@ const dashboard = Vue.component('dashboard', require('./components/dashboard.vue
 const login = Vue.component('login', require('./components/login.vue'));
 const profile = Vue.component('profile', require('./components/profile.vue'));
 const newUser = Vue.component('newUser', require('./components/newUser.vue'));
+const orders = Vue.component('orders', require('./components/ordersList.vue'));
 
 const routes = [
-    { path: '/items', component: require('./pages/itemsList.vue') },
-    { path: '/orders', component: require('./pages/ordersList.vue') },
     { path: '/', redirect: '/home', name: 'root' },
     { path: '/home', component:  home, name: 'home' },
     { path: '/login', component:  login, name: 'login' },
     { path: '/dashboard', component: dashboard, name: 'dashboard' },
     { path: '/profile', component: profile, name: 'profile' },
-    { path: '/new-user', component: newUser, name: 'newUser' }
+    { path: '/new-user', component: newUser, name: 'newUser' },
+    { path: '/orders', component: orders, name: 'Cooks' }
 ];
 
 const router = new VueRouter({

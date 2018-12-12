@@ -32,7 +32,7 @@
             </table>
         </div>
         <pagination :method="loadOrders" :links="links"></pagination>
-        <modal :object="currentIteam"></modal>
+        <modalItem :object="currentIteam"></modalItem>
     </div>
 </template>
 <script>
@@ -106,9 +106,9 @@ export default {
     computed: {
     },
     components:{
-        'nav-bar': require('../components/navbar.vue'),
+        'nav-bar': require('./dashboardnav.vue'),
         'pagination': require('../components/pagination.vue'),
-        'modal': require('../components/modal.vue')
+        'modalItem': require('../components/modalItem.vue')
     },
     created() {
         this.loadOrders('orders');
