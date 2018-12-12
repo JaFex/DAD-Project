@@ -20,6 +20,8 @@
         "vue": "^2.5.17"
     },
     "dependencies": {
-        "vue-router": "^3.0.1"
+        "bootstrap-vue": "^2.0.0-rc.11",
+        "vue-router": "^3.0.1",
+        "vuex": "^3.0.1"
     }
 }
