@@ -18,6 +18,7 @@ const login = Vue.component('login', require('./components/login.vue'));
 const profile = Vue.component('profile', require('./components/profile.vue'));
 const newUser = Vue.component('newUser', require('./components/newUser.vue'));
 const orders = Vue.component('orders', require('./components/ordersList.vue'));
+const meals = Vue.component('meals', require('./components/mealsList.vue'));
 const notfound = Vue.component('notfound', require('./components/erro/404.vue'));
 
 const routes = [
@@ -28,6 +29,7 @@ const routes = [
     { path: '/profile', meta: { title: 'Restaurante' }, component: profile, name: 'profile' },
     { path: '/new-user', meta: { title: 'Restaurante' }, component: newUser, name: 'newUser' },
     { path: '/orders', meta: { title: 'Restaurante' }, component: orders, name: 'Cooks' },
+    { path: '/meals', meta: { title: 'Restaurante' }, component: meals, name: 'Waters' },
     { path: '/404', meta: { title: 'Not Found 404' }, component: notfound, name: 'NotFound' },
     { path: '*', redirect: '/404' }
 ];

@@ -59,7 +59,7 @@ export default {
                         next: response.data.links.next,
                         currentPage: response.data.meta.current_page,
                         lastPage: response.data.meta.last_page,
-                        path: 'orders?page='
+                        path: url+'?page='
                     }
                 })
                 .catch(function (error) {
