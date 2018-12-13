@@ -19,5 +19,15 @@ Route::middleware('auth:api')->get('users/me', 'UserControllerAPI@myProfile');
 Route::middleware('auth:api')->post('users', 'UserControllerAPI@store');
 Route::middleware('auth:api')->put('users/{users}', 'UserControllerAPI@update');
 
-Route::middleware('auth:api')->get('meals', 'MealControllerAPI@index');
+Route::get('items/{item_id}', 'ItemControllerAPI@show');
 Route::get('items', 'ItemControllerAPI@index');
+
+Route::middleware('auth:api')->get('restaurantTables', 'RestaurantTableControllerAPI@index');
+
+Route::middleware('auth:api')->put('meals/{meal_id}', 'MealControllerAPI@update');
+Route::middleware('auth:api')->get('meals/{meal_id}', 'MealControllerAPI@show');
+Route::middleware('auth:api')->post('meals', 'MealControllerAPI@store');
+Route::middleware('auth:api')->get('meals', 'MealControllerAPI@index');
+
+Route::middleware('auth:api')->put('orders/{order_id}', 'OrderControllerAPI@update');
+Route::middleware('auth:api')->get('orders', 'OrderControllerAPI@index');

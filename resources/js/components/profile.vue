@@ -13,7 +13,7 @@
                                 <button type="button" class="btn btn-outline-primary btn-sm mt-3" @click.prevent="presentDialog">Change Image</button>
                                 <h4 class="mt-3">
                                     Function: 
-                                    <small class="text-muted">{{user.function}}</small>
+                                    <small class="text-muted">{{user.type}}</small>
                                 </h4>
                                 <h4 class="mt-3">
                                     Email: 

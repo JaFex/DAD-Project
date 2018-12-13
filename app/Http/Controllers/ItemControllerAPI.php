@@ -17,7 +17,17 @@ class ItemControllerAPI extends Controller
     public function index()
     {
         return ItemResource::collection(Item::orderBy('type', 'desc')->paginate(8));
+    }
 
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $item_id
+     * @return \Illuminate\Http\Response
+     */
+    public function show(int $item_id)
+    {
+        return ItemResource::collection(Item::findOrFail($item_id)->get());//::where('id', $item_id)->get());
     }
 
     /**
@@ -41,16 +51,7 @@ class ItemControllerAPI extends Controller
         //
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Item  $item
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Item $item)
-    {
-        //
-    }
+    
 
     /**
      * Show the form for editing the specified resource.

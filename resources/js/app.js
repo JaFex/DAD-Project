@@ -17,14 +17,21 @@ const dashboard = Vue.component('dashboard', require('./components/dashboard.vue
 const login = Vue.component('login', require('./components/login.vue'));
 const profile = Vue.component('profile', require('./components/profile.vue'));
 const newUser = Vue.component('newUser', require('./components/newUser.vue'));
+const orders = Vue.component('orders', require('./components/ordersList.vue'));
+const meals = Vue.component('meals', require('./components/mealsList.vue'));
+const notfound = Vue.component('notfound', require('./components/erro/404.vue'));
 
 const routes = [
-    { path: '/', redirect: '/home', name: 'root' },
-    { path: '/home', component:  home, name: 'home' },
-    { path: '/login', component:  login, name: 'login' },
-    { path: '/dashboard', component: dashboard, name: 'dashboard' },
-    { path: '/profile', component: profile, name: 'profile' },
-    { path: '/new-user', component: newUser, name: 'newUser' }
+    { path: '/', meta: { title: 'Restaurante' }, redirect: '/home', name: 'root' },
+    { path: '/home', meta: { title: 'Restaurante' }, component:  home, name: 'home' },
+    { path: '/login', meta: { title: 'Restaurante' }, component:  login, name: 'login' },
+    { path: '/dashboard', meta: { title: 'Restaurante' }, component: dashboard, name: 'dashboard' },
+    { path: '/profile', meta: { title: 'Restaurante' }, component: profile, name: 'profile' },
+    { path: '/new-user', meta: { title: 'Restaurante' }, component: newUser, name: 'newUser' },
+    { path: '/orders', meta: { title: 'Restaurante' }, component: orders, name: 'Cooks' },
+    { path: '/meals', meta: { title: 'Restaurante' }, component: meals, name: 'Waters' },
+    { path: '/404', meta: { title: 'Not Found 404' }, component: notfound, name: 'NotFound' },
+    { path: '*', redirect: '/404' }
 ];
 
 const router = new VueRouter({
@@ -51,5 +58,6 @@ router.beforeEach((to, from, next) => {
             return;
         }
     }
+    document.title = to.meta.title
     next();
 });

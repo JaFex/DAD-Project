@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Meal;
 use Illuminate\Http\Request;
 use App\Http\Resources\Meal as MealResource;
+use App\Meal;
 
 class MealControllerAPI extends Controller
 {
@@ -15,12 +15,12 @@ class MealControllerAPI extends Controller
      */
     public function index()
     {
-        return MealResource::collection(Meal::paginate(8));
+        return MealResource::collection(Meal::whereNull('end')->where('responsible_waiter_id', \Auth::guard('api')->user()->id)->paginate(10));
     }
 
     /**
      * Show the form for creating a new resource.
-     *
+     * 
      * @return \Illuminate\Http\Response
      */
     public function create()
@@ -36,18 +36,26 @@ class MealControllerAPI extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate(request(), [
+            'table_number' => 'required|exists:restaurant_tables,table_number|unique:meals,table_number,NULL,id,state,active',
+            'start' => 'required|date'
+        ]);
+        $request['state'] = 'active';
+        $request['total_price_preview'] = 0;
+        $request['responsible_waiter_id'] = \Auth::guard('api')->user()->id;
+        
+        return new MealResource(Meal::create($request->all()));
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Meal  $meal
+     * @param  int  $meal
      * @return \Illuminate\Http\Response
      */
-    public function show(Meal $meal)
+    public function show(int $meal_id)
     {
-        //
+        return MealResource::collection(Meal::findOrFail($meal_id)->get());
     }
 
     /**
@@ -65,12 +73,14 @@ class MealControllerAPI extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Meal  $meal
+     * @param  int $meal
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Meal $meal)
+    public function update(Request $request, int $meal_id)
     {
-        //
+        $meal = Meal::findOrFail($meal_id);
+        $meal->update($request->all());
+        return new MealResource($meal);
     }
 
     /**
