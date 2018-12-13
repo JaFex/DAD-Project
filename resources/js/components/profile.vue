@@ -8,7 +8,7 @@
                         <hr class="my-4">
                         <div class="row">
                             <div class="col-4 text-center">
-                                <b-img rounded height="220" :src="imagePath" alt="Responsive image"/>
+                                <b-img rounded height="220" :src="imagePath(this.$store.state.user.photo_url)" alt="Responsive image"/>
                                 <br>
                                 <button type="button" class="btn btn-outline-primary btn-sm mt-3" @click.prevent="presentDialog">Change Image</button>
                                 <h4 class="mt-3">
@@ -90,7 +90,7 @@
                 <div class="modal-body">
                     <form>
                         <div class="form-group">
-                            <input type="file" ref="file" class="form-control-file" id="photo">
+                            <input type="file" ref="file" class="form-control-file" id="file">
                         </div>
                     </form>
                 </div>
@@ -139,16 +139,15 @@ export default {
                 });
         },
         uploadPhoto() {
-            console.log(this.$refs.file.files[0]);
             let formData = new FormData();
-            formData.append('photo', this.$refs.file.files[0]);
-            console.log(formData);
-            axios.put('api/users/' + this.user.id, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+            formData.append('file', this.$refs.file.files[0]);
+            formData.append('_method', 'put');
+            formData.append('id', this.user.id);
+            axios.post('api/users/' + this.user.id, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
                 .then(response => {
-                    this.$refs.file.files[0] = '';
-                    console.log("SENDED");
-                    Object.assign(this.user, response.data.data);
-                    Object.assign(this.$store.state.user, this.user);
+                    this.$store.commit('setUser',response.data.data);
+                    this.user = this.$store.state.user;
+                    this.clear();
                 }).catch(error => {
                     console.log(error);
                 });
@@ -166,12 +165,15 @@ export default {
         },
         dismissDialog(){
             this.showDialog = false;
-        }
-    },
-    computed: {
-        imagePath() {
-            return 'storage/profiles/'+this.user.photo_url;
-        }
+        },
+        imagePath(img) {
+            return 'storage/profiles/'+img;
+        },
+        clear () {
+            const input = this.$refs.file;
+            input.type = 'text';
+            input.type = 'file';
+        },
     },
     components: {
         'nav-bar': require('./dashboardnav.vue')

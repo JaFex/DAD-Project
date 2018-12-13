@@ -44,7 +44,7 @@ const app = new Vue({
 }).$mount('#app');
 
 router.beforeEach((to, from, next) => {
-    let protectedRoutes = ['dashboard', 'profile'];
+    let protectedRoutes = ['dashboard', 'profile', 'newUser'];
     if ((protectedRoutes.includes(to.name))) {
         if (!store.state.user) {
             next("/login");

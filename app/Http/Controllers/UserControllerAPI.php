@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SendMailable;
 
 use App\User;
 use App\Http\Resources\User as UserResource;
+use Storage;
 
 class UserControllerAPI extends Controller
 {
@@ -13,6 +16,11 @@ class UserControllerAPI extends Controller
     public function myProfile(Request $request)
     {
         return new UserResource($request->user());
+    }
+
+    public function store(Request $request){
+        Mail::to($request['email'])->send(new SendMailable($request['name'], 'xpto'));
+        return $request;
     }
 
     public function update(Request $request, $id){
@@ -35,6 +43,15 @@ class UserControllerAPI extends Controller
                 'password' => 'min:3|string'
             ]);
             $request['password'] = bcrypt($request['password']);
+        }
+
+        if($request->file('file')){
+
+            if($user->photo_url != null){
+                Storage::delete('public/profiles/'.$user->photo_url);
+            }
+
+            $request['photo_url'] = basename($request->file('file')->store('public/profiles'));
         }
 
         $user->update($request->all());
