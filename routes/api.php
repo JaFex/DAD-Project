@@ -19,11 +19,13 @@ Route::middleware('auth:api')->get('users/me', 'UserControllerAPI@myProfile');
 Route::middleware('auth:api')->post('users', 'UserControllerAPI@store');
 Route::middleware('auth:api')->put('users/{users}', 'UserControllerAPI@update');
 
-Route::get('items/{item_id}', 'ItemControllerAPI@show');
-Route::get('items', 'ItemControllerAPI@index');
+Route::get('items/type/{type}', 'ItemControllerAPI@getByType');
+Route::get('items/{item_id}', 'ItemControllerAPI@get');
+Route::get('items', 'ItemControllerAPI@all');
 
 Route::middleware('auth:api')->get('restaurantTables', 'RestaurantTableControllerAPI@index');
 
+Route::get('meals/{meal_id}/orders', 'MealControllerAPI@orders');
 Route::middleware('auth:api')->put('meals/{meal_id}', 'MealControllerAPI@update');
 Route::middleware('auth:api')->get('meals/{meal_id}', 'MealControllerAPI@show');
 Route::middleware('auth:api')->post('meals', 'MealControllerAPI@store');

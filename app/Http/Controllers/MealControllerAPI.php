@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Resources\Meal as MealResource;
+use App\Http\Resources\Order as OrderResource;
 use App\Meal;
 
 class MealControllerAPI extends Controller
@@ -16,6 +17,17 @@ class MealControllerAPI extends Controller
     public function index()
     {
         return MealResource::collection(Meal::whereNull('end')->where('responsible_waiter_id', \Auth::guard('api')->user()->id)->paginate(10));
+    }
+
+    /**
+     * Display a listing of the resource.
+     *  @param  int  $meal
+     * @return \Illuminate\Http\Response
+     */
+    public function orders(int $meal_id)
+    {
+        $meal = Meal::findOrFail($meal_id);
+        return OrderResource::collection($meal->orders()->paginate(10));
     }
 
     /**

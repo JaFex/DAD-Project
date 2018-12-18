@@ -12,7 +12,7 @@
                     <tr>
                         <th>ID</th>
                         <th>State</th>
-                        <th>Item_id</th>
+                        <th>Item</th>
                         <!--<th>Meal_id</th>-->
                         <!--<th>Responsible_cook_id</th>-->
                         <th>Start</th>

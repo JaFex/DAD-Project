@@ -14,7 +14,7 @@ class ItemControllerAPI extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function all()
     {
         return ItemResource::collection(Item::orderBy('type', 'desc')->paginate(8));
     }
@@ -25,9 +25,20 @@ class ItemControllerAPI extends Controller
      * @param  int  $item_id
      * @return \Illuminate\Http\Response
      */
-    public function show(int $item_id)
+    public function get(int $item_id)
     {
         return ItemResource::collection(Item::findOrFail($item_id)->get());//::where('id', $item_id)->get());
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  string  $type
+     * @return \Illuminate\Http\Response
+     */
+    public function getByType(string $type)
+    {
+        return ItemResource::collection(Item::where('type', $type)->orderBy('type', 'desc')->get());
     }
 
     /**
