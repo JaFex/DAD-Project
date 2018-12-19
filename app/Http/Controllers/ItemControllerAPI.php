@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Item;
 use Illuminate\Http\Request;
 use App\Http\Resources\Item as ItemResource;
+use App\Item;
 
 
 class ItemControllerAPI extends Controller
@@ -27,7 +27,7 @@ class ItemControllerAPI extends Controller
      */
     public function get(int $item_id)
     {
-        return ItemResource::collection(Item::findOrFail($item_id)->get());//::where('id', $item_id)->get());
+        return new ItemResource(Item::findOrFail($item_id));//::where('id', $item_id)->get());
     }
 
     /**

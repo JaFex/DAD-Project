@@ -17,18 +17,18 @@
         </div>
         <div class="form-group">
             <label for="itemType">Type:</label>
-            <b-form-select v-model="selectedItemType" @change="onChangeItemType()" class="mb-3"  id="itemType">
-                <option :value="''" disabled selected="selected">-- Please select an option --</option>
-                <option value="dish" key="dish">dish</option>
-                <option value="drink" key="drink">drink</option>
-            </b-form-select>
+            <select v-model="selectedItemType" @change="onChangeItemType" class="mb-3 form-control"  id="itemType">
+                <option :value="''" disabled selected>-- Please select an option --</option>
+                <option value="dish">dish</option>
+                <option value="drink">drink</option>
+            </select>
         </div>
         <div class="form-group">
             <label for="itemName">Type:</label>
-            <b-form-select v-model="selectedItem" class="mb-3"  id="itemName">
+            <select v-model="selectedItem" class="mb-3 form-control"  id="itemName">
                 <option :value="null" disabled selected>-- Please select an option --</option>
                 <option v-for="item in listItems" :value="item" :key="item.id">{{item.name}}</option>
-            </b-form-select>
+            </select>
         </div>
         <div v-if="selectedItem" class="form-group">
             <img class="img-thumbnai" v-bind:src="selectedItem.photoUrl" style="max-width: 30%;">
@@ -68,21 +68,28 @@ export default {
             }
         },
         createOrder: function() {
+            this.showSuccess = false;
+            this.showErro = false;
+            this.messageTitle = '';
+            this.message = '';
+            
             if(this.selectedItemType && this.selectedMeal && this.selectedItem) {
-                showSuccess = false;
-                showErro = false;
+                if(this.selectedMeal.state !== "active") {
+                    this.showErro = true;
+                    this.messageTitle = 'Meal invalid';
+                    this.message = 'Meal is not active';
+                }
                 let order = {};
-                var now = new Date;
                 order['item_id']=this.selectedItem.id; 
                 order['meal_id']=this.selectedMeal.id; 
-                order['start']=now.getUTCFullYear()+"/"+now.getUTCMonth()+"/"+now.getUTCDate()+" "+now.getUTCHours()+":"+now.getUTCMinutes()+":"+now.getUTCSeconds();
                 let soft = this;
                 axios.post('/api/orders', order)
                     .then(response => {
-                        soft.listItems = response.data.data;
                         soft.messageTitle = "Success";
                         soft.message = "Order as been created to the meal "+order['meal_id']+"!";
                         soft.showSuccess = true;
+                        soft.selectedItemType = '';
+                        soft.selectedItem = null;
                     })
                     .catch(function (error) {
                         console.log(error);
@@ -91,6 +98,10 @@ export default {
 
                         soft.showErro = true;
                     });
+            } else {
+                this.showErro = true;
+                this.messageTitle = 'Invalid!';
+                this.message = 'You need to select all options';
             }
         },
     },

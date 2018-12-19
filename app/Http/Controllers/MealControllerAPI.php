@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Resources\Meal as MealResource;
 use App\Http\Resources\Order as OrderResource;
 use App\Meal;
+use Carbon\Carbon;
 
 class MealControllerAPI extends Controller
 {
@@ -49,9 +50,9 @@ class MealControllerAPI extends Controller
     public function store(Request $request)
     {
         $this->validate(request(), [
-            'table_number' => 'required|exists:restaurant_tables,table_number|unique:meals,table_number,NULL,id,state,active',
-            'start' => 'required|date'
+            'table_number' => 'required|exists:restaurant_tables,table_number|unique:meals,table_number,NULL,id,state,active'
         ]);
+        $request['start'] = Carbon::now();
         $request['state'] = 'active';
         $request['total_price_preview'] = 0;
         $request['responsible_waiter_id'] = \Auth::guard('api')->user()->id;

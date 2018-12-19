@@ -32,4 +32,5 @@ Route::middleware('auth:api')->post('meals', 'MealControllerAPI@store');
 Route::middleware('auth:api')->get('meals', 'MealControllerAPI@index');
 
 Route::middleware('auth:api')->put('orders/{order_id}', 'OrderControllerAPI@update');
+Route::middleware('auth:api')->post('orders', 'OrderControllerAPI@store');
 Route::middleware('auth:api')->get('orders', 'OrderControllerAPI@index');

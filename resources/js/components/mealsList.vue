@@ -58,7 +58,7 @@
                                     <td>{{meal.start}}</td>
                                     <td>{{meal.total_price_preview}}</td>
                                     <td>
-                                        <button type="button" class="btn btn-primary" @click.prevent="loadOrders(meal)">See all orders</button>
+                                        <button v-if="meal.total_price_preview > 0" type="button" class="btn btn-primary" @click.prevent="openOrders(meal);">See all orders</button>
                                         <button  type="button" class="btn btn-primary" @click.prevent="showFormCreteOrder(meal)">add order</button>
                                     </td>
                                 </tr>
@@ -119,17 +119,24 @@ export default {
                     console.log(error);
                 });
         },
-        loadOrders: function(meal){
-            axios.get('/api/meals/'+meal.id+'/orders')
+        openOrders: function(meal) {
+            this.currentMeal = meal;
+            this.loadOrders('meals/'+meal.id+'/orders');
+        },
+        loadOrders: function(url){
+            var res = url.split("?");
+            if(res.length > 2){
+                url = res[0]+"?"+res[2];
+            }
+            axios.get('/api/'+url)
                 .then(response => {
-                    this.currentMeal = meal;
                     this.orders = response.data.data;
                     this.linksOrders = {
                         prev: response.data.links.prev,
                         next: response.data.links.next,
                         currentPage: response.data.meta.current_page,
                         lastPage: response.data.meta.last_page,
-                        path: 'meals/'+meal.id+'/orders?page='
+                        path: url+'?page='
                     }
                 })
                 .catch(function (error) {
@@ -152,11 +159,9 @@ export default {
         creatMeal: function(table_number){
             this.closeListOrders();
             this.showErro = false;
-            var now = new Date;
             let self = this
             axios.post('/api/meals', {
-                table_number: table_number,
-                start: now.getUTCFullYear()+"/"+now.getUTCMonth()+"/"+now.getUTCDate()+" "+now.getUTCHours()+":"+now.getUTCMinutes()+":"+now.getUTCSeconds()
+                    table_number: table_number
                 })
                 .then(function (response) {
                     console.log(response);
@@ -178,33 +183,7 @@ export default {
         showFormCreteOrder: function(meal){
             this.currentMealCreate = meal;
             this.showCreteOrder = true;
-        },
-        createOrder: function(meal, item){
-            this.showErro = false;
-            var now = new Date;
-            let self = this
-            axios.post('/api/orders', {
-                meal_id: meal.id,
-                item: item.id,
-                start: now.getUTCFullYear()+"/"+now.getUTCMonth()+"/"+now.getUTCDate()+" "+now.getUTCHours()+":"+now.getUTCMinutes()+":"+now.getUTCSeconds()
-                })
-                .then(function (response) {
-                    console.log(response);
-                    self.loadOrders('meals');
-                })
-                .catch(function (error) {
-                    console.log(error.response.data);
-                    if(error.response.data.errors.table_number) {
-                        console.log(error.response.data.errors.table_number[0]);
-                        self.message = error.response.data.errors.table_number[0];
-                        self.messageTitle = 'Invalid!';
-                    } else {
-                        self.message = 'Something went wrong';
-                        self.messageTitle = 'Ops!';
-                    }
-                    self.showErro = true;
-                });      
-        },
+        }
     },
     computed: {
     },

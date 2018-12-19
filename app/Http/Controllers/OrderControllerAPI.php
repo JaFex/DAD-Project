@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 
 use App\Http\Resources\Order as OrderResource;
 use App\Order;
+use App\Meal;
+use App\Item;
+use App\Rules\MealIsActive;
+use Carbon\Carbon;
 
 class OrderControllerAPI extends Controller
 {
@@ -27,7 +31,20 @@ class OrderControllerAPI extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate(request(), [
+            'item_id' => 'required|exists:items,id',
+            'meal_id' => ['required', 'exists:meals,id', new MealIsActive]
+        ]);
+        $meal = Meal::findOrFail($request["meal_id"]);
+        $item = Item::findOrFail($request["item_id"]);
+        $meal->total_price_preview = $meal->total_price_preview + $item->price;
+        $meal->save();
+        $request['state'] = 'pending';
+        $request['responsible_cook_id'] = NULL;
+        $request['start'] = Carbon::now();
+        $request['end'] = NULL;
+        
+        return new OrderResource(Order::create($request->all()));
     }
 
     /**

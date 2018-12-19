@@ -15,6 +15,7 @@ class Item extends JsonResource
     public function toArray($request)
     {
         return [
+            'id' => $this->id,
             'name' => $this->name,
             'shortDescription' => substr($this->description,0,49).'...',
             'longDescription' => $this->description,

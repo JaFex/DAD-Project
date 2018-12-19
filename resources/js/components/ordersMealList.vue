@@ -42,12 +42,29 @@ export default {
         seeInfoIteam: function(item_id){
             axios.get('/api/items/'+item_id)
                 .then(response => {
-                    this.currentIteam = response.data.data[0];
+                    this.currentIteam = response.data.data;
                 })
                 .catch(function (error) {
                     console.log(error);
                 });
         },
+        loadOrders: function(url){
+            axios.get('/api/'+url)
+                .then(response => {
+                    this.currentMeal = meal;
+                    this.orders = response.data.data;
+                    this.linksOrders = {
+                        prev: response.data.links.prev,
+                        next: response.data.links.next,
+                        currentPage: response.data.meta.current_page,
+                        lastPage: response.data.meta.last_page,
+                        path: url+'?page='
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
     },
     computed: {
     },
