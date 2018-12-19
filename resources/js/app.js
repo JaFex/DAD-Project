@@ -43,8 +43,8 @@ const app = new Vue({
     store,
     data: {},
     created() {
-        console.log('-----');
-        console.log(this.$store.state.user);
+        //console.log('-----');
+        //console.log(this.$store.state.user);
         this.$store.commit('loadTokenAndUserFromSession');
         console.log(this.$store.state.user);
     }

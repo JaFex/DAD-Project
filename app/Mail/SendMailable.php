@@ -11,16 +11,18 @@ class SendMailable extends Mailable
 {
     use Queueable, SerializesModels;
     public $name;
-    public $link;
+    public $token;
+    public $type;
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($name, $link)
+    public function __construct($name, $token, $type)
     {
         $this->name = $name;
-        $this->link = $link;
+        $this->token = $token;
+        $this->type = $type;
     }
 
     /**
@@ -30,6 +32,6 @@ class SendMailable extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.welcome');
+        return $this->subject("Account confirmation")->view('emails.welcome');
     }
 }

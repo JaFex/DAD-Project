@@ -55,6 +55,7 @@ export default {
     },
     methods: {
         onChangeItemType: function(){
+            console.log(this.selectedItemType);
             if(this.selectedItemType) {
                 this.selectedItem = null;
                 let soft = this;
