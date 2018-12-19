@@ -17,18 +17,18 @@
         </div>
         <div class="form-group">
             <label for="itemType">Type:</label>
-            <b-form-select v-model="selectedItemType" @change="onChangeItemType()" class="mb-3"  id="itemType">
+            <select v-model="selectedItemType" @change="onChangeItemType()" class="mb-3 form-control"  id="itemType">
                 <option :value="''" disabled selected="selected">-- Please select an option --</option>
-                <option value="dish" key="dish">dish</option>
-                <option value="drink" key="drink">drink</option>
-            </b-form-select>
+                <option value="dish" key="dish">Dish</option>
+                <option value="drink" key="drink">Drink</option>
+            </select>
         </div>
         <div class="form-group">
             <label for="itemName">Type:</label>
-            <b-form-select v-model="selectedItem" class="mb-3"  id="itemName">
+            <select v-model="selectedItem" class="mb-3 form-control"  id="itemName">
                 <option :value="null" disabled selected>-- Please select an option --</option>
                 <option v-for="item in listItems" :value="item" :key="item.id">{{item.name}}</option>
-            </b-form-select>
+            </select>
         </div>
         <div v-if="selectedItem" class="form-group">
             <img class="img-thumbnai" v-bind:src="selectedItem.photoUrl" style="max-width: 30%;">
@@ -55,6 +55,7 @@ export default {
     },
     methods: {
         onChangeItemType: function(){
+            console.log(this.selectedItemType);
             if(this.selectedItemType) {
                 this.selectedItem = null;
                 let soft = this;

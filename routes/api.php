@@ -17,6 +17,8 @@ Route::middleware('auth:api')->post('logout','LoginControllerAPI@logout');
 
 Route::middleware('auth:api')->get('users/me', 'UserControllerAPI@myProfile');
 Route::middleware('auth:api')->post('users', 'UserControllerAPI@store');
+Route::middleware('auth:api')->put('users/{users}/start', 'UserControllerAPI@startShift');
+Route::middleware('auth:api')->put('users/{users}/end', 'UserControllerAPI@endShift');
 Route::middleware('auth:api')->put('users/{users}', 'UserControllerAPI@update');
 
 Route::get('items/type/{type}', 'ItemControllerAPI@getByType');

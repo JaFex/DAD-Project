@@ -27,7 +27,7 @@ class ItemControllerAPI extends Controller
      */
     public function get(int $item_id)
     {
-        return ItemResource::collection(Item::findOrFail($item_id)->get());//::where('id', $item_id)->get());
+        return ItemResource::collection(Item::findOrFail($item_id));//::where('id', $item_id)->get());
     }
 
     /**

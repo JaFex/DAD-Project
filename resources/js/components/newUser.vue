@@ -48,7 +48,7 @@
                                     <b-form-group id="functionLabel"
                                                 label="Function:"
                                                 label-for="functionInput">
-                                        <b-form-select id="functionInput" v-model="user.type" :options="this.functions"/>
+                                        <b-form-select id="functionInput" v-model="user.type" :options="functions"/>
                                     </b-form-group>
                                     <b-form-group id="photoLabel"
                                                 label="Photo:"
@@ -70,7 +70,12 @@ export default {
     data() {
         return {
             user: {},
-            functions: ['Manager', 'Cook', 'Waiter', 'Cashier']
+            functions: [
+                { text: 'Manager', value: 'manager' },
+                { text: 'Cook', value: 'cook' },
+                { text: 'Waiter', value: 'waiter' },
+                { text: 'Cashier', value: 'cashier' }
+            ]
         }
     },
     methods: {
