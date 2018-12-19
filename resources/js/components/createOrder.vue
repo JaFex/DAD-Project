@@ -10,10 +10,10 @@
         </div>
         <div class="form-group">
             <label for="tableFormSelect">Table number: </label>
-            <b-form-select v-model="selectedMeal" class="mb-3" id="tableFormSelect">
-                <option :value="null" disabled>-- Please select an option --</option>
-                <option v-for="myMeal in myMeals" :value="myMeal" :key="myMeal.id">{{ myMeal.table_number }}</option>
-            </b-form-select>
+            <select v-model="selectedMeal" class="mb-3 form-control" id="tableFormSelect">
+                <option :value="null" disabled selected>-- Please select an option --</option>
+                <option v-for="myMeal in meals" :value="myMeal" :key="myMeal.id">{{ myMeal.table_number }}</option>
+            </select>
         </div>
         <div class="form-group">
             <label for="itemType">Type:</label>
@@ -27,7 +27,7 @@
             <label for="itemName">Type:</label>
             <select v-model="selectedItem" class="mb-3 form-control"  id="itemName">
                 <option :value="null" disabled selected>-- Please select an option --</option>
-                <option v-for="item in listItems" :value="item" :key="item.id">{{item.name}}</option>
+                <option v-for="item in listItems" :value="item" :key="item.id">{{ item.name }}</option>
             </select>
         </div>
         <div v-if="selectedItem" class="form-group">
@@ -41,8 +41,19 @@
 <script>
 export default {
     props: ['myMeals', 'meal'],
+    watch: { 
+        myMeals: function(newVal, oldVal) { // watch it
+          if(newVal.length != oldVal.length) {
+            this.meals = newVal;
+          }
+        },
+        meal: function(newVal, oldVal) { // watch it
+          this.selectedMeal = newVal;
+        }
+      },
     data() {
         return {
+            meals: {},
             selectedMeal: null,
             selectedItemType: '',
             selectedItem: null,
@@ -86,11 +97,13 @@ export default {
                 let soft = this;
                 axios.post('/api/orders', order)
                     .then(response => {
+                        order = response.data.data;
                         soft.messageTitle = "Success";
-                        soft.message = "Order as been created to the meal "+order['meal_id']+"!";
+                        soft.message = "Order as been created to the meal "+order.meal_id+"!";
                         soft.showSuccess = true;
                         soft.selectedItemType = '';
                         soft.selectedItem = null;
+                        this.$emit('clickNewOrder');
                     })
                     .catch(function (error) {
                         console.log(error);
@@ -111,6 +124,7 @@ export default {
     components:{
     },
     created() {
+        this.meals = this.myMeals;
         this.selectedMeal = this.meal;
     }
 }

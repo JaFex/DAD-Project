@@ -30,7 +30,7 @@
                     <button type="button" class="btn btn-danger float-right"  @click.prevent="showCreteOrder = false">Close</button>
                 </div>
                 <div class="card-body">
-                    <createOrder :myMeals="meals" :meal="currentMealCreate"></createOrder>
+                    <createOrder @clickNewOrder="newOrder" :myMeals="meals" :meal="currentMealCreate"></createOrder>
                 </div>
             </div>
             <div class="card">
@@ -183,6 +183,12 @@ export default {
         showFormCreteOrder: function(meal){
             this.currentMealCreate = meal;
             this.showCreteOrder = true;
+        },
+        newOrder: function() {
+            this.loadMeals('meals');
+            if(this.currentMeal && this.currentMealCreate && this.currentMeal.id == currentMealCreate.id) {
+                this.loadOrders('meals/'+this.currentMeal.id+'/orders');
+            }
         }
     },
     computed: {
