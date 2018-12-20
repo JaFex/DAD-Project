@@ -1,6 +1,14 @@
 <template>
     <div>
         <div class="container">
+            <div v-if="showSuccess" class="alert alert-success alert-dismissible">
+                <a href="#" class="close" v-on:click='showSuccess = false'>&times;</a>
+                <strong>{{ messageTitle }}</strong> {{ message }}
+            </div>
+            <div v-if="showErro" class="alert alert-danger alert-dismissible">
+                <a href="#" class="close" v-on:click='showErro = false'>&times;</a>
+                <strong>{{ messageTitleErro }}</strong> {{ messageErro }}
+            </div>
             <table class="table">
                 <thead>
                     <tr>
@@ -18,6 +26,7 @@
                         <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter" @click="seeInfoIteam(order.item_id)">Show me item</button></td>
                         <td>{{order.start}}</td>
                         <td>
+                            <button v-if="timeHideButton(order)" :id="order.id" type="button" class="btn btn-danger" @click.prevent="deleteInTime(order)">Delete (<strong :id="'time_'+order.id"></strong>)</button>
                             <!--<button v-if="order.state === 'in preparation'" type="button" class="btn btn-primary" @click.prevent="changeStateOrder(order, 'prepared')">I Finished Preparing</button>
                             <button v-else-if="order.state === 'confirmed'" type="button" class="btn btn-primary" @click.prevent="changeStateOrder(order, 'in preparation')">Start Preparation</button>-->
                         </td>
@@ -36,6 +45,12 @@ export default {
         return {
             currentOrder: '',
             currentIteam: '',
+            showSuccess: false,
+            showErro: false,
+            messageTitle: '',
+            message: '',
+            messageTitleErro: '',
+            messageErro: ''
         }
     },
     methods: {
@@ -45,7 +60,7 @@ export default {
                     this.currentIteam = response.data.data;
                 })
                 .catch(function (error) {
-                    console.log(error);
+                    console.log("seeInfoIteam->"+error);
                 });
         },
         loadOrders: function(url){
@@ -62,8 +77,93 @@ export default {
                     }
                 })
                 .catch(function (error) {
-                    console.log(error);
+                    console.log("loadOrders->"+error);
                 });
+        },
+        timeHideButton(order) {
+            var dateStartString = order.start+'';
+            var date = new Date();
+            date = new Date(date.getTime() - 5*1000);
+            var str = dateStartString.split(" ");
+            str = str[0]+"T"+str[1]+"Z";
+            var dateStart = new Date(str);
+            var timeDiff = Math.abs(date.getTime() - dateStart.getTime());
+            if (date > dateStart) {
+                return false;
+            } else {
+                var secunds = Math.round(timeDiff/1000);
+                console.log("div="+div);
+                var div = secunds>5?5:secunds;
+                var time = (secunds>5?1000:(timeDiff/div))-250//(timeDiff/div)- (menos o tempo de envio e reposta de delete)
+                this.timeRunOut(time, div, order);
+                return true;
+            }
+        },
+        timeRunOut: function(time, timeToShow, order) {
+            let soft = this;
+            setTimeout(function () {
+                console.log("time out -"+timeToShow);
+                var htmlTimeShow = document.getElementById('time_'+order.id+'');
+                if(htmlTimeShow) {
+                    htmlTimeShow.innerHTML = timeToShow;
+                    if(timeToShow <= 0) {
+                        document.getElementById(''+order.id+'').style.display='none';
+                        soft.timeRunOutOrderConfirmed(order);
+                    } else {
+                        timeToShow--;
+                        soft.timeRunOut(time, timeToShow, order);
+                    }
+                }
+            }, time);
+        },
+        timeRunOutOrderConfirmed: function(order) {
+            order.state = 'confirmed';
+            let soft = this;
+            axios.put('/api/orders/'+order.id, order)
+                    .then(response => {
+                        order = response.data.data;
+                        soft.messageTitle = "Order Confirmed!";
+                        soft.message = "Order ("+order.id+") as been confirmed on the meal "+order.meal_id+"!";
+                        soft.showSuccess = true;
+                        soft.selectedItemType = '';
+                        soft.selectedItem = null;
+                        soft.$emit('clickUpdateOrder', order);
+                    })
+                    .catch(function (error) {
+                        console.log("timeRunOutOrderConfirmed->"+error);
+                        soft.messageTitleErro = "Fail to confirm order!";
+                        soft.messageErro = "Ops! Order"+order.id+" not confirmed";
+
+                        soft.showErro = true;
+                    });
+        },
+        deleteInTime: function(order) {
+            var dateStartString = order.start+'';
+            var date = new Date();
+            date = new Date(date.getTime() - 5*1000);
+            var str = dateStartString.split(" ");
+            str = str[0]+"T"+str[1]+"Z";
+            var dateStart = new Date(str);
+            let soft = this;
+            if (date <= dateStart) {
+                axios.delete('/api/orders/'+order.id)
+                    .then(response => {
+                        order = response.data.data;
+                        soft.messageTitle = "Order Deleted!";
+                        soft.message = "Order "+order.id+" as been deleted on the meal "+order.meal_id+"!";
+                        soft.showSuccess = true;
+                        soft.selectedItemType = '';
+                        soft.selectedItem = null;
+                        soft.$emit('clickReloadMealAndOrder');
+                    })
+                    .catch(function (error) {
+                        console.log("deleteInTime-"+error.response.data.test);
+                        soft.messageTitleErro = "Fail to delete order!";
+                        soft.messageErro = "Ops! Order ("+error.response.data.order_id+") not deleted because '"+error.response.data.message+"'";
+
+                        soft.showErro = true;
+                    });
+            }
         }
     },
     computed: {

@@ -10,6 +10,9 @@ use App\Meal;
 use App\Item;
 use App\Rules\MealIsActive;
 use Carbon\Carbon;
+use DateTime;
+use DatePeriod;
+use DateInterval;
 
 class OrderControllerAPI extends Controller
 {
@@ -75,11 +78,29 @@ class OrderControllerAPI extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int  $order_id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($order_id)
     {
-        //
+        $dateNow = Carbon::now();
+        $now = Carbon::now();
+        $dateNow->sub(new DateInterval('PT5S'));
+
+        $order = Order::findOrFail($order_id);
+        $dateOrder = $order->start;//date('Y-m-d H:i:s',+);
+        
+
+        if ($dateNow > $dateOrder) {
+            return response([
+                'order_id' => $order->id,
+                'message' => "You missed the amount of time to remove!",
+                
+                'test' => [['Now time', $now], ['Now -5 secunds', $dateNow], ['Date Order', $dateOrder]]
+            ], 401);
+        }
+        $order->delete();
+        
+        return new OrderResource($order);
     }
 }

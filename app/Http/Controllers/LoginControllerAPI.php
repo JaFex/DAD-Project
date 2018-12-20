@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 define('YOUR_SERVER_URL', 'http://restaurant.test');
 // Check "oauth_clients" table for next 2 values: 
 define('CLIENT_ID', '2'); 
-define('CLIENT_SECRET','OWu7eiPIN6XUuSSlz7vuOX9Hko7l3IjIGfJLEY1X');
+define('CLIENT_SECRET','HW4WNtNTaQdmpIuvJ3OgzVaAdcJYFktEL9jGujq9');
 
 class LoginControllerAPI extends Controller
 {

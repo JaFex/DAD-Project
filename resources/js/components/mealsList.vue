@@ -19,6 +19,10 @@
                         <button class="btn btn-outline-secondary btn-primary" type="button" @click.prevent="creatMeal(selectedRestaurantTables)">Create a meal for table {{ selectedRestaurantTables }}</button>
                     </div>
                 </div>
+                <div v-if="showSuccess" class="alert alert-success alert-dismissible">
+                    <a href="#" class="close" v-on:click='showSuccess = false'>&times;</a>
+                    <strong>{{ messageTitle }}</strong> {{ message }}
+                </div>
                 <div v-if="showErro" class="alert alert-danger alert-dismissible">
                     <a href="#" class="close" v-on:click='showErro = false'>&times;</a>
                     <strong>{{ messageTitle }}</strong> {{ message }}
@@ -30,7 +34,7 @@
                     <button type="button" class="btn btn-danger float-right"  @click.prevent="showCreteOrder = false">Close</button>
                 </div>
                 <div class="card-body">
-                    <createOrder :myMeals="meals" :meal="currentMealCreate"></createOrder>
+                    <createOrder @clickReloadMealAndOrder="reloadMealAndOrder" :myMeals="meals" :meal="currentMealCreate"></createOrder>
                 </div>
             </div>
             <div class="card">
@@ -59,7 +63,7 @@
                                     <td>{{meal.total_price_preview}}</td>
                                     <td>
                                         <button v-if="meal.total_price_preview > 0" type="button" class="btn btn-primary" @click.prevent="openOrders(meal);">See all orders</button>
-                                        <button  type="button" class="btn btn-primary" @click.prevent="showFormCreteOrder(meal)">add order</button>
+                                        <button type="button" class="btn btn-primary" @click.prevent="showFormCreteOrder(meal)">add order</button>
                                     </td>
                                 </tr>
                                 <tr v-if='currentMeal && meal.id == currentMeal.id'>
@@ -70,7 +74,7 @@
                                                 <button type="button" class="btn btn-danger float-right" @click.prevent="closeListOrders()">Close</button>
                                             </div>
                                             <div class="card-body">
-                                                <ordersMealList :method="loadOrders" :meal="currentMeal" :orders="orders" :links="linksOrders"></ordersMealList>
+                                                <ordersMealList @clickReloadMealAndOrder="reloadMealAndOrder" @clickUpdateOrder="updateOrder(order)"  :method="loadOrders" :meal="currentMeal" :orders="orders" :links="linksOrders"></ordersMealList>
                                             </div>
                                         </div>
                                     </td>
@@ -88,6 +92,7 @@
 export default {
     data() {
         return {
+            showSuccess: false,
             showErro: false,
             message: '',
             messageTitle: '',
@@ -158,6 +163,7 @@ export default {
         },
         creatMeal: function(table_number){
             this.closeListOrders();
+            this.showSuccess = false;
             this.showErro = false;
             let self = this
             axios.post('/api/meals', {
@@ -166,6 +172,9 @@ export default {
                 .then(function (response) {
                     console.log(response);
                     self.loadMeals('meals');
+                    self.message = 'Meal as created successful to the table '+table_number;
+                    self.messageTitle = 'Success!';
+                    self.showSuccess = true;
                 })
                 .catch(function (error) {
                     console.log(error.response.data);
@@ -183,9 +192,21 @@ export default {
         showFormCreteOrder: function(meal){
             this.currentMealCreate = meal;
             this.showCreteOrder = true;
+        },
+        reloadMealAndOrder: function() {
+            this.loadMeals('meals');
+            if(this.currentMeal && this.currentMealCreate && this.currentMeal.id == this.currentMealCreate.id) {
+                this.loadOrders('meals/'+this.currentMeal.id+'/orders');
+            }
+        },
+        updateOrder: function(order) {
+            if(this.currentMeal && this.order && this.currentMeal.id == this.order.id) {
+                this.loadOrders('meals/'+this.currentMeal.id+'/orders');
+            }
         }
     },
     computed: {
+        
     },
     components:{
         'nav-bar': require('./dashboardnav.vue'),
