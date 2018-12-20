@@ -1,79 +1,80 @@
 <template>
     <div>
         <nav-bar></nav-bar>
-        <div class="container" style="margin-top: 30px;">
+        <div class="container-fuid" style="margin-top: 30px;">
             <div class="row">
                 <div class="col">
-                    <b-jumbotron header="My Profile" class="mt-3">
+                    <b-jumbotron header="My Profile">
                         <hr class="my-4">
-                        <div class="row">
-                            <div class="col-4 text-center">
-                                <b-img rounded height="220" :src="imagePath(this.$store.state.user.photo_url)" alt="Responsive image"/>
-                                <br>
-                                <button type="button" class="btn btn-outline-primary btn-sm mt-3" @click.prevent="presentDialog">Change Image</button>
-                                <h4 class="mt-3">
-                                    Function: 
-                                    <small class="text-muted">{{user.type}}</small>
-                                </h4>
-                                <h4 class="mt-3">
-                                    Email: 
-                                    <small class="text-muted">{{user.email}}</small>
-                                </h4>
+                        <div class="row justify-content-center">
+                            <div class="col-6">
+                                <div class="row">
+                                    <div class="col-4 text-center mr-4">
+                                        <b-img rounded height="220" :src="imagePath(this.$store.state.user.photo_url)" alt="Responsive image"/>
+                                        <br>
+                                        <button type="button" class="btn btn-outline-primary btn-sm mt-3" @click.prevent="presentDialog">Change Image</button>
+                                        <h4 class="mt-3">
+                                            Function: 
+                                            <small class="text-muted">{{user.type}}</small>
+                                        </h4>
+                                        <h4 class="mt-3">
+                                            Email: 
+                                            <small class="text-muted">{{user.email}}</small>
+                                        </h4>
+                                    </div>
+                                    <div class="col">
+                                        <b-form>
+                                            <div class="form-group">
+                                                <label for="usernameInput">Username:</label>
+                                                <input class="form-control" id="usernameInput"
+                                                            type="text"
+                                                            v-model.trim="user.username"
+                                                            :class="!$v.user.username.required || !$v.user.username.minLength ? 'is-invalid' : ''" />
+                                                <div class="invalid" v-if="!$v.user.username.required">
+                                                    Field is required.
+                                                </div>
+                                                <div class="invalid" v-if="!$v.user.username.minLength">
+                                                    Username must have at least {{$v.user.username.$params.minLength.min}} letters.
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="nameInput">Name:</label>
+                                                <input class="form-control" id="nameInput" type="text" v-model.trim.lazy="user.name">
+                                                <div class="invalid" v-show="!$v.user.name.required">
+                                                    Field is required.
+                                                </div>
+                                            </div>
+                                            <b-form-group id="newPasswordInput"
+                                                        label="New Password:"
+                                                        label-for="newPasswordInput"
+                                                        >
+                                                <b-form-input id="newPasswordInput"
+                                                            type="password"
+                                                            v-model="newPassword"
+                                                            @change="clickPasswordField()"
+                                                            :class="passwordError ? 'is-invalid' : ''"
+                                                            >
+                                                </b-form-input>
+                                            </b-form-group>
+                                            <b-form-group id="confirmPasswordInput"
+                                                        label="Confirm Password:"
+                                                        label-for="confirmPasswordInput">
+                                                <b-form-input id="confirmPasswordInput"
+                                                            type="password"
+                                                            @change="clickPasswordField($event)"
+                                                            v-model="confirmPassword"
+                                                            :class="passwordError ? 'is-invalid' : ''">
+                                                </b-form-input>
+                                                <div class="invalid-feedback">
+                                                    Passwords don't match.
+                                                </div>
+                                            </b-form-group>
+                                            <b-button variant="primary" @click.prevent="updateUser">Submit</b-button>
+                                        </b-form>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col">
-                                <b-form>
-                                    <b-form-group id="usernameInput"
-                                                label="Username:"
-                                                label-for="usernameInput"
-                                                >
-                                        <b-form-input id="usernameInput"
-                                                    type="text"
-                                                    required
-                                                    v-model="user.username">
-                                        </b-form-input>
-                                        <b-form-invalid-feedback></b-form-invalid-feedback>
-                                    </b-form-group>
-                                    <b-form-group id="nameInput"
-                                                label="Name:"
-                                                label-for="nameInput"
-                                                >
-                                        <b-form-input id="nameInput"
-                                                    type="text"
-                                                    required
-                                                    v-model="user.name">
-                                        </b-form-input>
-                                        <b-form-invalid-feedback></b-form-invalid-feedback>
-                                    </b-form-group>
-                                    <b-form-group id="newPasswordInput"
-                                                label="New Password:"
-                                                label-for="newPasswordInput"
-                                                >
-                                        <b-form-input id="newPasswordInput"
-                                                    type="password"
-                                                    v-model="newPassword"
-                                                    @change="clickPasswordField()"
-                                                    :class="passwordError ? 'is-invalid' : ''"
-                                                    >
-                                        </b-form-input>
-                                        <b-form-invalid-feedback></b-form-invalid-feedback>
-                                    </b-form-group>
-                                    <b-form-group id="confirmPasswordInput"
-                                                label="Confirm Password:"
-                                                label-for="confirmPasswordInput">
-                                        <b-form-input id="confirmPasswordInput"
-                                                    type="password"
-                                                    @change="clickPasswordField($event)"
-                                                    v-model="confirmPassword"
-                                                    :class="passwordError ? 'is-invalid' : ''">
-                                        </b-form-input>
-                                        <div class="invalid-feedback">
-                                            Passwords don't match.
-                                        </div>
-                                    </b-form-group>
-                                    <b-button variant="primary" @click.prevent="updateUser">Submit</b-button>
-                                </b-form>
-                            </div>
-                        </div>
+                        </div> 
                     </b-jumbotron>
                 </div>
             </div>
@@ -103,6 +104,7 @@
     </div>
 </template>
 <script>
+import { required, minLength, alphaNum, alpha } from 'vuelidate/lib/validators'
 export default {
     data() {
         return {
@@ -133,7 +135,7 @@ export default {
                     this.confirmPassword = '';
                     this.photo_url = '';
                     Object.assign(this.user, response.data.data);
-                    Object.assign(this.$store.state.user, this.user);
+                    this.$store.commit('setUser',response.data.data);
                 }).catch(error => {
                     console.log(error);
                 });
@@ -177,6 +179,20 @@ export default {
     },
     components: {
         'nav-bar': require('./dashboardnav.vue')
+    },
+    validations: {
+        user: {
+            username: {
+                required,
+                minLength: minLength(2),
+                alphaNum
+            },
+            name: {
+                required,
+                minLength: minLength(3),
+                alpha
+            }
+        },
     },
     created() {
         this.loadUser();

@@ -18,6 +18,9 @@
                     <template slot="button-content">Users</template>
                     <router-link to="/new-user" tag="a" role="manuitem" class="dropdown-item">New User</router-link>
                 </b-nav-item-dropdown>
+                <li class="nav-item">
+                    <router-link to="/message" class="nav-link" tag="a">Send Message</router-link>
+                </li>
             </b-navbar-nav>
             <b-navbar-nav class="ml-auto">
                 <b-nav-item v-if="this.$store.state.user.shift_active === 1" class="mr-2" disabled>Working</b-nav-item>
@@ -41,6 +44,9 @@ export default {
         logout() {
             axios.post('api/logout')
                 .then(response => {
+                    if(this.$store.state.user.shift_active){
+                        this.$socket.emit('user_exit', this.$store.state.user);
+                    }
                     this.$store.commit('clearUserAndToken');
                     this.$router.push("/");
                 })
@@ -53,6 +59,7 @@ export default {
             axios.put('api/users/' + this.$store.state.user.id + '/start')
                 .then(response => {
                     this.$store.commit('setUser',response.data.data);
+                    this.$socket.emit('user_enter', response.data.data);
                 })
                 .catch(error => {
                     console.log(error);
@@ -62,6 +69,7 @@ export default {
             axios.put('api/users/' + this.$store.state.user.id + '/end')
                 .then(response => {
                     this.$store.commit('setUser',response.data.data);
+                    this.$socket.emit('user_exit', this.$store.state.user);
                 })
                 .catch(error => {
                     console.log(error);
@@ -85,4 +93,13 @@ export default {
     }
 }
 </script>
+<style>
+    .info{
+        color: #004085 !important;
+        background-color: #cce5ff !important;
+        border-color: #b8daff !important;
+        border-radius: .25rem !important;
+    }
+</style>
+
 

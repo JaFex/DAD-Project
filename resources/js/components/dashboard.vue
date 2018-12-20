@@ -5,16 +5,21 @@
             <div class="row">
                 <div class="col">
                     <b-jumbotron header="Dashboard" :lead="'Welcome, ' + this.$store.state.user.name">
-                        <template v-if="this.$store.state.user.shift_active == 0">
-                            <p>Shift: Inactive</p>
-                            <p v-if="this.$store.state.user.last_shift_end">Last shift: {{ endDate }}</p>
-                            <p v-if="this.$store.state.user.last_shift_end">Time since last shift: {{ endDateDif }}</p> 
-                        </template>
-                        <template v-else >
-                            <p>Shift: Active</p>
-                            <p v-if="this.$store.state.user.last_shift_start">Start at: {{ startDate }}</p>
-                            <p v-if="this.$store.state.user.last_shift_start">Time since start of shift: {{ startDateDif }}</p>
-                        </template>    
+                        <hr class="my-4">
+                        <div>
+                            <h4 class="mb-3">My shift informations</h4>
+                            <template v-if="this.$store.state.user.shift_active == 0">
+                                <p>Status: Inactive</p>
+                                <p v-if="this.$store.state.user.last_shift_end">Last shift: {{ endDate }}</p>
+                                <p v-if="this.$store.state.user.last_shift_end">Time since last shift: {{ endDateDif }}</p> 
+                            </template>
+                            <template v-else >
+                                <p>Shift: Active</p>
+                                <p v-if="this.$store.state.user.last_shift_start">Start at: {{ startDate }}</p>
+                                <p v-if="this.$store.state.user.last_shift_start">Time since start of shift: {{ startDateDif }}</p>
+                            </template> 
+                        </div>
+                           
                     </b-jumbotron>
                 </div>
             </div>
@@ -25,7 +30,7 @@
 import moment from 'moment';
 export default {
     methods: {
-        
+
     },
     components: {
         'nav-bar': require('./dashboardnav.vue')

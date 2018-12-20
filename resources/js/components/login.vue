@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="row justify-content-center align-items-center">
             <div class="col-4">
-                <div class="alert" :class="typeofmsg" v-if="showMessage">             
+                <div class="alert alert-danger" v-if="showMessage">             
                     <button type="button" class="close" v-on:click="showMessage=false">&times;</button>
                     <strong>{{ message }}</strong>
                 </div>
@@ -35,7 +35,6 @@ export default {
                     email:"",
                     password:""
                 },
-                typeofmsg: "alert-success",
                 showMessage: false,
                 message: "",
             }
@@ -49,14 +48,19 @@ export default {
                     })
                     .then(response => {
                         this.$store.commit('setUser',response.data.data);
-                        this.typeofmsg = "alert-success";
-                        this.message = "User authenticated correctly";
-                        this.showMessage = true;
+                        this.$toasted.show('Logged successfully.', {
+                            theme: "bubble",
+                            position: "bottom-center",
+                            duration: 5000,
+                            className: ['success']
+                        });
+                        if(this.$store.state.user.shift_active){
+                            this.$socket.emit('user_enter', this.$store.state.user);
+                        }
                         this.$router.push("/dashboard");
                     })
                     .catch(error => {
                         this.$store.commit('clearUserAndToken');
-                        this.typeofmsg = "alert-danger";
                         this.message = "Invalid credentials";
                         this.showMessage = true;
                         console.log(error);
@@ -66,9 +70,16 @@ export default {
 }
 </script>
 <style>
+
     html, body, #app, .container-fluid, .row {
         height: 95%;
     }
+
+    .success{
+        background-color: #28a745 !important;
+        border-color: #28a745 !important;
+    }
+
 </style>
 
 
