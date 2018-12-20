@@ -88124,10 +88124,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
         return {
+            showSuccess: false,
             showErro: false,
             message: '',
             messageTitle: '',
@@ -88199,6 +88204,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         creatMeal: function creatMeal(table_number) {
             this.closeListOrders();
+            this.showSuccess = false;
             this.showErro = false;
             var self = this;
             axios.post('/api/meals', {
@@ -88206,6 +88212,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }).then(function (response) {
                 console.log(response);
                 self.loadMeals('meals');
+                self.message = 'Meal as created successful to the table ' + table_number;
+                self.messageTitle = 'Success!';
+                self.showSuccess = true;
             }).catch(function (error) {
                 console.log(error.response.data);
                 if (error.response.data.errors.table_number) {
@@ -88223,9 +88232,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.currentMealCreate = meal;
             this.showCreteOrder = true;
         },
-        newOrder: function newOrder() {
+        reloadMealAndOrder: function reloadMealAndOrder() {
             this.loadMeals('meals');
-            if (this.currentMeal && this.currentMealCreate && this.currentMeal.id == currentMealCreate.id) {
+            if (this.currentMeal && this.currentMealCreate && this.currentMeal.id == this.currentMealCreate.id) {
+                this.loadOrders('meals/' + this.currentMeal.id + '/orders');
+            }
+        },
+        updateOrder: function updateOrder(order) {
+            if (this.currentMeal && this.order && this.currentMeal.id == this.order.id) {
                 this.loadOrders('meals/' + this.currentMeal.id + '/orders');
             }
         }
@@ -88327,13 +88341,28 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['method', 'meal', 'orders', 'links'],
     data: function data() {
         return {
             currentOrder: '',
-            currentIteam: ''
+            currentIteam: '',
+            showSuccess: false,
+            showErro: false,
+            messageTitle: '',
+            message: '',
+            messageTitleErro: '',
+            messageErro: ''
         };
     },
 
@@ -88344,7 +88373,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             axios.get('/api/items/' + item_id).then(function (response) {
                 _this.currentIteam = response.data.data;
             }).catch(function (error) {
-                console.log(error);
+                console.log("seeInfoIteam->" + error);
             });
         },
         loadOrders: function loadOrders(url) {
@@ -88361,8 +88390,90 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     path: url + '?page='
                 };
             }).catch(function (error) {
-                console.log(error);
+                console.log("loadOrders->" + error);
             });
+        },
+        timeHideButton: function timeHideButton(order) {
+            var dateStartString = order.start + '';
+            var date = new Date();
+            date = new Date(date.getTime() - 5 * 1000);
+            var str = dateStartString.split(" ");
+            str = str[0] + "T" + str[1] + "Z";
+            var dateStart = new Date(str);
+            var timeDiff = Math.abs(date.getTime() - dateStart.getTime());
+            if (date > dateStart) {
+                return false;
+            } else {
+                var secunds = Math.round(timeDiff / 1000);
+                console.log("div=" + div);
+                var div = secunds > 5 ? 5 : secunds;
+                var time = (secunds > 5 ? 1000 : timeDiff / div) - 250; //(timeDiff/div)- (menos o tempo de envio e reposta de delete)
+                this.timeRunOut(time, div, order);
+                return true;
+            }
+        },
+
+        timeRunOut: function timeRunOut(time, timeToShow, order) {
+            var soft = this;
+            setTimeout(function () {
+                console.log("time out -" + timeToShow);
+                var htmlTimeShow = document.getElementById('time_' + order.id + '');
+                if (htmlTimeShow) {
+                    htmlTimeShow.innerHTML = timeToShow;
+                    if (timeToShow <= 0) {
+                        document.getElementById('' + order.id + '').style.display = 'none';
+                        soft.timeRunOutOrderConfirmed(order);
+                    } else {
+                        timeToShow--;
+                        soft.timeRunOut(time, timeToShow, order);
+                    }
+                }
+            }, time);
+        },
+        timeRunOutOrderConfirmed: function timeRunOutOrderConfirmed(order) {
+            order.state = 'confirmed';
+            var soft = this;
+            axios.put('/api/orders/' + order.id, order).then(function (response) {
+                order = response.data.data;
+                soft.messageTitle = "Order Confirmed!";
+                soft.message = "Order (" + order.id + ") as been confirmed on the meal " + order.meal_id + "!";
+                soft.showSuccess = true;
+                soft.selectedItemType = '';
+                soft.selectedItem = null;
+                soft.$emit('clickUpdateOrder', order);
+            }).catch(function (error) {
+                console.log("timeRunOutOrderConfirmed->" + error);
+                soft.messageTitleErro = "Fail to confirm order!";
+                soft.messageErro = "Ops! Order" + order.id + " not confirmed";
+
+                soft.showErro = true;
+            });
+        },
+        deleteInTime: function deleteInTime(order) {
+            var dateStartString = order.start + '';
+            var date = new Date();
+            date = new Date(date.getTime() - 5 * 1000);
+            var str = dateStartString.split(" ");
+            str = str[0] + "T" + str[1] + "Z";
+            var dateStart = new Date(str);
+            var soft = this;
+            if (date <= dateStart) {
+                axios.delete('/api/orders/' + order.id).then(function (response) {
+                    order = response.data.data;
+                    soft.messageTitle = "Order Deleted!";
+                    soft.message = "Order " + order.id + " as been deleted on the meal " + order.meal_id + "!";
+                    soft.showSuccess = true;
+                    soft.selectedItemType = '';
+                    soft.selectedItem = null;
+                    soft.$emit('clickReloadMealAndOrder');
+                }).catch(function (error) {
+                    console.log("deleteInTime-" + error.response.data.test);
+                    soft.messageTitleErro = "Fail to delete order!";
+                    soft.messageErro = "Ops! Order (" + error.response.data.order_id + ") not deleted because '" + error.response.data.message + "'";
+
+                    soft.showErro = true;
+                });
+            }
         }
     },
     computed: {},
@@ -88385,6 +88496,52 @@ var render = function() {
     "div",
     [
       _c("div", { staticClass: "container" }, [
+        _vm.showSuccess
+          ? _c(
+              "div",
+              { staticClass: "alert alert-success alert-dismissible" },
+              [
+                _c(
+                  "a",
+                  {
+                    staticClass: "close",
+                    attrs: { href: "#" },
+                    on: {
+                      click: function($event) {
+                        _vm.showSuccess = false
+                      }
+                    }
+                  },
+                  [_vm._v("×")]
+                ),
+                _vm._v(" "),
+                _c("strong", [_vm._v(_vm._s(_vm.messageTitle))]),
+                _vm._v(" " + _vm._s(_vm.message) + "\n        ")
+              ]
+            )
+          : _vm._e(),
+        _vm._v(" "),
+        _vm.showErro
+          ? _c("div", { staticClass: "alert alert-danger alert-dismissible" }, [
+              _c(
+                "a",
+                {
+                  staticClass: "close",
+                  attrs: { href: "#" },
+                  on: {
+                    click: function($event) {
+                      _vm.showErro = false
+                    }
+                  }
+                },
+                [_vm._v("×")]
+              ),
+              _vm._v(" "),
+              _c("strong", [_vm._v(_vm._s(_vm.messageTitleErro))]),
+              _vm._v(" " + _vm._s(_vm.messageErro) + "\n        ")
+            ])
+          : _vm._e(),
+        _vm._v(" "),
         _c("table", { staticClass: "table" }, [
           _vm._m(0),
           _vm._v(" "),
@@ -88417,7 +88574,28 @@ var render = function() {
                 _vm._v(" "),
                 _c("td", [_vm._v(_vm._s(order.start))]),
                 _vm._v(" "),
-                _c("td")
+                _c("td", [
+                  _vm.timeHideButton(order)
+                    ? _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-danger",
+                          attrs: { id: order.id, type: "button" },
+                          on: {
+                            click: function($event) {
+                              $event.preventDefault()
+                              _vm.deleteInTime(order)
+                            }
+                          }
+                        },
+                        [
+                          _vm._v("Delete ("),
+                          _c("strong", { attrs: { id: "time_" + order.id } }),
+                          _vm._v(")")
+                        ]
+                      )
+                    : _vm._e()
+                ])
               ])
             })
           )
@@ -88560,6 +88738,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         myMeals: function myMeals(newVal, oldVal) {
             // watch it
             if (newVal.length != oldVal.length) {
+                //para não causar problemas no select caso a meal o preço previsto mude ele deteta que houve mudança mas eu não me interessa isso só interessa se almentou a lista pois o id e numero da tabela não podem ser alterados e eu uso só esses
                 this.meals = newVal;
             }
         },
@@ -88596,8 +88775,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }
         },
         createOrder: function createOrder() {
-            var _this = this;
-
             this.showSuccess = false;
             this.showErro = false;
             this.messageTitle = '';
@@ -88616,11 +88793,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 axios.post('/api/orders', order).then(function (response) {
                     order = response.data.data;
                     soft.messageTitle = "Success";
-                    soft.message = "Order as been created to the meal " + order.meal_id + "!";
+                    soft.message = "Order as been created to the meal " + order.meal_id + " on table " + soft.selectedMeal.table_number + "!";
                     soft.showSuccess = true;
                     soft.selectedItemType = '';
                     soft.selectedItem = null;
-                    _this.$emit('clickNewOrder');
+                    soft.$emit('clickReloadMealAndOrder');
                 }).catch(function (error) {
                     console.log(error);
                     soft.messageTitle = "Fail";
@@ -88979,6 +89156,31 @@ var render = function() {
             ])
           ]),
           _vm._v(" "),
+          _vm.showSuccess
+            ? _c(
+                "div",
+                { staticClass: "alert alert-success alert-dismissible" },
+                [
+                  _c(
+                    "a",
+                    {
+                      staticClass: "close",
+                      attrs: { href: "#" },
+                      on: {
+                        click: function($event) {
+                          _vm.showSuccess = false
+                        }
+                      }
+                    },
+                    [_vm._v("×")]
+                  ),
+                  _vm._v(" "),
+                  _c("strong", [_vm._v(_vm._s(_vm.messageTitle))]),
+                  _vm._v(" " + _vm._s(_vm.message) + "\n            ")
+                ]
+              )
+            : _vm._e(),
+          _vm._v(" "),
           _vm.showErro
             ? _c(
                 "div",
@@ -89034,7 +89236,7 @@ var render = function() {
                 [
                   _c("createOrder", {
                     attrs: { myMeals: _vm.meals, meal: _vm.currentMealCreate },
-                    on: { clickNewOrder: _vm.newOrder }
+                    on: { clickReloadMealAndOrder: _vm.reloadMealAndOrder }
                   })
                 ],
                 1
@@ -89145,6 +89347,13 @@ var render = function() {
                                           meal: _vm.currentMeal,
                                           orders: _vm.orders,
                                           links: _vm.linksOrders
+                                        },
+                                        on: {
+                                          clickReloadMealAndOrder:
+                                            _vm.reloadMealAndOrder,
+                                          clickUpdateOrder: function($event) {
+                                            _vm.updateOrder(_vm.order)
+                                          }
                                         }
                                       })
                                     ],

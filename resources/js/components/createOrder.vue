@@ -43,7 +43,7 @@ export default {
     props: ['myMeals', 'meal'],
     watch: { 
         myMeals: function(newVal, oldVal) { // watch it
-          if(newVal.length != oldVal.length) {
+          if(newVal.length != oldVal.length) { //para não causar problemas no select caso a meal o preço previsto mude ele deteta que houve mudança mas eu não me interessa isso só interessa se almentou a lista pois o id e numero da tabela não podem ser alterados e eu uso só esses
             this.meals = newVal;
           }
         },
@@ -99,11 +99,11 @@ export default {
                     .then(response => {
                         order = response.data.data;
                         soft.messageTitle = "Success";
-                        soft.message = "Order as been created to the meal "+order.meal_id+"!";
+                        soft.message = "Order as been created to the meal "+order.meal_id+" on table "+soft.selectedMeal.table_number+"!";
                         soft.showSuccess = true;
                         soft.selectedItemType = '';
                         soft.selectedItem = null;
-                        this.$emit('clickNewOrder');
+                        soft.$emit('clickReloadMealAndOrder');
                     })
                     .catch(function (error) {
                         console.log(error);
