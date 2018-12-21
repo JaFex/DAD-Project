@@ -122,7 +122,7 @@ export default {
                     }
                 })
                 .catch(function (error) {
-                    console.log(error);
+                    console.log("loadMeals-"+error);
                 });
         },
         openOrders: function(meal) {
@@ -142,7 +142,7 @@ export default {
                     }
                 })
                 .catch(function (error) {
-                    console.log(error);
+                    console.log("loadOrders-"+error);
                 });
         },
         loadTables: function(url){
@@ -152,7 +152,7 @@ export default {
                     this.selectedRestaurantTables = this.restaurantTables[0].table_number;
                 })
                 .catch(function (error) {
-                    console.log(error);
+                    console.log("loadTables-"+error);
                 });
         },
         closeListOrders: function(){
@@ -167,16 +167,15 @@ export default {
                     table_number: table_number
                 })
                 .then(function (response) {
-                    console.log(response);
                     self.loadMeals('meals');
                     self.message = 'Meal as created successful to the table '+table_number;
                     self.messageTitle = 'Success!';
                     self.showSuccess = true;
                 })
                 .catch(function (error) {
-                    console.log(error.response.data);
+                    console.log("creatMeal-"+error.response.data);
                     if(error.response.data.errors.table_number) {
-                        console.log(error.response.data.errors.table_number[0]);
+                        console.log("creatMeal-"+error.response.data.errors.table_number[0]);
                         self.message = error.response.data.errors.table_number[0];
                         self.messageTitle = 'Invalid!';
                     } else {
@@ -221,7 +220,7 @@ export default {
                         .catch(function (error) {
                             console.log("timeRunOutOrderConfirmed->"+error);
                             if (error.response.status === 404) {
-                                console.log('Is 404 maybe order has deleted so he didn t find order');
+                                console.log("timeRunOutOrderConfirmed->"+'Is 404 maybe order has deleted so he didn t find order');
                             } else {
                                 soft.messageTitleErro = "Fail to confirm order!";
                                 soft.messageErro = "Ops! Order"+order.id+" not confirmed";
@@ -237,7 +236,6 @@ export default {
             let soft = this;
             axios.get('/api/meals/'+meal.id+'/terminated')
                 .then(response => {
-                    console.log(response.data['terminated']);
                     var booleanCanBeTerminated = response.data['terminated'];
                     if(booleanCanBeTerminated == true) {
                         soft.sendUpdateToTerminateMeal(meal);
@@ -255,7 +253,7 @@ export default {
                     }
                 })
                 .catch(function (error) {
-                    console.log(error);
+                    console.log("terminateMeal->"+error);
                 });
         },
         sendUpdateToTerminateMeal: function(meal) {
@@ -291,10 +289,10 @@ export default {
         
     },
     components:{
-        'nav-bar': require('./dashboardnav.vue'),
-        'pagination': require('../components/pagination.vue'),
-        'ordersMealList': require('../components/ordersMealList.vue'),
-        'createOrder': require('../components/createOrder.vue')
+        'nav-bar': require('../dashboardnav.vue'),
+        'pagination': require('../pagination.vue'),
+        'ordersMealList': require('./ordersMealList.vue'),
+        'createOrder': require('./createOrder.vue')
     },
     created() {
         this.loadMeals('meals');

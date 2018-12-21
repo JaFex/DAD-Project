@@ -27,9 +27,9 @@ const dashboard = Vue.component('dashboard', require('./components/dashboard.vue
 const login = Vue.component('login', require('./components/login.vue'));
 const profile = Vue.component('profile', require('./components/profile.vue'));
 const newUser = Vue.component('newUser', require('./components/newUser.vue'));
-const orders = Vue.component('orders', require('./components/ordersList.vue'));
-const meals = Vue.component('meals', require('./components/mealsList.vue'));
-const ordersToDeliver = Vue.component('ordersToDeliver', require('./components/ordersToDeliver.vue'));
+const orders = Vue.component('orders', require('./components/cook/ordersList.vue'));
+const meals = Vue.component('meals', require('./components/waiter/mealsList.vue'));
+const ordersToDeliver = Vue.component('ordersToDeliver', require('./components/waiter/ordersToDeliver.vue'));
 const message = Vue.component('message', require('./components/message.vue'));
 const notfound = Vue.component('notfound', require('./components/erro/404.vue'));
 

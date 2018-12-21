@@ -76,7 +76,7 @@ export default {
                         soft.listItems = response.data.data;
                     })
                     .catch(function (error) {
-                        console.log("onChangeItemType: "+error);
+                        console.log("onChangeItemType- "+error);
                     });
             }
         },
@@ -107,7 +107,7 @@ export default {
                         soft.$emit('clickTimeRunOutOrderConfirmed', order);
                     })
                     .catch(function (error) {
-                        console.log("createOrder: "+error);
+                        console.log("createOrder- "+error);
                         soft.messageTitle = "Fail";
                         soft.message = "Ops!";
 

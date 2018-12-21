@@ -185,8 +185,8 @@ export default {
     computed: {
     },
     components:{
-        'pagination': require('../components/pagination.vue'),
-        'modalItem': require('../components/modalItem.vue')
+        'pagination': require('../pagination.vue'),
+        'modalItem': require('../modalItem.vue')
     },
     created() {
     },

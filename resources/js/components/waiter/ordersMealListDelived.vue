@@ -65,7 +65,6 @@ export default {
         loadOrdersSamePage: function(url, currentPage){
             axios.get('/api/'+url+'?page='+currentPage)
                 .then(response => {
-                    this.currentMeal = this.meal;
                     this.orders = response.data.data;
                     this.linksOrders = {
                         prev: response.data.links.prev,
@@ -88,8 +87,7 @@ export default {
             axios.put('/api/orders/'+order.id, update)
                 .then(response => {
                     order = response.data.data;
-                    console.log(soft.currentMeal.id);
-                    soft.loadOrdersSamePage(soft.currentMeal.id+'/delived', soft.links.currentPage);
+                    soft.loadOrdersSamePage('meals/'+soft.meal.id+'/delived', soft.links.currentPage);
                 })
                 .catch(function (error) {
                     console.log("changeStateOrder-"+error);
@@ -99,14 +97,13 @@ export default {
     computed: {
     },
     components:{
-        'pagination': require('../components/pagination.vue'),
-        'modalItem': require('../components/modalItem.vue')
+        'pagination': require('../pagination.vue'),
+        'modalItem': require('../modalItem.vue')
     },
     created() {
     },
     sockets:{
         privateUpdatePrepared(received){
-            console.log(received);
             var sourceUser = received[0];
             var order = received[1];
             

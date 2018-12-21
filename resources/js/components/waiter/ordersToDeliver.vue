@@ -98,7 +98,7 @@ export default {
                     }
                 })
                 .catch(function (error) {
-                    console.log(error);
+                    console.log("loadMeals->"+error);
                 });
         },
         openOrders: function(meal) {
@@ -122,7 +122,7 @@ export default {
                     }
                 })
                 .catch(function (error) {
-                    console.log(error);
+                    console.log("loadOrders->"+error);
                 });
         },
         closeListOrders: function(){
@@ -144,9 +144,9 @@ export default {
         
     },
     components:{
-        'nav-bar': require('./dashboardnav.vue'),
-        'pagination': require('../components/pagination.vue'),
-        'ordersMealList': require('../components/ordersMealListDelived.vue')
+        'nav-bar': require('../dashboardnav.vue'),
+        'pagination': require('../pagination.vue'),
+        'ordersMealList': require('./ordersMealListDelived.vue')
     },
     created() {
         this.loadMeals('meals');

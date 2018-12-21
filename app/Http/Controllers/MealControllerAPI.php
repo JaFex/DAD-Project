@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use DB;
 use Illuminate\Http\Request;
 use App\Http\Resources\Meal as MealResource;
 use App\Http\Resources\Order as OrderResource;
 use App\Meal;
+use App\Order;
+use App\Item;
+use App\Invoice;
+use App\Invoice_item;
 use Carbon\Carbon;
 
 class MealControllerAPI extends Controller
@@ -147,17 +152,34 @@ class MealControllerAPI extends Controller
         $request['end'] = Carbon::now();
         $meal->update($request->all());
         foreach ($meal->orders as $order){
-            if($order->state !== "delivered" && $order->state !== "not delivered" ){
-                $order->state = "not delivered";
-                $order->end = Carbon::now();
-                $order->save();
+            if($order->state !== "delivered"){
+                if($order->state !== "not delivered") {
+                    $order->state = "not delivered";
+                    $order->end = Carbon::now();
+                    $order->save();
+                }
                 $meal->total_price_preview = $meal->total_price_preview - $order->item->price;
-            } else if($order->state === "delivered") {
-                
             }
         }
-        
         $meal->save();
+
+        $array = null;
+        $array['meal_id'] = $meal->id;
+        $array['state'] = "pending";
+        $array['date'] = Carbon::now();
+        $array['total_price'] = $meal->total_price_preview;
+        $invoice = Invoice::create($array);
+        foreach (Order::where('meal_id', $meal->id)->where('state', 'delivered')->select('item_id', DB::raw('count(*) as total'))->groupBy('item_id')->get() as $counter) {
+            $array = null;
+            $array['invoice_id'] = $invoice->id;
+            $array['item_id'] = $counter->item_id;
+            $array['quantity'] = $counter->total;
+            $array['unit_price'] = Item::findOrFail($counter->item_id)->price;
+            $array['sub_total_price'] = $array['unit_price']*$counter->total;
+            Invoice_item::create($array);
+        }
+        
+        
         return new MealResource($meal);
     }
 

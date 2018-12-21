@@ -13,8 +13,6 @@
                         <th>ID</th>
                         <th>State</th>
                         <th>Item</th>
-                        <!--<th>Meal_id</th>-->
-                        <!--<th>Responsible_cook_id</th>-->
                         <th>Start</th>
                         <th>Accion</th>
                     </tr>
@@ -24,8 +22,6 @@
                         <td>{{order.id}}</td>
                         <td>{{order.state}}</td>
                         <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter" @click="seeInfoIteam(order.item_id)">Show me item</button></td>
-                        <!--<td>{{order.meal_id}}</td>-->
-                        <!--<td>{{order.responsible_cook_id}}</td>-->
                         <td>{{order.start}}</td>
                         <td>
                             <button v-if="order.state === 'in preparation'" type="button" class="btn btn-primary" @click.prevent="changeStateOrder(order, 'prepared')">I Finished Preparing</button>
@@ -85,7 +81,7 @@ export default {
         seeInfoIteam: function(item_id){
             axios.get('/api/items/'+item_id)
                 .then(response => {
-                    this.currentIteam = response.data.data[0];
+                    this.currentIteam = response.data.data;
                 })
                 .catch(function (error) {
                     console.log("seeInfoIteam-"+error);
@@ -120,9 +116,9 @@ export default {
     computed: {
     },
     components:{
-        'nav-bar': require('./dashboardnav.vue'),
-        'pagination': require('../components/pagination.vue'),
-        'modalItem': require('../components/modalItem.vue')
+        'nav-bar': require('../dashboardnav.vue'),
+        'pagination': require('../pagination.vue'),
+        'modalItem': require('../modalItem.vue')
     },
     created() {
         this.loadOrders('orders');
