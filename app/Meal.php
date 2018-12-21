@@ -13,4 +13,9 @@ class Meal extends Model
     {
         return $this->hasMany('App\Order');
     }
+
+    public function responsible_waiter()
+    {
+        return $this->belongsTo('App\User');
+    }
 }

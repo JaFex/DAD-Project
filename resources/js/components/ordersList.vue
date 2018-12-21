@@ -63,7 +63,23 @@ export default {
                     }
                 })
                 .catch(function (error) {
-                    console.log(error);
+                    console.log("loadOrders-"+error);
+                });
+        },
+        loadOrdersSamePage: function(url, currentPage){
+            axios.get('/api/'+url+'?page='+currentPage)
+                .then(response => {
+                    this.orders = response.data.data;
+                    this.links = {
+                        prev: response.data.links.prev,
+                        next: response.data.links.next,
+                        currentPage: currentPage,
+                        lastPage: response.data.meta.last_page,
+                        path: url+'?page='
+                    }
+                })
+                .catch(function (error) {
+                    console.log("loadOrdersSamePage-"+error);
                 });
         },
         seeInfoIteam: function(item_id){
@@ -72,38 +88,34 @@ export default {
                     this.currentIteam = response.data.data[0];
                 })
                 .catch(function (error) {
-                    console.log(error);
+                    console.log("seeInfoIteam-"+error);
                 });
         },
         changeStateOrder: function(order, state){
             order.state = state;
-            order.responsible_cook_id = this.$store.state.user.id;
-            var now = new Date;
-            if(state === 'prepared') {
-                order.end = now.getUTCFullYear()+"/"+now.getUTCMonth()+"/"+now.getUTCDate()+" "+now.getUTCHours()+":"+now.getUTCMinutes()+":"+now.getUTCSeconds();
-            }
-            axios.put('/api/orders/'+order.id, order)
+            let soft = this;
+            var update = {};
+            update["state"] = state;
+            axios.put('/api/orders/'+order.id, update)
                 .then(response => {
                     order = response.data.data;
                     if(order.state === 'prepared') {
-                        axios.get('/api/orders?page='+this.links.currentPage)
+                        axios.get('/api/orders/'+order.id+'/waiter')
                             .then(response => {
-                                this.orders = response.data.data;
-                                this.links = {
-                                    prev: response.data.links.prev,
-                                    next: response.data.links.next,
-                                    currentPage: response.data.meta.current_page,
-                                    lastPage: response.data.meta.last_page,
-                                    path: 'orders?page='
-                                }
+                                var waiter = response.data.data;
+                                soft.$socket.emit('privateUpdate', this.$store.state.user, waiter, order);
                             })
                             .catch(function (error) {
-                                console.log(error);
+                                console.log("loadOrdersSamePage-"+error);
                             });
+                    } else if(order.state === "in preparation") {
+                        soft.$socket.emit('kitchenWichoutMe');
+                        soft.$socket.emit('waiter');
                     }
+                    soft.loadOrdersSamePage('orders', this.links.currentPage);
                 })
                 .catch(function (error) {
-                    console.log(error);
+                    console.log("changeStateOrder-"+error);
                 });
         },
     },
@@ -116,6 +128,28 @@ export default {
     },
     created() {
         this.loadOrders('orders');
-    }
+    },
+    sockets:{
+        update() {
+            console.log('---SOCKETS TELL TO UPDATE---');
+            this.loadOrdersSamePage('orders', this.links.currentPage);
+        },
+        privateUpdate_unavailable(destUser){
+            this.$toasted.show('The waiter "' + destUser.name + '" is not available', {
+                            theme: "bubble",
+                            position: "bottom-center",
+                            duration: 5000,
+                            className: ['error']
+                        });
+        },
+        privateUpdate_sent(destUser){
+            this.$toasted.show('The waiter "' + destUser.name + '" was warned that was order preperad', {
+                            theme: "bubble",
+                            position: "bottom-center",
+                            duration: 5000,
+                            className: ['success']
+                        });
+        }
+    },
 }
 </script>

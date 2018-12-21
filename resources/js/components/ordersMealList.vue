@@ -80,6 +80,23 @@ export default {
                     console.log("loadOrders->"+error);
                 });
         },
+        loadOrdersSamePage: function(url, currentPage){
+            axios.get('/api/'+url+'?page='+currentPage)
+                .then(response => {
+                    this.currentMeal = meal;
+                    this.orders = response.data.data;
+                    this.linksOrders = {
+                        prev: response.data.links.prev,
+                        next: response.data.links.next,
+                        currentPage: currentPage,
+                        lastPage: response.data.meta.last_page,
+                        path: url+'?page='
+                    }
+                })
+                .catch(function (error) {
+                    console.log("loadOrders->"+error);
+                });
+        },
         timeHideButton(order) {
             var dateStartString = order.start+'';
             var date = new Date();
@@ -89,12 +106,14 @@ export default {
             var dateStart = new Date(str);
             var timeDiff = Math.abs(date.getTime() - dateStart.getTime());
             if (date > dateStart) {
+                if(order.state === "pending") {
+                    this.needToBeConfirmed(order);
+                }
                 return false;
             } else {
                 var secunds = Math.round(timeDiff/1000);
-                console.log("div="+div);
                 var div = secunds>5?5:secunds;
-                var time = (secunds>5?1000:(timeDiff/div))-250//(timeDiff/div)- (menos o tempo de envio e reposta de delete)
+                var time = (secunds>5?1000:(timeDiff/div))-250;//(timeDiff/div) - (menos o tempo de envio e reposta de delete)
                 this.timeRunOut(time, div, order);
                 return true;
             }
@@ -102,40 +121,18 @@ export default {
         timeRunOut: function(time, timeToShow, order) {
             let soft = this;
             setTimeout(function () {
-                console.log("time out -"+timeToShow);
+                //console.log("time out -"+timeToShow);
                 var htmlTimeShow = document.getElementById('time_'+order.id+'');
                 if(htmlTimeShow) {
                     htmlTimeShow.innerHTML = timeToShow;
                     if(timeToShow <= 0) {
                         document.getElementById(''+order.id+'').style.display='none';
-                        soft.timeRunOutOrderConfirmed(order);
                     } else {
                         timeToShow--;
                         soft.timeRunOut(time, timeToShow, order);
                     }
                 }
             }, time);
-        },
-        timeRunOutOrderConfirmed: function(order) {
-            order.state = 'confirmed';
-            let soft = this;
-            axios.put('/api/orders/'+order.id, order)
-                    .then(response => {
-                        order = response.data.data;
-                        soft.messageTitle = "Order Confirmed!";
-                        soft.message = "Order ("+order.id+") as been confirmed on the meal "+order.meal_id+"!";
-                        soft.showSuccess = true;
-                        soft.selectedItemType = '';
-                        soft.selectedItem = null;
-                        soft.$emit('clickUpdateOrder', order);
-                    })
-                    .catch(function (error) {
-                        console.log("timeRunOutOrderConfirmed->"+error);
-                        soft.messageTitleErro = "Fail to confirm order!";
-                        soft.messageErro = "Ops! Order"+order.id+" not confirmed";
-
-                        soft.showErro = true;
-                    });
         },
         deleteInTime: function(order) {
             var dateStartString = order.start+'';
@@ -164,6 +161,25 @@ export default {
                         soft.showErro = true;
                     });
             }
+        },
+        needToBeConfirmed: function(order) {
+            console.log("Order that need to be confirmed long time ago");
+            let soft = this;
+            setTimeout(function () {
+                var update = {};
+                update["state"] = 'confirmed';
+                axios.put('/api/orders/'+order.id, update)
+                        .then(response => {
+                            order = response.data.data;
+                            soft.selectedItemType = '';
+                            soft.selectedItem = null;
+                            soft.$emit('clickUpdateKitchen');
+                            soft.$emit('clickUpdateOrder', order);
+                        })
+                        .catch(function (error) {
+                            console.log("needToBeConfirmed->"+error);
+                        });
+            }, 5000);
         }
     },
     computed: {
@@ -173,6 +189,6 @@ export default {
         'modalItem': require('../components/modalItem.vue')
     },
     created() {
-    }
+    },
 }
 </script>

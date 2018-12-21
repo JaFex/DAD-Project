@@ -19,7 +19,7 @@ Vue.use(Toasted);
 Vue.use(Vuelidate);
 Vue.use(new VueSocketio({
     debug: true,
-    connection: 'http://192.168.10.10:8080'
+    connection: 'http://192.168.10.1:8080'
 }));
 
 const home = Vue.component('home', require('./components/index.vue'));
@@ -29,6 +29,7 @@ const profile = Vue.component('profile', require('./components/profile.vue'));
 const newUser = Vue.component('newUser', require('./components/newUser.vue'));
 const orders = Vue.component('orders', require('./components/ordersList.vue'));
 const meals = Vue.component('meals', require('./components/mealsList.vue'));
+const ordersToDeliver = Vue.component('ordersToDeliver', require('./components/ordersToDeliver.vue'));
 const message = Vue.component('message', require('./components/message.vue'));
 const notfound = Vue.component('notfound', require('./components/erro/404.vue'));
 
@@ -41,6 +42,7 @@ const routes = [
     { path: '/new-user', meta: { title: 'Restaurant' }, component: newUser, name: 'newUser' },
     { path: '/orders', meta: { title: 'Restaurant' }, component: orders, name: 'Cooks' },
     { path: '/meals', meta: { title: 'Restaurant' }, component: meals, name: 'Waters' },
+    { path: '/orders-to-deliver', meta: { title: 'Restaurant' }, component: ordersToDeliver, name: 'Waters Deliver' },
     { path: '/message', meta: { title: 'Restaurant' }, component: message, name: 'Message' },
     { path: '/404', meta: { title: 'Not Found 404' }, component: notfound, name: 'NotFound' },
     { path: '*', redirect: '/404' }

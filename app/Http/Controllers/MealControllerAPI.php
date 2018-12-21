@@ -28,7 +28,18 @@ class MealControllerAPI extends Controller
     public function orders(int $meal_id)
     {
         $meal = Meal::findOrFail($meal_id);
-        return OrderResource::collection($meal->orders()->paginate(10));
+        return OrderResource::collection($meal->orders()->whereIn('state', ['pending', 'confirmed'])->paginate(10));
+    }
+
+    /**
+     * Display a listing of the resource.
+     *  @param  int  $meal
+     * @return \Illuminate\Http\Response
+     */
+    public function toDelived(int $meal_id)
+    {
+        $meal = Meal::findOrFail($meal_id);
+        return OrderResource::collection($meal->orders()->whereIn('state', ['prepared', 'delivered', 'not delivered'])->orderBy('state', 'asc')->paginate(10));
     }
 
     /**
@@ -68,7 +79,7 @@ class MealControllerAPI extends Controller
      */
     public function show(int $meal_id)
     {
-        return MealResource::collection(Meal::findOrFail($meal_id)->get());
+        return MealResource::collection(Meal::findOrFail($meal_id));
     }
 
     /**
@@ -93,6 +104,7 @@ class MealControllerAPI extends Controller
     {
         $meal = Meal::findOrFail($meal_id);
         $meal->update($request->all());
+        $meal->save();
         return new MealResource($meal);
     }
 

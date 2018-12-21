@@ -48,7 +48,9 @@ export default {
           }
         },
         meal: function(newVal, oldVal) { // watch it
-          this.selectedMeal = newVal;
+            if(newVal != oldVal) {
+                this.selectedMeal = newVal;
+            }
         }
       },
     data() {
@@ -66,7 +68,6 @@ export default {
     },
     methods: {
         onChangeItemType: function(){
-            console.log(this.selectedItemType);
             if(this.selectedItemType) {
                 this.selectedItem = null;
                 let soft = this;
@@ -75,7 +76,7 @@ export default {
                         soft.listItems = response.data.data;
                     })
                     .catch(function (error) {
-                        console.log(error);
+                        console.log("onChangeItemType: "+error);
                     });
             }
         },
@@ -103,10 +104,10 @@ export default {
                         soft.showSuccess = true;
                         soft.selectedItemType = '';
                         soft.selectedItem = null;
-                        soft.$emit('clickReloadMealAndOrder');
+                        soft.$emit('clickTimeRunOutOrderConfirmed', order);
                     })
                     .catch(function (error) {
-                        console.log(error);
+                        console.log("createOrder: "+error);
                         soft.messageTitle = "Fail";
                         soft.message = "Ops!";
 

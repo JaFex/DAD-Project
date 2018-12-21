@@ -7,6 +7,7 @@
                 </li>
                 <li v-if="isAuthWaiter()" class="nav-item">
                     <router-link to="/meals" class="nav-link" tag="a">Meals</router-link>
+                    <router-link to="/orders-to-deliver" class="nav-link" tag="a">Meals To Deliver</router-link>
                 </li>
                 <li v-if="isAuthCashier()" class="nav-item">
                     <router-link to="/cashier" class="nav-link" tag="a">Cashier</router-link>
@@ -90,6 +91,18 @@ export default {
         isAuthCashier() {
             return this.$store.state.user.type  === 'cashier';
         }
+    },
+    sockets:{
+        privateUpdate(received){
+            var sourceUser = received[0];
+            var order = received[1];
+            this.$toasted.show('New order('+order.id+') is prepared on meal "'+order.meal_id+'" from "' + sourceUser.name + '"', {
+                            theme: "bubble",
+                            position: "bottom-center",
+                            duration: 5000,
+                            className: ['success']
+                        });
+        },
     }
 }
 </script>

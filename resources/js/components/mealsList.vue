@@ -34,7 +34,7 @@
                     <button type="button" class="btn btn-danger float-right"  @click.prevent="showCreteOrder = false">Close</button>
                 </div>
                 <div class="card-body">
-                    <createOrder @clickReloadMealAndOrder="reloadMealAndOrder" :myMeals="meals" :meal="currentMealCreate"></createOrder>
+                    <createOrder @clickTimeRunOutOrderConfirmed="timeRunOutOrderConfirmed" @clickReloadMealAndOrder="reloadMealAndOrder" :myMeals="meals" :meal="currentMealCreate"></createOrder>
                 </div>
             </div>
             <div class="card">
@@ -74,7 +74,7 @@
                                                 <button type="button" class="btn btn-danger float-right" @click.prevent="closeListOrders()">Close</button>
                                             </div>
                                             <div class="card-body">
-                                                <ordersMealList @clickReloadMealAndOrder="reloadMealAndOrder" @clickUpdateOrder="updateOrder(order)"  :method="loadOrders" :meal="currentMeal" :orders="orders" :links="linksOrders"></ordersMealList>
+                                                <ordersMealList @clickReloadMealAndOrder="reloadMealAndOrder" @clickUpdateKitchen="updateKitchen" @clickUpdateOrder="updateOrder"  :method="loadOrders" :meal="currentMeal" :orders="orders" :links="linksOrders"></ordersMealList>
                                             </div>
                                         </div>
                                     </td>
@@ -129,10 +129,6 @@ export default {
             this.loadOrders('meals/'+meal.id+'/orders');
         },
         loadOrders: function(url){
-            var res = url.split("?");
-            if(res.length > 2){
-                url = res[0]+"?"+res[2];
-            }
             axios.get('/api/'+url)
                 .then(response => {
                     this.orders = response.data.data;
@@ -200,9 +196,41 @@ export default {
             }
         },
         updateOrder: function(order) {
-            if(this.currentMeal && this.order && this.currentMeal.id == this.order.id) {
+            if(this.currentMeal && order && this.currentMeal.id == order.meal_id) {
                 this.loadOrders('meals/'+this.currentMeal.id+'/orders');
             }
+        },
+        timeRunOutOrderConfirmed: function(order) {
+            this.reloadMealAndOrder();
+            let soft = this;
+            setTimeout(function () {
+                var update = {};
+                update["state"] = 'confirmed';
+                axios.put('/api/orders/'+order.id, update)
+                        .then(response => {
+                            order = response.data.data;
+                            soft.messageTitle = "Order Confirmed!";
+                            soft.message = "Order ("+order.id+") as been confirmed on the meal "+order.meal_id+"!";
+                            soft.showSuccess = true;
+                            soft.selectedItemType = '';
+                            soft.selectedItem = null;
+                            soft.updateOrder(order);
+                            soft.$socket.emit('kitchen');
+                        })
+                        .catch(function (error) {
+                            console.log("timeRunOutOrderConfirmed->"+error);
+                            if (error.response.status === 404) {
+                                console.log('Is 404 maybe order has deleted so he didn t find order');
+                            } else {
+                                soft.messageTitleErro = "Fail to confirm order!";
+                                soft.messageErro = "Ops! Order"+order.id+" not confirmed";
+                                soft.showErro = true;
+                            }
+                        });
+            }, 5000);
+        },
+        updateKitchen: function() {
+            this.$socket.emit('kitchen');
         }
     },
     computed: {
@@ -217,6 +245,19 @@ export default {
     created() {
         this.loadMeals('meals');
         this.loadTables('restaurantTables');
+    },
+    sockets:{
+        connect(){
+            console.log('socket connected (socket ID = '+this.$socket.id+')');
+        },
+        privateUpdate(sourceUser){
+            this.$toasted.show('The waiter "' + destUser.name + '" is not available', {
+                            theme: "bubble",
+                            position: "bottom-center",
+                            duration: 5000,
+                            className: ['success']
+                        });
+        },
     }
 }
 </script>

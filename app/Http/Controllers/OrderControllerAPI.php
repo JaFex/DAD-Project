@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 
 use App\Http\Resources\Order as OrderResource;
 use App\Order;
+use App\Http\Resources\User as UserResource;
+use App\User;
+use App\Http\Resources\Meal as MealResource;
 use App\Meal;
 use App\Item;
 use App\Rules\MealIsActive;
@@ -24,6 +27,33 @@ class OrderControllerAPI extends Controller
     public function index()
     {
         return OrderResource::collection(Order::whereIn('state', ['confirmed', 'in preparation'])->where('responsible_cook_id', \Auth::guard('api')->user()->id)->orWhere('state', 'confirmed')->whereNull('responsible_cook_id')->orderBy('state', 'desc')->orderBy('start', 'asc')->paginate(10));
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @param  int  $order_id
+     * @return \Illuminate\Http\Response
+     */
+    public function getWaiter(int $order_id)
+    {
+        $order = Order::findOrFail($order_id);
+        $meal = $order->meal;
+        $user = $meal->responsible_waiter;
+        return new UserResource($user);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @param  int  $order_id
+     * @return \Illuminate\Http\Response
+     */
+    public function getMeal(int $order_id)
+    {
+        $order = Order::findOrFail($order_id);
+        $meal = $order->meal;
+        return new MealResource($meal);
     }
 
     /**
@@ -70,8 +100,16 @@ class OrderControllerAPI extends Controller
      */
     public function update(Request $request, $order_id)
     {
+        $this->validate(request(), [
+            'state' => 'required|in:confirmed,in preparation,prepared,delivered,not delivered'
+        ]);
+        if($request["state"] === "in preparation") {
+            $request['responsible_cook_id'] = \Auth::guard('api')->user()->id;
+        }
+        
         $order = Order::findOrFail($order_id);
         $order->update($request->all());
+        $order->save();
         return new OrderResource($order);
     }
 
@@ -90,12 +128,14 @@ class OrderControllerAPI extends Controller
         $order = Order::findOrFail($order_id);
         $dateOrder = $order->start;//date('Y-m-d H:i:s',+);
         
+        $meal = $order->meal;
+        $meal->total_price_preview = $meal->total_price_preview - $order->item->price;
+        $meal->save();
 
         if ($dateNow > $dateOrder) {
             return response([
                 'order_id' => $order->id,
                 'message' => "You missed the amount of time to remove!",
-                
                 'test' => [['Now time', $now], ['Now -5 secunds', $dateNow], ['Date Order', $dateOrder]]
             ], 401);
         }
