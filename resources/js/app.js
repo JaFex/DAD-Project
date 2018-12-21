@@ -30,6 +30,7 @@ const newUser = Vue.component('newUser', require('./components/newUser.vue'));
 const orders = Vue.component('orders', require('./components/cook/ordersList.vue'));
 const meals = Vue.component('meals', require('./components/waiter/mealsList.vue'));
 const ordersToDeliver = Vue.component('ordersToDeliver', require('./components/waiter/ordersToDeliver.vue'));
+const invoices = Vue.component('invoices', require('./components/cashier/invoicesList.vue'));
 const message = Vue.component('message', require('./components/message.vue'));
 const notfound = Vue.component('notfound', require('./components/erro/404.vue'));
 
@@ -43,6 +44,7 @@ const routes = [
     { path: '/orders', meta: { title: 'Restaurant' }, component: orders, name: 'Cooks' },
     { path: '/meals', meta: { title: 'Restaurant' }, component: meals, name: 'Waters' },
     { path: '/orders-to-deliver', meta: { title: 'Restaurant' }, component: ordersToDeliver, name: 'Waters Deliver' },
+    { path: '/invoices', meta: { title: 'Restaurant' }, component: invoices, name: 'Cashier' },
     { path: '/message', meta: { title: 'Restaurant' }, component: message, name: 'Message' },
     { path: '/404', meta: { title: 'Not Found 404' }, component: notfound, name: 'NotFound' },
     { path: '*', redirect: '/404' }

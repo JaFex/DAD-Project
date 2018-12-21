@@ -11,7 +11,7 @@
             </div>
             <table class="table">
                 <thead>
-                    <tr>
+                    <tr class="table-active">
                         <th>ID</th>
                         <th>State</th>
                         <th>Item</th>
@@ -20,7 +20,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="order in orders">
+                    <tr v-for="order in orders" :class="[order.state !='prepared'? 'table-success' : 'table-warning']" :key="order.id">
                         <td>{{order.id}}</td>
                         <td>{{order.state}}</td>
                         <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter" @click="seeInfoIteam(order.item_id)">Show me item</button></td>

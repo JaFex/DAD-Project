@@ -48498,10 +48498,11 @@ var newUser = Vue.component('newUser', __webpack_require__(406));
 var orders = Vue.component('orders', __webpack_require__(411));
 var meals = Vue.component('meals', __webpack_require__(414));
 var ordersToDeliver = Vue.component('ordersToDeliver', __webpack_require__(417));
+var invoices = Vue.component('invoices', __webpack_require__(439));
 var message = Vue.component('message', __webpack_require__(420));
 var notfound = Vue.component('notfound', __webpack_require__(425));
 
-var routes = [{ path: '/', meta: { title: 'Restaurant' }, redirect: '/home', name: 'root' }, { path: '/home', meta: { title: 'Restaurant' }, component: home, name: 'home' }, { path: '/login', meta: { title: 'Restaurant' }, component: login, name: 'login' }, { path: '/dashboard', meta: { title: 'Restaurant' }, component: dashboard, name: 'dashboard' }, { path: '/profile', meta: { title: 'Restaurant' }, component: profile, name: 'profile' }, { path: '/new-user', meta: { title: 'Restaurant' }, component: newUser, name: 'newUser' }, { path: '/orders', meta: { title: 'Restaurant' }, component: orders, name: 'Cooks' }, { path: '/meals', meta: { title: 'Restaurant' }, component: meals, name: 'Waters' }, { path: '/orders-to-deliver', meta: { title: 'Restaurant' }, component: ordersToDeliver, name: 'Waters Deliver' }, { path: '/message', meta: { title: 'Restaurant' }, component: message, name: 'Message' }, { path: '/404', meta: { title: 'Not Found 404' }, component: notfound, name: 'NotFound' }, { path: '*', redirect: '/404' }];
+var routes = [{ path: '/', meta: { title: 'Restaurant' }, redirect: '/home', name: 'root' }, { path: '/home', meta: { title: 'Restaurant' }, component: home, name: 'home' }, { path: '/login', meta: { title: 'Restaurant' }, component: login, name: 'login' }, { path: '/dashboard', meta: { title: 'Restaurant' }, component: dashboard, name: 'dashboard' }, { path: '/profile', meta: { title: 'Restaurant' }, component: profile, name: 'profile' }, { path: '/new-user', meta: { title: 'Restaurant' }, component: newUser, name: 'newUser' }, { path: '/orders', meta: { title: 'Restaurant' }, component: orders, name: 'Cooks' }, { path: '/meals', meta: { title: 'Restaurant' }, component: meals, name: 'Waters' }, { path: '/orders-to-deliver', meta: { title: 'Restaurant' }, component: ordersToDeliver, name: 'Waters Deliver' }, { path: '/invoices', meta: { title: 'Restaurant' }, component: invoices, name: 'Cashier' }, { path: '/message', meta: { title: 'Restaurant' }, component: message, name: 'Message' }, { path: '/404', meta: { title: 'Not Found 404' }, component: notfound, name: 'NotFound' }, { path: '*', redirect: '/404' }];
 
 var router = new __WEBPACK_IMPORTED_MODULE_0_vue_router__["a" /* default */]({
     routes: routes
@@ -87431,6 +87432,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     methods: {
@@ -87539,30 +87545,39 @@ var render = function() {
           ),
           _vm._v(" "),
           _vm.isAuthWaiter()
-            ? _c(
-                "li",
-                { staticClass: "nav-item" },
-                [
-                  _c(
-                    "router-link",
-                    {
-                      staticClass: "nav-link",
-                      attrs: { to: "/meals", tag: "a" }
-                    },
-                    [_vm._v("Meals")]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "router-link",
-                    {
-                      staticClass: "nav-link",
-                      attrs: { to: "/orders-to-deliver", tag: "a" }
-                    },
-                    [_vm._v("Meals To Deliver")]
-                  )
-                ],
-                1
-              )
+            ? [
+                _c(
+                  "li",
+                  { staticClass: "nav-item" },
+                  [
+                    _c(
+                      "router-link",
+                      {
+                        staticClass: "nav-link",
+                        attrs: { to: "/meals", tag: "a" }
+                      },
+                      [_vm._v("Meals")]
+                    )
+                  ],
+                  1
+                ),
+                _vm._v(" "),
+                _c(
+                  "li",
+                  { staticClass: "nav-item" },
+                  [
+                    _c(
+                      "router-link",
+                      {
+                        staticClass: "nav-link",
+                        attrs: { to: "/orders-to-deliver", tag: "a" }
+                      },
+                      [_vm._v("Meals To Deliver")]
+                    )
+                  ],
+                  1
+                )
+              ]
             : _vm._e(),
           _vm._v(" "),
           _vm.isAuthCashier()
@@ -87574,7 +87589,7 @@ var render = function() {
                     "router-link",
                     {
                       staticClass: "nav-link",
-                      attrs: { to: "/cashier", tag: "a" }
+                      attrs: { to: "/invoices", tag: "a" }
                     },
                     [_vm._v("Cashier")]
                   )
@@ -87636,7 +87651,7 @@ var render = function() {
             1
           )
         ],
-        1
+        2
       ),
       _vm._v(" "),
       _c(
@@ -90113,6 +90128,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
@@ -90248,90 +90270,107 @@ var render = function() {
       _c("br"),
       _vm._v(" "),
       _c("div", { staticClass: "container" }, [
-        _c("table", { staticClass: "table" }, [
-          _vm._m(0),
-          _vm._v(" "),
-          _c(
-            "tbody",
-            _vm._l(_vm.orders, function(order) {
-              return _c(
-                "tr",
-                {
-                  class: [
-                    !order.responsible_cook_id
-                      ? "table-warning"
-                      : "table-success"
-                  ]
-                },
-                [
-                  _c("td", [_vm._v(_vm._s(order.id))]),
-                  _vm._v(" "),
-                  _c("td", [_vm._v(_vm._s(order.state))]),
-                  _vm._v(" "),
-                  _c("td", [
-                    _c(
-                      "button",
+        _c(
+          "div",
+          { staticClass: "card" },
+          [
+            _vm._m(0),
+            _vm._v(" "),
+            _c("div", { staticClass: "card-body" }, [
+              _c("table", { staticClass: "table" }, [
+                _vm._m(1),
+                _vm._v(" "),
+                _c(
+                  "tbody",
+                  _vm._l(_vm.orders, function(order) {
+                    return _c(
+                      "tr",
                       {
-                        staticClass: "btn btn-primary",
-                        attrs: {
-                          "data-toggle": "modal",
-                          "data-target": "#exampleModalCenter"
-                        },
-                        on: {
-                          click: function($event) {
-                            _vm.seeInfoIteam(order.item_id)
-                          }
-                        }
+                        key: order.id,
+                        class: [
+                          !order.responsible_cook_id
+                            ? "table-warning"
+                            : "table-success"
+                        ]
                       },
-                      [_vm._v("Show me item")]
+                      [
+                        _c("td", [_vm._v(_vm._s(order.id))]),
+                        _vm._v(" "),
+                        _c("td", [_vm._v(_vm._s(order.state))]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-primary",
+                              attrs: {
+                                "data-toggle": "modal",
+                                "data-target": "#exampleModalCenter"
+                              },
+                              on: {
+                                click: function($event) {
+                                  _vm.seeInfoIteam(order.item_id)
+                                }
+                              }
+                            },
+                            [_vm._v("Show me item")]
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [_vm._v(_vm._s(order.start))]),
+                        _vm._v(" "),
+                        _c("td", [
+                          order.state === "in preparation"
+                            ? _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-primary",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      $event.preventDefault()
+                                      _vm.changeStateOrder(order, "prepared")
+                                    }
+                                  }
+                                },
+                                [_vm._v("I Finished Preparing")]
+                              )
+                            : order.state === "confirmed"
+                            ? _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-primary",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      $event.preventDefault()
+                                      _vm.changeStateOrder(
+                                        order,
+                                        "in preparation"
+                                      )
+                                    }
+                                  }
+                                },
+                                [_vm._v("Start Preparation")]
+                              )
+                            : _vm._e()
+                        ])
+                      ]
                     )
-                  ]),
-                  _vm._v(" "),
-                  _c("td", [_vm._v(_vm._s(order.start))]),
-                  _vm._v(" "),
-                  _c("td", [
-                    order.state === "in preparation"
-                      ? _c(
-                          "button",
-                          {
-                            staticClass: "btn btn-primary",
-                            attrs: { type: "button" },
-                            on: {
-                              click: function($event) {
-                                $event.preventDefault()
-                                _vm.changeStateOrder(order, "prepared")
-                              }
-                            }
-                          },
-                          [_vm._v("I Finished Preparing")]
-                        )
-                      : order.state === "confirmed"
-                      ? _c(
-                          "button",
-                          {
-                            staticClass: "btn btn-primary",
-                            attrs: { type: "button" },
-                            on: {
-                              click: function($event) {
-                                $event.preventDefault()
-                                _vm.changeStateOrder(order, "in preparation")
-                              }
-                            }
-                          },
-                          [_vm._v("Start Preparation")]
-                        )
-                      : _vm._e()
-                  ])
-                ]
-              )
-            })
-          )
-        ])
-      ]),
-      _vm._v(" "),
-      _c("pagination", { attrs: { method: _vm.loadOrders, links: _vm.links } }),
-      _vm._v(" "),
-      _c("modalItem", { attrs: { object: _vm.currentIteam } })
+                  })
+                )
+              ])
+            ]),
+            _vm._v(" "),
+            _c("pagination", {
+              attrs: { method: _vm.loadOrders, links: _vm.links }
+            }),
+            _vm._v(" "),
+            _c("modalItem", { attrs: { object: _vm.currentIteam } })
+          ],
+          1
+        )
+      ])
     ],
     1
   )
@@ -90341,8 +90380,18 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-header" }, [
+      _c("h5", { staticClass: "card-title float-left" }, [
+        _vm._v("Current Orders")
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
     return _c("thead", [
-      _c("tr", [
+      _c("tr", { staticClass: "table-active" }, [
         _c("th", [_vm._v("ID")]),
         _vm._v(" "),
         _c("th", [_vm._v("State")]),
@@ -90913,7 +90962,7 @@ var render = function() {
                   [
                     _vm._l(_vm.meals, function(meal) {
                       return [
-                        _c("tr", [
+                        _c("tr", { key: meal.id }, [
                           _c("td", [_vm._v(_vm._s(meal.id))]),
                           _vm._v(" "),
                           _c("td", [_vm._v(_vm._s(meal.state))]),
@@ -90975,7 +91024,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _vm.currentMeal && meal.id == _vm.currentMeal.id
-                          ? _c("tr", [
+                          ? _c("tr", { key: "meal_" + meal.id }, [
                               _c("td", { attrs: { colspan: "6" } }, [
                                 _c("div", { staticClass: "card" }, [
                                   _c("div", { staticClass: "card-header" }, [
@@ -91069,7 +91118,7 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "card-header" }, [
       _c("h5", { staticClass: "card-title float-left" }, [
-        _vm._v("My current meals")
+        _vm._v("My current meals with orders 'pending' and 'confirmed'")
       ])
     ])
   },
@@ -91399,7 +91448,7 @@ var render = function() {
                   [
                     _vm._l(_vm.meals, function(meal) {
                       return [
-                        _c("tr", [
+                        _c("tr", { key: meal.id }, [
                           _c("td", [_vm._v(_vm._s(meal.id))]),
                           _vm._v(" "),
                           _c("td", [_vm._v(_vm._s(meal.state))]),
@@ -91431,7 +91480,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _vm.currentMeal && meal.id == _vm.currentMeal.id
-                          ? _c("tr", [
+                          ? _c("tr", { key: "meal_" + meal.id }, [
                               _c("td", { attrs: { colspan: "6" } }, [
                                 _c("div", { staticClass: "card" }, [
                                   _c("div", { staticClass: "card-header" }, [
@@ -91507,7 +91556,7 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "card-header" }, [
       _c("h5", { staticClass: "card-title float-left" }, [
-        _vm._v("My current meals")
+        _vm._v("My meals and order need to be deliver")
       ])
     ])
   },
@@ -91516,7 +91565,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("thead", [
-      _c("tr", [
+      _c("tr", { staticClass: "table-active" }, [
         _c("th", [_vm._v("ID")]),
         _vm._v(" "),
         _c("th", [_vm._v("State")]),
@@ -92385,68 +92434,79 @@ var render = function() {
           _c(
             "tbody",
             _vm._l(_vm.orders, function(order) {
-              return _c("tr", [
-                _c("td", [_vm._v(_vm._s(order.id))]),
-                _vm._v(" "),
-                _c("td", [_vm._v(_vm._s(order.state))]),
-                _vm._v(" "),
-                _c("td", [
-                  _c(
-                    "button",
-                    {
-                      staticClass: "btn btn-primary",
-                      attrs: {
-                        "data-toggle": "modal",
-                        "data-target": "#exampleModalCenter"
-                      },
-                      on: {
-                        click: function($event) {
-                          _vm.seeInfoIteam(order.item_id)
-                        }
-                      }
-                    },
-                    [_vm._v("Show me item")]
-                  )
-                ]),
-                _vm._v(" "),
-                _c("td", [_vm._v(_vm._s(order.start))]),
-                _vm._v(" "),
-                _c("td", [
-                  order.state === "prepared"
-                    ? _c(
-                        "button",
-                        {
-                          staticClass: "btn btn-primary",
-                          attrs: { type: "button" },
-                          on: {
-                            click: function($event) {
-                              $event.preventDefault()
-                              _vm.changeStateOrder(order, "delivered")
-                            }
-                          }
-                        },
-                        [_vm._v("Delivered")]
-                      )
-                    : _vm._e(),
+              return _c(
+                "tr",
+                {
+                  key: order.id,
+                  class: [
+                    order.state != "prepared"
+                      ? "table-success"
+                      : "table-warning"
+                  ]
+                },
+                [
+                  _c("td", [_vm._v(_vm._s(order.id))]),
                   _vm._v(" "),
-                  order.state === "prepared"
-                    ? _c(
-                        "button",
-                        {
-                          staticClass: "btn btn-danger",
-                          attrs: { type: "button" },
-                          on: {
-                            click: function($event) {
-                              $event.preventDefault()
-                              _vm.changeStateOrder(order, "not delivered")
-                            }
-                          }
+                  _c("td", [_vm._v(_vm._s(order.state))]),
+                  _vm._v(" "),
+                  _c("td", [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary",
+                        attrs: {
+                          "data-toggle": "modal",
+                          "data-target": "#exampleModalCenter"
                         },
-                        [_vm._v("Not Delivered")]
-                      )
-                    : _vm._e()
-                ])
-              ])
+                        on: {
+                          click: function($event) {
+                            _vm.seeInfoIteam(order.item_id)
+                          }
+                        }
+                      },
+                      [_vm._v("Show me item")]
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _c("td", [_vm._v(_vm._s(order.start))]),
+                  _vm._v(" "),
+                  _c("td", [
+                    order.state === "prepared"
+                      ? _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-primary",
+                            attrs: { type: "button" },
+                            on: {
+                              click: function($event) {
+                                $event.preventDefault()
+                                _vm.changeStateOrder(order, "delivered")
+                              }
+                            }
+                          },
+                          [_vm._v("Delivered")]
+                        )
+                      : _vm._e(),
+                    _vm._v(" "),
+                    order.state === "prepared"
+                      ? _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-danger",
+                            attrs: { type: "button" },
+                            on: {
+                              click: function($event) {
+                                $event.preventDefault()
+                                _vm.changeStateOrder(order, "not delivered")
+                              }
+                            }
+                          },
+                          [_vm._v("Not Delivered")]
+                        )
+                      : _vm._e()
+                  ])
+                ]
+              )
             })
           )
         ])
@@ -92465,7 +92525,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("thead", [
-      _c("tr", [
+      _c("tr", { staticClass: "table-active" }, [
         _c("th", [_vm._v("ID")]),
         _vm._v(" "),
         _c("th", [_vm._v("State")]),
@@ -92795,55 +92855,66 @@ var render = function() {
           _c(
             "tbody",
             _vm._l(_vm.orders, function(order) {
-              return _c("tr", [
-                _c("td", [_vm._v(_vm._s(order.id))]),
-                _vm._v(" "),
-                _c("td", [_vm._v(_vm._s(order.state))]),
-                _vm._v(" "),
-                _c("td", [
-                  _c(
-                    "button",
-                    {
-                      staticClass: "btn btn-primary",
-                      attrs: {
-                        "data-toggle": "modal",
-                        "data-target": "#exampleModalCenter"
-                      },
-                      on: {
-                        click: function($event) {
-                          _vm.seeInfoIteam(order.item_id)
-                        }
-                      }
-                    },
-                    [_vm._v("Show me item")]
-                  )
-                ]),
-                _vm._v(" "),
-                _c("td", [_vm._v(_vm._s(order.start))]),
-                _vm._v(" "),
-                _c("td", [
-                  _vm.timeHideButton(order)
-                    ? _c(
-                        "button",
-                        {
-                          staticClass: "btn btn-danger",
-                          attrs: { id: order.id, type: "button" },
-                          on: {
-                            click: function($event) {
-                              $event.preventDefault()
-                              _vm.deleteInTime(order)
-                            }
-                          }
+              return _c(
+                "tr",
+                {
+                  key: order.id,
+                  class: [
+                    order.state == "confirmed"
+                      ? "table-success"
+                      : "table-warning"
+                  ]
+                },
+                [
+                  _c("td", [_vm._v(_vm._s(order.id))]),
+                  _vm._v(" "),
+                  _c("td", [_vm._v(_vm._s(order.state))]),
+                  _vm._v(" "),
+                  _c("td", [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary",
+                        attrs: {
+                          "data-toggle": "modal",
+                          "data-target": "#exampleModalCenter"
                         },
-                        [
-                          _vm._v("Delete ("),
-                          _c("strong", { attrs: { id: "time_" + order.id } }),
-                          _vm._v(")")
-                        ]
-                      )
-                    : _vm._e()
-                ])
-              ])
+                        on: {
+                          click: function($event) {
+                            _vm.seeInfoIteam(order.item_id)
+                          }
+                        }
+                      },
+                      [_vm._v("Show me item")]
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _c("td", [_vm._v(_vm._s(order.start))]),
+                  _vm._v(" "),
+                  _c("td", [
+                    _vm.timeHideButton(order)
+                      ? _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-danger",
+                            attrs: { id: order.id, type: "button" },
+                            on: {
+                              click: function($event) {
+                                $event.preventDefault()
+                                _vm.deleteInTime(order)
+                              }
+                            }
+                          },
+                          [
+                            _vm._v("Delete ("),
+                            _c("strong", { attrs: { id: "time_" + order.id } }),
+                            _vm._v(")")
+                          ]
+                        )
+                      : _vm._e()
+                  ])
+                ]
+              )
             })
           )
         ])
@@ -92862,7 +92933,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("thead", [
-      _c("tr", [
+      _c("tr", { staticClass: "table-active" }, [
         _c("th", [_vm._v("ID")]),
         _vm._v(" "),
         _c("th", [_vm._v("State")]),
@@ -93314,6 +93385,762 @@ if (false) {
   module.hot.accept()
   if (module.hot.data) {
     require("vue-hot-reload-api")      .rerender("data-v-54d71510", module.exports)
+  }
+}
+
+/***/ }),
+/* 439 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(8)
+/* script */
+var __vue_script__ = __webpack_require__(440)
+/* template */
+var __vue_template__ = __webpack_require__(444)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/cashier/invoicesList.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-4873953b", Component.options)
+  } else {
+    hotAPI.reload("data-v-4873953b", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 440 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    data: function data() {
+        return {
+            showSuccess: false,
+            showErro: false,
+            message: '',
+            messageTitle: '',
+            invoices: {},
+            invoiceItems: {},
+            links: {},
+            linksInvoiceItems: {},
+            currentInvoice: ''
+        };
+    },
+
+    methods: {
+        loadInvoices: function loadInvoices(url) {
+            var _this = this;
+
+            axios.get('/api/' + url).then(function (response) {
+                _this.invoices = response.data.data;
+                _this.links = {
+                    prev: response.data.links.prev,
+                    next: response.data.links.next,
+                    currentPage: response.data.meta.current_page,
+                    lastPage: response.data.meta.last_page,
+                    path: url + '?page='
+                };
+            }).catch(function (error) {
+                console.log("loadInvoices-" + error);
+            });
+        },
+        loadInvoicesSamePage: function loadInvoicesSamePage(url, currentPage) {
+            var _this2 = this;
+
+            axios.get('/api/' + url + '?page=' + currentPage).then(function (response) {
+                _this2.invoices = response.data.data;
+                _this2.links = {
+                    prev: response.data.links.prev,
+                    next: response.data.links.next,
+                    currentPage: currentPage,
+                    lastPage: response.data.meta.last_page,
+                    path: url + '?page='
+                };
+            }).catch(function (error) {
+                console.log("loadInvoicesSamePage-" + error);
+            });
+        },
+        openInvoicesItems: function openInvoicesItems(invoice) {
+            this.currentInvoice = invoice;
+            this.loadInvoiceItems('invoices/' + invoice.id + '/items');
+        },
+        loadInvoiceItems: function loadInvoiceItems(url) {
+            var _this3 = this;
+
+            axios.get('/api/' + url).then(function (response) {
+                _this3.invoiceItems = response.data.data;
+                _this3.linksInvoiceItems = {
+                    prev: response.data.links.prev,
+                    next: response.data.links.next,
+                    currentPage: response.data.meta.current_page,
+                    lastPage: response.data.meta.last_page,
+                    path: url + '?page='
+                };
+            }).catch(function (error) {
+                console.log("loadInvoiceItems-" + error);
+            });
+        },
+        closeListInvoicesItems: function closeListInvoicesItems() {
+            this.currentInvoice = '';
+        },
+        reloadInvoiceAndInvoicesItems: function reloadInvoiceAndInvoicesItems() {
+            this.loadInvoices('invoices');
+            if (this.currentInvoice) {
+                this.loadInvoiceItems('invoices/' + this.currentInvoice.id + '/items');
+            }
+        }
+    },
+    computed: {},
+    components: {
+        'nav-bar': __webpack_require__(16),
+        'pagination': __webpack_require__(41),
+        'invoiceItemsList': __webpack_require__(441)
+    },
+    created: function created() {
+        this.loadInvoices('invoices');
+    },
+
+    sockets: {
+        update: function update() {
+            console.log('---SOCKETS TELL TO UPDATE---');
+            this.loadInvoicesSamePage('invoices', this.links.currentPage);
+        }
+    }
+});
+
+/***/ }),
+/* 441 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(8)
+/* script */
+var __vue_script__ = __webpack_require__(442)
+/* template */
+var __vue_template__ = __webpack_require__(443)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/cashier/invoiceItemsList.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-0e73f330", Component.options)
+  } else {
+    hotAPI.reload("data-v-0e73f330", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 442 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    props: ['method', 'invoice', 'invoiceItems', 'links'],
+    data: function data() {
+        return {
+            currentOrder: '',
+            currentIteam: '',
+            showSuccess: false,
+            showErro: false,
+            messageTitle: '',
+            message: '',
+            messageTitleErro: '',
+            messageErro: ''
+        };
+    },
+
+    methods: {
+        seeInfoIteam: function seeInfoIteam(item_id) {
+            var _this = this;
+
+            axios.get('/api/items/' + item_id).then(function (response) {
+                _this.currentIteam = response.data.data;
+            }).catch(function (error) {
+                console.log("seeInfoIteam->" + error);
+            });
+        }
+    },
+    computed: {},
+    components: {
+        'pagination': __webpack_require__(41),
+        'modalItem': __webpack_require__(83)
+    },
+    created: function created() {}
+});
+
+/***/ }),
+/* 443 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    [
+      _c("div", { staticClass: "container" }, [
+        _vm.showSuccess
+          ? _c(
+              "div",
+              { staticClass: "alert alert-success alert-dismissible" },
+              [
+                _c(
+                  "a",
+                  {
+                    staticClass: "close",
+                    attrs: { href: "#" },
+                    on: {
+                      click: function($event) {
+                        _vm.showSuccess = false
+                      }
+                    }
+                  },
+                  [_vm._v("×")]
+                ),
+                _vm._v(" "),
+                _c("strong", [_vm._v(_vm._s(_vm.messageTitle))]),
+                _vm._v(" " + _vm._s(_vm.message) + "\n        ")
+              ]
+            )
+          : _vm._e(),
+        _vm._v(" "),
+        _vm.showErro
+          ? _c("div", { staticClass: "alert alert-danger alert-dismissible" }, [
+              _c(
+                "a",
+                {
+                  staticClass: "close",
+                  attrs: { href: "#" },
+                  on: {
+                    click: function($event) {
+                      _vm.showErro = false
+                    }
+                  }
+                },
+                [_vm._v("×")]
+              ),
+              _vm._v(" "),
+              _c("strong", [_vm._v(_vm._s(_vm.messageTitleErro))]),
+              _vm._v(" " + _vm._s(_vm.messageErro) + "\n        ")
+            ])
+          : _vm._e(),
+        _vm._v(" "),
+        _c("table", { staticClass: "table" }, [
+          _vm._m(0),
+          _vm._v(" "),
+          _c(
+            "tbody",
+            _vm._l(_vm.invoiceItems, function(invoiceItem) {
+              return _c(
+                "tr",
+                { key: invoiceItem.id + "-" + invoiceItem.item_id },
+                [
+                  _c("td", [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary",
+                        attrs: {
+                          "data-toggle": "modal",
+                          "data-target": "#exampleModalCenter"
+                        },
+                        on: {
+                          click: function($event) {
+                            _vm.seeInfoIteam(invoiceItem.item_id)
+                          }
+                        }
+                      },
+                      [_vm._v("Show me item")]
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _c("td", [_vm._v(_vm._s(invoiceItem.quantity))]),
+                  _vm._v(" "),
+                  _c("td", [_vm._v(_vm._s(invoiceItem.unit_price))]),
+                  _vm._v(" "),
+                  _c("td", [_vm._v(_vm._s(invoiceItem.sub_total_price))]),
+                  _vm._v(" "),
+                  _c("td")
+                ]
+              )
+            })
+          )
+        ])
+      ]),
+      _vm._v(" "),
+      _c("pagination", { attrs: { method: _vm.method, links: _vm.links } }),
+      _vm._v(" "),
+      _c("modalItem", { attrs: { object: _vm.currentIteam } })
+    ],
+    1
+  )
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", { staticClass: "table-active" }, [
+        _c("th", [_vm._v("Item")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Quantity")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("unit_price")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("sub_total_price")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Accion")])
+      ])
+    ])
+  }
+]
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-0e73f330", module.exports)
+  }
+}
+
+/***/ }),
+/* 444 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    [
+      _c("nav-bar"),
+      _vm._v(" "),
+      _c("br"),
+      _vm._v(" "),
+      _c("br"),
+      _vm._v(" "),
+      _c("br"),
+      _vm._v(" "),
+      _c("br"),
+      _vm._v(" "),
+      _c("br"),
+      _vm._v(" "),
+      _c("div", { staticClass: "container" }, [
+        _c("div", { staticClass: "card" }, [
+          _vm._m(0),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "card-body" },
+            [
+              _vm.showSuccess
+                ? _c(
+                    "div",
+                    { staticClass: "alert alert-success alert-dismissible" },
+                    [
+                      _c(
+                        "a",
+                        {
+                          staticClass: "close",
+                          attrs: { href: "#" },
+                          on: {
+                            click: function($event) {
+                              _vm.showSuccess = false
+                            }
+                          }
+                        },
+                        [_vm._v("×")]
+                      ),
+                      _vm._v(" "),
+                      _c("strong", [_vm._v(_vm._s(_vm.messageTitle))]),
+                      _vm._v(" " + _vm._s(_vm.message) + "\n                ")
+                    ]
+                  )
+                : _vm._e(),
+              _vm._v(" "),
+              _vm.showErro
+                ? _c(
+                    "div",
+                    { staticClass: "alert alert-danger alert-dismissible" },
+                    [
+                      _c(
+                        "a",
+                        {
+                          staticClass: "close",
+                          attrs: { href: "#" },
+                          on: {
+                            click: function($event) {
+                              _vm.showErro = false
+                            }
+                          }
+                        },
+                        [_vm._v("×")]
+                      ),
+                      _vm._v(" "),
+                      _c("strong", [_vm._v(_vm._s(_vm.messageTitle))]),
+                      _vm._v(" " + _vm._s(_vm.message) + "\n                ")
+                    ]
+                  )
+                : _vm._e(),
+              _vm._v(" "),
+              _c("table", { staticClass: "table" }, [
+                _vm._m(1),
+                _vm._v(" "),
+                _c(
+                  "tbody",
+                  [
+                    _vm._l(_vm.invoices, function(invoice) {
+                      return [
+                        _c("tr", { key: invoice.id }, [
+                          _c("td", [_vm._v(_vm._s(invoice.id))]),
+                          _vm._v(" "),
+                          _c("td", [_vm._v(_vm._s(invoice.meal_id))]),
+                          _vm._v(" "),
+                          _c("td", [_vm._v(_vm._s(invoice.state))]),
+                          _vm._v(" "),
+                          _c("td", [_vm._v(_vm._s(invoice.nif))]),
+                          _vm._v(" "),
+                          _c("td", [_vm._v(_vm._s(invoice.name))]),
+                          _vm._v(" "),
+                          _c("td", [_vm._v(_vm._s(invoice.date))]),
+                          _vm._v(" "),
+                          _c("td", [_vm._v(_vm._s(invoice.total_price))]),
+                          _vm._v(" "),
+                          _c("td", [
+                            invoice.total_price > 0
+                              ? _c(
+                                  "button",
+                                  {
+                                    staticClass: "btn btn-primary",
+                                    attrs: { type: "button" },
+                                    on: {
+                                      click: function($event) {
+                                        $event.preventDefault()
+                                        _vm.openInvoicesItems(invoice)
+                                      }
+                                    }
+                                  },
+                                  [_vm._v("See all invoices items")]
+                                )
+                              : _vm._e(),
+                            _vm._v(" "),
+                            _c(
+                              "button",
+                              {
+                                staticClass: "btn btn-primary",
+                                attrs: { type: "button" },
+                                on: {
+                                  click: function($event) {
+                                    $event.preventDefault()
+                                  }
+                                }
+                              },
+                              [_vm._v("Paid")]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "button",
+                              {
+                                staticClass: "btn btn-danger",
+                                attrs: { type: "button" },
+                                on: {
+                                  click: function($event) {
+                                    $event.preventDefault()
+                                  }
+                                }
+                              },
+                              [_vm._v("Not Paid")]
+                            )
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _vm.currentInvoice &&
+                        invoice.id == _vm.currentInvoice.id
+                          ? _c("tr", { key: "invoice_" + invoice.id }, [
+                              _c("td", { attrs: { colspan: "6" } }, [
+                                _c("div", { staticClass: "card" }, [
+                                  _c("div", { staticClass: "card-header" }, [
+                                    _c(
+                                      "h5",
+                                      { staticClass: "card-title float-left" },
+                                      [
+                                        _vm._v(
+                                          "Invoice (" +
+                                            _vm._s(invoice.id) +
+                                            ") items"
+                                        )
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "button",
+                                      {
+                                        staticClass:
+                                          "btn btn-danger float-right",
+                                        attrs: { type: "button" },
+                                        on: {
+                                          click: function($event) {
+                                            $event.preventDefault()
+                                            _vm.closeListInvoicesItems()
+                                          }
+                                        }
+                                      },
+                                      [_vm._v("Close")]
+                                    )
+                                  ]),
+                                  _vm._v(" "),
+                                  _c(
+                                    "div",
+                                    { staticClass: "card-body" },
+                                    [
+                                      _c("invoiceItemsList", {
+                                        attrs: {
+                                          method: _vm.loadInvoiceItems,
+                                          invoice: _vm.currentInvoice,
+                                          invoiceItems: _vm.invoiceItems,
+                                          links: _vm.linksInvoiceItems
+                                        }
+                                      })
+                                    ],
+                                    1
+                                  )
+                                ])
+                              ])
+                            ])
+                          : _vm._e()
+                      ]
+                    })
+                  ],
+                  2
+                )
+              ]),
+              _vm._v(" "),
+              _c("pagination", {
+                attrs: { method: _vm.loadInvoices, links: _vm.links }
+              })
+            ],
+            1
+          )
+        ])
+      ])
+    ],
+    1
+  )
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-header" }, [
+      _c("h5", { staticClass: "card-title float-left" }, [_vm._v("Invoices")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", { staticClass: "table-active" }, [
+        _c("th", [_vm._v("ID")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Meal id")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("State")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("NIF")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Name")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Date")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Total price")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Accion")])
+      ])
+    ])
+  }
+]
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-4873953b", module.exports)
   }
 }
 

@@ -7,32 +7,39 @@
         <br>
         <br>
         <div class="container">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>State</th>
-                        <th>Item</th>
-                        <th>Start</th>
-                        <th>Accion</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="order in orders" :class="[!order.responsible_cook_id? 'table-warning' : 'table-success']">
-                        <td>{{order.id}}</td>
-                        <td>{{order.state}}</td>
-                        <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter" @click="seeInfoIteam(order.item_id)">Show me item</button></td>
-                        <td>{{order.start}}</td>
-                        <td>
-                            <button v-if="order.state === 'in preparation'" type="button" class="btn btn-primary" @click.prevent="changeStateOrder(order, 'prepared')">I Finished Preparing</button>
-                            <button v-else-if="order.state === 'confirmed'" type="button" class="btn btn-primary" @click.prevent="changeStateOrder(order, 'in preparation')">Start Preparation</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title float-left">Current Orders</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr class="table-active">
+                                <th>ID</th>
+                                <th>State</th>
+                                <th>Item</th>
+                                <th>Start</th>
+                                <th>Accion</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="order in orders" :class="[!order.responsible_cook_id? 'table-warning' : 'table-success']" :key="order.id">
+                                <td>{{order.id}}</td>
+                                <td>{{order.state}}</td>
+                                <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter" @click="seeInfoIteam(order.item_id)">Show me item</button></td>
+                                <td>{{order.start}}</td>
+                                <td>
+                                    <button v-if="order.state === 'in preparation'" type="button" class="btn btn-primary" @click.prevent="changeStateOrder(order, 'prepared')">I Finished Preparing</button>
+                                    <button v-else-if="order.state === 'confirmed'" type="button" class="btn btn-primary" @click.prevent="changeStateOrder(order, 'in preparation')">Start Preparation</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <pagination :method="loadOrders" :links="links"></pagination>
+                <modalItem :object="currentIteam"></modalItem>
+            </div>
         </div>
-        <pagination :method="loadOrders" :links="links"></pagination>
-        <modalItem :object="currentIteam"></modalItem>
     </div>
 </template>
 <script>

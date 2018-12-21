@@ -39,7 +39,7 @@
             </div>
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title float-left">My current meals</h5>
+                    <h5 class="card-title float-left">My current meals with orders 'pending' and 'confirmed'</h5>
                 </div>
                 <div class="card-body">
                     <table class="table">
@@ -55,7 +55,7 @@
                         </thead>
                         <tbody>
                             <template  v-for="meal in meals">
-                                <tr>
+                                <tr :key="meal.id">
                                     <td>{{meal.id}}</td>
                                     <td>{{meal.state}}</td>
                                     <td>{{meal.table_number}}</td>
@@ -67,7 +67,7 @@
                                         <button type="button" class="btn btn-danger" @click.prevent="terminateMeal(meal)">Terminate</button>
                                     </td>
                                 </tr>
-                                <tr v-if='currentMeal && meal.id == currentMeal.id'>
+                                <tr v-if='currentMeal && meal.id == currentMeal.id' :key="'meal_'+meal.id">
                                     <td colspan="6">
                                         <div class="card">
                                             <div class="card-header">

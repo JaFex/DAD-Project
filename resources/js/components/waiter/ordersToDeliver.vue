@@ -9,7 +9,7 @@
         <div class="container">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title float-left">My current meals</h5>
+                    <h5 class="card-title float-left">My meals and order need to be deliver</h5>
                 </div>
                 <div class="card-body">
                     <div v-if="showSuccess" class="alert alert-success alert-dismissible">
@@ -22,7 +22,7 @@
                     </div>
                     <table class="table">
                         <thead>
-                            <tr>
+                            <tr class="table-active">
                                 <th>ID</th>
                                 <th>State</th>
                                 <th>Table number</th>
@@ -33,7 +33,7 @@
                         </thead>
                         <tbody>
                             <template  v-for="meal in meals">
-                                <tr>
+                                <tr :key="meal.id">
                                     <td>{{meal.id}}</td>
                                     <td>{{meal.state}}</td>
                                     <td>{{meal.table_number}}</td>
@@ -43,7 +43,7 @@
                                         <button v-if="meal.total_price_preview > 0" type="button" class="btn btn-primary" @click.prevent="openOrders(meal);">See all orders</button>
                                     </td>
                                 </tr>
-                                <tr v-if='currentMeal && meal.id == currentMeal.id'>
+                                <tr v-if='currentMeal && meal.id == currentMeal.id' :key="'meal_'+meal.id">
                                     <td colspan="6">
                                         <div class="card">
                                             <div class="card-header">
