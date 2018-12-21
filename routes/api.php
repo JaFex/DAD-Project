@@ -27,8 +27,10 @@ Route::get('items', 'ItemControllerAPI@all');
 
 Route::middleware('auth:api')->get('restaurantTables', 'RestaurantTableControllerAPI@index');
 
-Route::get('meals/{meal_id}/delived', 'MealControllerAPI@toDelived');
-Route::get('meals/{meal_id}/orders', 'MealControllerAPI@orders');
+Route::middleware('auth:api')->get('meals/{meal_id}/terminated', 'MealControllerAPI@canBeTerminated');
+Route::middleware('auth:api')->put('meals/{meal_id}/terminated', 'MealControllerAPI@terminated');
+Route::middleware('auth:api')->get('meals/{meal_id}/delived', 'MealControllerAPI@toDelived');
+Route::middleware('auth:api')->get('meals/{meal_id}/orders', 'MealControllerAPI@orders');
 Route::middleware('auth:api')->put('meals/{meal_id}', 'MealControllerAPI@update');
 Route::middleware('auth:api')->get('meals/{meal_id}', 'MealControllerAPI@show');
 Route::middleware('auth:api')->post('meals', 'MealControllerAPI@store');

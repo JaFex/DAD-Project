@@ -103,7 +103,9 @@ class OrderControllerAPI extends Controller
         $this->validate(request(), [
             'state' => 'required|in:confirmed,in preparation,prepared,delivered,not delivered'
         ]);
-        if($request["state"] === "in preparation") {
+        if($request["state"] === "delivered" || $request["state"] === "not delivered") {
+            $request['end'] = Carbon::now();
+        }else if($request["state"] === "in preparation") {
             $request['responsible_cook_id'] = \Auth::guard('api')->user()->id;
         }
         

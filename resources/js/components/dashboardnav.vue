@@ -93,7 +93,7 @@ export default {
         }
     },
     sockets:{
-        privateUpdate(received){
+        privateUpdatePrepared(received){
             var sourceUser = received[0];
             var order = received[1];
             this.$toasted.show('New order('+order.id+') is prepared on meal "'+order.meal_id+'" from "' + sourceUser.name + '"', {

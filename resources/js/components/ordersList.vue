@@ -99,8 +99,7 @@ export default {
             axios.put('/api/orders/'+order.id, update)
                 .then(response => {
                     order = response.data.data;
-                    if(order.state === 'prepared') {
-                        axios.get('/api/orders/'+order.id+'/waiter')
+                    axios.get('/api/orders/'+order.id+'/waiter')
                             .then(response => {
                                 var waiter = response.data.data;
                                 soft.$socket.emit('privateUpdate', this.$store.state.user, waiter, order);
@@ -108,9 +107,8 @@ export default {
                             .catch(function (error) {
                                 console.log("loadOrdersSamePage-"+error);
                             });
-                    } else if(order.state === "in preparation") {
+                    if(order.state === "in preparation") {
                         soft.$socket.emit('kitchenWichoutMe');
-                        soft.$socket.emit('waiter');
                     }
                     soft.loadOrdersSamePage('orders', this.links.currentPage);
                 })
@@ -143,7 +141,7 @@ export default {
                         });
         },
         privateUpdate_sent(destUser){
-            this.$toasted.show('The waiter "' + destUser.name + '" was warned that was order preperad', {
+            this.$toasted.show('The waiter "' + destUser.name + '" was warned that order was changed', {
                             theme: "bubble",
                             position: "bottom-center",
                             duration: 5000,

@@ -97,13 +97,66 @@ class MealControllerAPI extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int $meal
+     * @param  int $meal_id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, int $meal_id)
     {
-        $meal = Meal::findOrFail($meal_id);
+        /*$meal = Meal::findOrFail($meal_id);
         $meal->update($request->all());
+        $meal->save();
+        return new MealResource($meal);*/
+    }
+
+
+     /**
+     * Update the specified resource in storage.
+     *
+     * @param  int $meal_id
+     * @return \Illuminate\Http\Response
+     */
+    public function canBeTerminated(int $meal_id)
+    {
+        $meal = Meal::findOrFail($meal_id);
+
+        foreach ($meal->orders as $order){
+            if($order->state !== "delivered"){
+                return response([
+                    'terminated' => false
+                ], 200);
+            }
+        }
+        return response([
+            'terminated' => true
+        ], 200);
+    }
+
+     /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int $meal_id
+     * @return \Illuminate\Http\Response
+     */
+    public function terminated(Request $request, int $meal_id)
+    {
+        $this->validate(request(), [
+            'state' => 'required|in:terminated'
+        ]);
+        $meal = Meal::findOrFail($meal_id);
+        $request['end'] = Carbon::now();
+        $meal->update($request->all());
+        foreach ($meal->orders as $order){
+            if($order->state !== "delivered" && $order->state !== "not delivered" ){
+                $order->state = "not delivered";
+                $order->end = Carbon::now();
+                $order->save();
+                $meal->total_price_preview = $meal->total_price_preview - $order->item->price;
+            } else if($order->state === "delivered") {
+                
+            }
+        }
+        
         $meal->save();
         return new MealResource($meal);
     }

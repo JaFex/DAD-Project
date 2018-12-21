@@ -65,7 +65,7 @@ export default {
         loadOrdersSamePage: function(url, currentPage){
             axios.get('/api/'+url+'?page='+currentPage)
                 .then(response => {
-                    this.currentMeal = meal;
+                    this.currentMeal = this.meal;
                     this.orders = response.data.data;
                     this.linksOrders = {
                         prev: response.data.links.prev,
@@ -105,13 +105,14 @@ export default {
     created() {
     },
     sockets:{
-        privateUpdate(received){
+        privateUpdatePrepared(received){
+            console.log(received);
             var sourceUser = received[0];
             var order = received[1];
             
-            if(this.currentMeal.id == order.meal_id) {
-                console.log("Received "+order.meal_id);
-                this.loadOrdersSamePage(this.currentMeal.id+'/delived', this.links.currentPage);
+            if(this.meal.id == order.meal_id) {
+                console.log('---SOCKETS TELL TO UPDATE NEW ORDER PREPARED---');
+                this.loadOrdersSamePage('meals/'+this.meal.id+'/delived', this.links.currentPage);
             }
         },
     }

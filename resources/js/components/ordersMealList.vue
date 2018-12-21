@@ -66,7 +66,7 @@ export default {
         loadOrders: function(url){
             axios.get('/api/'+url)
                 .then(response => {
-                    this.currentMeal = meal;
+                    this.currentMeal = this.meal;
                     this.orders = response.data.data;
                     this.linksOrders = {
                         prev: response.data.links.prev,
@@ -83,7 +83,7 @@ export default {
         loadOrdersSamePage: function(url, currentPage){
             axios.get('/api/'+url+'?page='+currentPage)
                 .then(response => {
-                    this.currentMeal = meal;
+                    this.currentMeal = this.meal;
                     this.orders = response.data.data;
                     this.linksOrders = {
                         prev: response.data.links.prev,

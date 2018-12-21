@@ -64,6 +64,7 @@
                                     <td>
                                         <button v-if="meal.total_price_preview > 0" type="button" class="btn btn-primary" @click.prevent="openOrders(meal);">See all orders</button>
                                         <button type="button" class="btn btn-primary" @click.prevent="showFormCreteOrder(meal)">add order</button>
+                                        <button type="button" class="btn btn-danger" @click.prevent="terminateMeal(meal)">Terminate</button>
                                     </td>
                                 </tr>
                                 <tr v-if='currentMeal && meal.id == currentMeal.id'>
@@ -231,6 +232,59 @@ export default {
         },
         updateKitchen: function() {
             this.$socket.emit('kitchen');
+        },
+        terminateMeal: function(meal){
+            let soft = this;
+            axios.get('/api/meals/'+meal.id+'/terminated')
+                .then(response => {
+                    console.log(response.data['terminated']);
+                    var booleanCanBeTerminated = response.data['terminated'];
+                    if(booleanCanBeTerminated == true) {
+                        soft.sendUpdateToTerminateMeal(meal);
+                    } else if(booleanCanBeTerminated == false) {
+                        if (confirm('The meal ('+meal.id+') have not all orders been delivered yet, and will they be excluded from payment! Is it okay?')) {
+                            soft.sendUpdateToTerminateMeal(meal);
+                        } else {
+                            soft.$toasted.show('The meal ('+meal.id+') was not been terminated', {
+                                theme: "bubble",
+                                position: "bottom-center",
+                                duration: 5000,
+                                className: ['success']
+                            });
+                        }
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        },
+        sendUpdateToTerminateMeal: function(meal) {
+            let soft = this;
+            var update = {};
+            update["state"] = 'terminated';
+            axios.put('/api/meals/'+meal.id+'/terminated', update)
+                    .then(response => {
+                        meal = response.data.data;
+                        soft.$toasted.show('The meal ('+meal.id+') was been terminated', {
+                                theme: "bubble",
+                                position: "bottom-center",
+                                duration: 5000,
+                                className: ['success']
+                            });
+                        soft.currentMeal = soft.currentMeal.id==meal.id?null:soft.currentMeal;
+                        soft.reloadMealAndOrder();
+                        soft.$socket.emit('kitchen');
+                        soft.$socket.emit('cashier');
+                    })
+                    .catch(function (error) {
+                        console.log("sendUpdateToTerminateMeal->"+error);
+                        soft.$toasted.show('ERRO: The meal ('+meal.id+') was not been terminated', {
+                                theme: "bubble",
+                                position: "bottom-center",
+                                duration: 5000,
+                                className: ['error']
+                            });
+                    });
         }
     },
     computed: {
@@ -247,16 +301,10 @@ export default {
         this.loadTables('restaurantTables');
     },
     sockets:{
-        connect(){
-            console.log('socket connected (socket ID = '+this.$socket.id+')');
-        },
-        privateUpdate(sourceUser){
-            this.$toasted.show('The waiter "' + destUser.name + '" is not available', {
-                            theme: "bubble",
-                            position: "bottom-center",
-                            duration: 5000,
-                            className: ['success']
-                        });
+        privateUpdateConfirmed(received){
+            var sourceUser = received[0];
+            var order = received[1];
+            this.updateOrder(order);
         },
     }
 }
