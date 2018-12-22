@@ -23,7 +23,7 @@ class InvoiceControllerAPI extends Controller
                 'data' => 'Not Found Data'
             ], 404);
         }
-        return InvoiceResource::collection(Invoice::where('state', 'pending')->paginate(10));
+        return InvoiceResource::collection(Invoice::where('state', 'pending')->orderBy('date', 'asc')->paginate(10));
     }
     /**
      * Display a listing of the resource.
@@ -32,7 +32,7 @@ class InvoiceControllerAPI extends Controller
      */
     public function paid()
     {
-        return InvoiceResource::collection(Invoice::where('state', 'paid')->paginate(10));
+        return InvoiceResource::collection(Invoice::where('state', 'paid')->orderBy('date', 'desc')->paginate(10));
     }
 
     /**
