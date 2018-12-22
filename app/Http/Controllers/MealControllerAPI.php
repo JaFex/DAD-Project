@@ -63,7 +63,7 @@ class MealControllerAPI extends Controller
         }
         //$collection = collect($summarys)->forPage(isset($_GET['page'])?$_GET['page']:1, 10);
         $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-        return SummaryResource::collection(MealControllerAPI::paginate($summarys, 3, null, ['path' => $actual_link]));
+        return SummaryResource::collection(MealControllerAPI::paginate($summarys, 10, null, ['path' => $actual_link]));
     }
 
     public function paginate($items, $perPage = 15, $page = null, $options = [])

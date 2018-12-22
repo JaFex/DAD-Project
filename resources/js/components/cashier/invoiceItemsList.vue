@@ -12,20 +12,21 @@
             <table class="table">
                 <thead>
                     <tr class="table-active">
-                        <th>Item</th>
+                        <th>Item Name</th>
                         <th>Quantity</th>
-                        <th>unit_price</th>
-                        <th>sub_total_price</th>
+                        <th>Unit Price</th>
+                        <th>Sub Total Price</th>
                         <th>Accion</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="invoiceItem in invoiceItems" :key="invoiceItem.id+'-'+invoiceItem.item_id">
-                        <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter" @click="seeInfoIteam(invoiceItem.item_id)">Show me item</button></td>
+                        <td>{{invoiceItem.item_name}}</td>
                         <td>{{invoiceItem.quantity}}</td>
                         <td>{{invoiceItem.unit_price}}</td>
                         <td>{{invoiceItem.sub_total_price}}</td>
                         <td>
+                            <button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter" @click="seeInfoIteam(invoiceItem.item_id)">Show Details the item</button>
                             <!--<button v-if="timeHideButton(order)" :id="order.id" type="button" class="btn btn-danger" @click.prevent="deleteInTime(order)">Delete (<strong :id="'time_'+order.id"></strong>)</button>
                             <button v-if="order.state === 'in preparation'" type="button" class="btn btn-primary" @click.prevent="changeStateOrder(order, 'prepared')">I Finished Preparing</button>
                             <button v-else-if="order.state === 'confirmed'" type="button" class="btn btn-primary" @click.prevent="changeStateOrder(order, 'in preparation')">Start Preparation</button>-->

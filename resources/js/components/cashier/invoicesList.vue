@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div> 
         <nav-bar></nav-bar>
         <br>
         <br>
@@ -24,10 +24,10 @@
                         <thead>
                             <tr class="table-active">
                                 <th>ID</th>
-                                <th>Meal id</th>
+                                <th>Meal ID</th>
+                                <th>Waiter (ID)-Name</th>
+                                <th>Table Number</th>
                                 <th>State</th>
-                                <th>NIF</th>
-                                <th>Name</th>
                                 <th>Date</th>
                                 <th>Total price</th>
                                 <th>Accion</th>
@@ -38,19 +38,18 @@
                                 <tr :key="invoice.id">
                                     <td>{{invoice.id}}</td>
                                     <td>{{invoice.meal_id}}</td>
+                                    <td>{{'('+invoice.waiter_id+')-'+ invoice.waiter_name}}</td>
+                                    <td>{{invoice.table_number}}</td>
                                     <td>{{invoice.state}}</td>
-                                    <td>{{invoice.nif}}</td>
-                                    <td>{{invoice.name}}</td>
                                     <td>{{invoice.date}}</td>
                                     <td>{{invoice.total_price}}</td>
                                     <td>
                                         <button v-if="invoice.total_price > 0" type="button" class="btn btn-primary" @click.prevent="openInvoicesItems(invoice);">See all invoices items</button>
-                                        <button type="button" class="btn btn-primary" @click.prevent="">Paid</button>
-                                        <button type="button" class="btn btn-danger" @click.prevent="">Not Paid</button>
+                                        <button type="button" class="btn btn-success" @click.prevent="showPaidForm(invoice)">Paid and Fill Info</button>
                                     </td>
                                 </tr>
                                 <tr v-if='currentInvoice && invoice.id == currentInvoice.id' :key="'invoice_'+invoice.id">
-                                    <td colspan="6">
+                                    <td colspan="10">
                                         <div class="card">
                                             <div class="card-header">
                                                 <h5 class="card-title float-left">Invoice ({{ invoice.id }}) items</h5>
@@ -69,14 +68,17 @@
                 </div>
             </div>
         </div>
+        <formPaidFillInfo v-if="showForm" :messagemServer="messageToForm" :methodDone="paidTheMeal" :methodClose="hidePaidForm" :invoice="currentInvoiceToPaid" :invoiceItems="invoiceItems"></formPaidFillInfo>
     </div>
 </template>
 <script>
 export default {
     data() {
         return {
+            showForm: false,
             showSuccess: false,
             showErro: false,
+            messageToForm: '',
             message: '',
             messageTitle: '',
             invoices: {},
@@ -84,6 +86,7 @@ export default {
             links: {},
             linksInvoiceItems: {},
             currentInvoice: '',
+            currentInvoiceToPaid: ''
         }
     },
     methods: {
@@ -147,6 +150,47 @@ export default {
             if(this.currentInvoice) {
                 this.loadInvoiceItems('invoices/'+this.currentInvoice.id+'/items');
             }
+        },
+        showPaidForm: function(invoice) {
+            this.showForm=true;
+            this.currentInvoiceToPaid=invoice;
+            this.messageToForm = '';
+        },
+        hidePaidForm: function() {
+            this.showForm=false;
+            this.currentInvoiceToPaid=null;
+            this.messageToForm = '';
+        },
+        paidTheMeal: function(invoice_id, name, nif) {
+            this.showSuccess = false;
+            this.showErro = false;
+            if(this.currentInvoiceToPaid.id != invoice_id) {
+                this.showErro = true;
+                this.message = 'The item to pay is different from the selected.';
+                this.messageTitle = 'Ops!';
+                this.hidePaidForm();
+                return;
+            }
+            let soft = this;
+            var array = {};
+            array['name'] = name;
+            array['nif'] = nif;
+            array['state'] = 'paid';
+            
+            axios.put('/api/invoices/'+this.currentInvoiceToPaid.id, array)
+                .then(response => {
+                    soft.currentInvoiceToPaid = response.data.data;
+                    soft.showSuccess = true;
+                    soft.message = 'The invoice is paid.';
+                    soft.messageTitle = 'Paid Successful!';
+                    soft.hidePaidForm();
+                    soft.loadInvoicesSamePage('invoices', this.links.currentPage);
+                    soft.$emit('cashierWichoutMe');
+                })
+                .catch(function (error) {
+                    console.log("needToBeConfirmed->"+error);
+                    soft.messageToForm = 'Something went wrong with the server.';
+                });
         }
     },
     computed: {
@@ -155,7 +199,8 @@ export default {
     components:{
         'nav-bar': require('../dashboardnav.vue'),
         'pagination': require('../pagination.vue'),
-        'invoiceItemsList': require('./invoiceItemsList.vue')
+        'invoiceItemsList': require('./invoiceItemsList.vue'),
+        'formPaidFillInfo': require('./formPaidFillInfo.vue')
     },
     created() {
         this.loadInvoices('invoices');

@@ -12,6 +12,7 @@ import VueSocketio from 'vue-socket.io';
 import store from './stores/global-store';
 
 
+
 window.Vue = require('vue');
 Vue.use(VueRouter);
 Vue.use(BootstrapVue);
@@ -32,6 +33,7 @@ const meals = Vue.component('meals', require('./components/waiter/mealsList.vue'
 const summaryMealList = Vue.component('summaryMealList', require('./components/waiter/summaryMealList.vue'));
 const ordersToDeliver = Vue.component('ordersToDeliver', require('./components/waiter/ordersToDeliver.vue'));
 const invoices = Vue.component('invoices', require('./components/cashier/invoicesList.vue'));
+const invoicesListFile = Vue.component('invoices', require('./components/cashier/invoicesListFile.vue'));
 const message = Vue.component('message', require('./components/message.vue'));
 const notfound = Vue.component('notfound', require('./components/erro/404.vue'));
 
@@ -47,6 +49,7 @@ const routes = [
     { path: '/summary', meta: { title: 'Restaurant' }, component: summaryMealList, name: 'Waters Summary' },
     { path: '/orders-to-deliver', meta: { title: 'Restaurant' }, component: ordersToDeliver, name: 'Waters Deliver' },
     { path: '/invoices', meta: { title: 'Restaurant' }, component: invoices, name: 'Cashier' },
+    { path: '/invoicesPDF', meta: { title: 'Restaurant' }, component: invoicesListFile, name: 'Invoice PDF' },
     { path: '/message', meta: { title: 'Restaurant' }, component: message, name: 'Message' },
     { path: '/404', meta: { title: 'Not Found 404' }, component: notfound, name: 'NotFound' },
     { path: '*', redirect: '/404' }

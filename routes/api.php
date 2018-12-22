@@ -57,6 +57,8 @@ Route::middleware('auth:api')->get('orders', 'OrderControllerAPI@index');
 //------------------------------------INVOICES------------------------------------------------//
 //--------------------------------------------------------------------------------------------//
 Route::middleware('auth:api')->get('invoices/{invoice_id}/items', 'InvoiceControllerAPI@items');
+Route::get('invoices/{invoice_id}/download', 'InvoiceControllerAPI@downloadPDF');
+Route::middleware('auth:api')->put('invoices/{invoice_id}', 'InvoiceControllerAPI@update');
 Route::middleware('auth:api')->get('invoices', 'InvoiceControllerAPI@index');
 //--------------------------------------------------------------------------------------------//
 //----------------------------------INVOICES_ITEMS--------------------------------------------//

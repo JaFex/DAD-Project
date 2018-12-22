@@ -16,10 +16,16 @@
                         <router-link to="/summary" class="nav-link" tag="a">Summary Meals</router-link>
                     </li>
                 </template>
+                <template v-if="isAuthCashier()">
+                    <li class="nav-item">
+                        <router-link to="/invoices" class="nav-link" tag="a">Invoices</router-link>
+                    </li>
+                    <li class="nav-item">
+                        <router-link to="/invoicesPDF" class="nav-link" tag="a">Invoices Download</router-link>
+                    </li>
+                </template>
                 
-                <li v-if="isAuthCashier()" class="nav-item">
-                    <router-link to="/invoices" class="nav-link" tag="a">Cashier</router-link>
-                </li>
+                
                 <li v-if="isAuthCook()" class="nav-item">
                     <router-link to="/orders" class="nav-link" tag="a">Orders</router-link>
                 </li>
