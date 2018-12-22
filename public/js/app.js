@@ -94948,12 +94948,27 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 console.log("loadInvoicesSamePage-" + error);
             });
         },
-        downloadPDF: function downloadPDF(invoice) {
-            axios.get('/api/invoices/' + invoice.id + '/download').then(function (response) {
-                console.log("downloadPDF-" + response);
-                console.log("downloadPDF-" + Object.values(response));
+        downloadPDF: function downloadPDF(invoice, url) {
+            var soft = this;
+            axios({
+                url: soft.url + 'api/invoices/' + invoice.id + '/download',
+                method: 'GET',
+                responseType: 'blob' // important
+            }).then(function (response) {
+                var urlLocal = window.URL.createObjectURL(new Blob([response.data]));
+                var link = document.createElement('a');
+                link.href = urlLocal;
+                link.setAttribute('download', 'invoice_' + invoice.id + '.pdf');
+                document.body.appendChild(link);
+                link.click();
             }).catch(function (error) {
-                console.log("downloadPDF-" + error);
+                console.log("downloadPDF-" + error.response.data.data);
+                soft.$toasted.show(error.response.data.data, {
+                    theme: "bubble",
+                    position: "bottom-center",
+                    duration: 5000,
+                    className: ['error']
+                });
             });
         }
     },
@@ -94963,13 +94978,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         'pagination': __webpack_require__(12)
     },
     created: function created() {
-        this.loadInvoices('invoices');
+        this.loadInvoices('invoices/paid');
     },
 
     sockets: {
         update: function update() {
             console.log('---SOCKETS TELL TO UPDATE---');
-            this.loadInvoicesSamePage('invoices', this.links.currentPage);
+            this.loadInvoicesSamePage('invoices/paid', this.links.currentPage);
         }
     }
 });
@@ -95043,16 +95058,21 @@ var render = function() {
                           _vm._v(" "),
                           _c("td", [
                             _c(
-                              "a",
+                              "button",
                               {
                                 staticClass: "btn btn-success",
-                                attrs: {
-                                  href:
-                                    _vm.url +
-                                    "api/invoices/" +
-                                    invoice.id +
-                                    "/download",
-                                  type: "application/pdf"
+                                attrs: { type: "button" },
+                                on: {
+                                  click: function($event) {
+                                    $event.preventDefault()
+                                    _vm.downloadPDF(
+                                      invoice,
+                                      _vm.url +
+                                        "api/invoices/" +
+                                        invoice.id +
+                                        "/download"
+                                    )
+                                  }
                                 }
                               },
                               [_vm._v("Download PDF")]

@@ -40,8 +40,8 @@
                                     <td>{{invoice.date}}</td>
                                     <td>{{invoice.total_price}}</td>
                                     <td>
-                                        <!--<button type="button" class="btn btn-success" @click.prevent="downloadPDF(invoice)">Download PDF</button>-->
-                                        <a :href="url+'api/invoices/'+invoice.id+'/download'" type="application/pdf" class="btn btn-success">Download PDF</a>
+                                        <button type="button" class="btn btn-success" @click.prevent="downloadPDF(invoice, url+'api/invoices/'+invoice.id+'/download')">Download PDF</button>
+                                       <!-- <a :href= type="application/pdf" class="btn btn-success">Download PDF</a>-->
                                     </td>
                                 </tr>
                             </template >
@@ -95,14 +95,27 @@ export default {
                     console.log("loadInvoicesSamePage-"+error);
                 });
         },
-        downloadPDF: function(invoice) {
-            axios.get('/api/invoices/'+invoice.id+'/download')
-                .then(response => {
-                    console.log("downloadPDF-"+response);
-                    console.log("downloadPDF-"+Object.values(response));
-                })
-                .catch(function (error) {
-                    console.log("downloadPDF-"+error);
+        downloadPDF: function(invoice, url) {
+            let soft = this;
+            axios({
+                url: soft.url+'api/invoices/'+invoice.id+'/download',
+                method: 'GET',
+                responseType: 'blob', // important
+            }).then((response) => {
+                const urlLocal = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = urlLocal;
+                link.setAttribute('download', 'invoice_'+invoice.id+'.pdf');
+                document.body.appendChild(link);
+                link.click();
+            }).catch(function (error) {
+                    console.log("downloadPDF-"+error.response.data.data);
+                    soft.$toasted.show(error.response.data.data, {
+                            theme: "bubble",
+                            position: "bottom-center",
+                            duration: 5000,
+                            className: ['error']
+                        });
                 });
         }
     },
@@ -114,12 +127,12 @@ export default {
         'pagination': require('../pagination.vue'),
     },
     created() {
-        this.loadInvoices('invoices');
+        this.loadInvoices('invoices/paid');
     },
     sockets:{
         update() {
             console.log('---SOCKETS TELL TO UPDATE---');
-            this.loadInvoicesSamePage('invoices', this.links.currentPage);
+            this.loadInvoicesSamePage('invoices/paid', this.links.currentPage);
         },
     }
 }

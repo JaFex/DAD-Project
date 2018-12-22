@@ -18,7 +18,21 @@ class InvoiceControllerAPI extends Controller
      */
     public function index()
     {
+        if($state != 'paid' && $state != 'pending' && $state != 'not paid') {
+            return response([
+                'data' => 'Not Found Data'
+            ], 404);
+        }
         return InvoiceResource::collection(Invoice::where('state', 'pending')->paginate(10));
+    }
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function paid()
+    {
+        return InvoiceResource::collection(Invoice::where('state', 'paid')->paginate(10));
     }
 
     /**
@@ -61,6 +75,11 @@ class InvoiceControllerAPI extends Controller
     public function downloadPDF(int $invoice_id)
     {
         $invoice = Invoice::findOrFail($invoice_id);
+        if($invoice->state !== 'paid') {
+            return response([
+                'data' => 'Invoice need to be paid for Download'
+            ], 405);
+        }
         $pdf = PDF::loadView('pdf', compact('invoice'));
         return $pdf->download('invoice.pdf');
     }
