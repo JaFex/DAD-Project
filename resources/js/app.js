@@ -29,6 +29,7 @@ const profile = Vue.component('profile', require('./components/profile.vue'));
 const newUser = Vue.component('newUser', require('./components/newUser.vue'));
 const orders = Vue.component('orders', require('./components/cook/ordersList.vue'));
 const meals = Vue.component('meals', require('./components/waiter/mealsList.vue'));
+const summaryMealList = Vue.component('summaryMealList', require('./components/waiter/summaryMealList.vue'));
 const ordersToDeliver = Vue.component('ordersToDeliver', require('./components/waiter/ordersToDeliver.vue'));
 const invoices = Vue.component('invoices', require('./components/cashier/invoicesList.vue'));
 const message = Vue.component('message', require('./components/message.vue'));
@@ -43,6 +44,7 @@ const routes = [
     { path: '/new-user', meta: { title: 'Restaurant' }, component: newUser, name: 'newUser' },
     { path: '/orders', meta: { title: 'Restaurant' }, component: orders, name: 'Cooks' },
     { path: '/meals', meta: { title: 'Restaurant' }, component: meals, name: 'Waters' },
+    { path: '/summary', meta: { title: 'Restaurant' }, component: summaryMealList, name: 'Waters Summary' },
     { path: '/orders-to-deliver', meta: { title: 'Restaurant' }, component: ordersToDeliver, name: 'Waters Deliver' },
     { path: '/invoices', meta: { title: 'Restaurant' }, component: invoices, name: 'Cashier' },
     { path: '/message', meta: { title: 'Restaurant' }, component: message, name: 'Message' },

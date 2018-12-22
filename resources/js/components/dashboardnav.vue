@@ -12,6 +12,9 @@
                     <li class="nav-item">
                         <router-link to="/orders-to-deliver" class="nav-link" tag="a">Meals To Deliver</router-link>
                     </li>
+                    <li class="nav-item">
+                        <router-link to="/summary" class="nav-link" tag="a">Summary Meals</router-link>
+                    </li>
                 </template>
                 
                 <li v-if="isAuthCashier()" class="nav-item">

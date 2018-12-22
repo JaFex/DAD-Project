@@ -3,9 +3,13 @@
 namespace App\Http\Controllers;
 
 use DB;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
 use App\Http\Resources\Meal as MealResource;
 use App\Http\Resources\Order as OrderResource;
+use App\Http\Resources\Summary as SummaryResource;
 use App\Meal;
 use App\Order;
 use App\Item;
@@ -34,6 +38,39 @@ class MealControllerAPI extends Controller
     {
         $meal = Meal::findOrFail($meal_id);
         return OrderResource::collection($meal->orders()->whereIn('state', ['pending', 'confirmed'])->paginate(10));
+    }
+
+    /**
+     * Display a listing of the resource.
+     *  @param  int  $meal
+     * @return \Illuminate\Http\Response
+     */
+    public function summaryItems(int $meal_id)
+    {
+        $meal = Meal::findOrFail($meal_id);
+        $summarys = null;
+        $i = 0;
+        foreach ($meal->orders()->orderBy('item_id', 'asc')->orderBy('id', 'asc')->get() as $order) {
+            $item = Item::findOrFail($order->item_id);
+            $array = null;
+            $array['order_id'] = $order->id;
+            $array['item_id'] = $item->id;
+            $array['item_name'] = $item->name;
+            $array['item_type'] = $item->type;
+            $array['item_price'] = $item->price;
+            $summarys[$i] = new SummaryResource($array);
+            $i++;
+        }
+        //$collection = collect($summarys)->forPage(isset($_GET['page'])?$_GET['page']:1, 10);
+        $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+        return SummaryResource::collection(MealControllerAPI::paginate($summarys, 3, null, ['path' => $actual_link]));
+    }
+
+    public function paginate($items, $perPage = 15, $page = null, $options = [])
+    {
+        $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
+        $items = $items instanceof Collection ? $items : Collection::make($items);
+        return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
     }
 
     /**
