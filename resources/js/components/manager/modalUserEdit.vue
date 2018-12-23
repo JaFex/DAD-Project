@@ -63,7 +63,7 @@ export default {
                         duration: 5000,
                         className: ['success']
                     });
-                    //Falta comunicar a todos os managers a alteração
+                    this.$socket.emit('msg_update_users_from_client');
                 }).catch(error => {
                     console.log(error);
                     this.message = '';

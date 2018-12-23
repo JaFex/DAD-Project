@@ -73,7 +73,7 @@ export default {
                         duration: 5000,
                         className: ['success']
                     });
-                    //Falta comunicar a todos a alteração
+                    this.$socket.emit('msg_update_items_from_client');
                 }).catch(error => {
                     console.log(error);
                     this.message = '';
