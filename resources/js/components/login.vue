@@ -61,7 +61,7 @@ export default {
                     })
                     .catch(error => {
                         this.$store.commit('clearUserAndToken');
-                        this.message = "Invalid credentials";
+                        this.message = error.response.data.msg;
                         this.showMessage = true;
                         console.log(error);
                     })

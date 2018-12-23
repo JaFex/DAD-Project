@@ -6,6 +6,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class RestaurantTable extends JsonResource
 {
+
     /**
      * Transform the resource into an array.
      *
@@ -16,6 +17,7 @@ class RestaurantTable extends JsonResource
     {
         return [
             'table_number' => $this->table_number,
+            'deleted' => $this->deleted_at === null ? false : true,
         ];
     }
 }

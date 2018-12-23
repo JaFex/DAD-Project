@@ -17,21 +17,36 @@ Route::middleware('auth:api')->post('logout','LoginControllerAPI@logout');
 //--------------------------------------------------------------------------------------------//
 //------------------------------------USERS---------------------------------------------------//
 //--------------------------------------------------------------------------------------------//
+Route::middleware('auth:api')->get('users', 'UserControllerAPI@index');
 Route::middleware('auth:api')->get('users/me', 'UserControllerAPI@myProfile');
 Route::middleware('auth:api')->post('users', 'UserControllerAPI@store');
-Route::middleware('auth:api')->put('users/{users}/start', 'UserControllerAPI@startShift');
-Route::middleware('auth:api')->put('users/{users}/end', 'UserControllerAPI@endShift');
-Route::middleware('auth:api')->put('users/{users}', 'UserControllerAPI@update');
+Route::middleware('auth:api')->put('users/{user}/start', 'UserControllerAPI@startShift');
+Route::middleware('auth:api')->put('users/{user}/end', 'UserControllerAPI@endShift');
+Route::middleware('auth:api')->put('users/{user}', 'UserControllerAPI@update');
+Route::middleware('auth:api')->delete('users/{user}', 'UserControllerAPI@destroy');
+Route::middleware('auth:api')->put('users/{user}/restore', 'UserControllerAPI@restore');
+Route::middleware('auth:api')->put('users/{user}/block', 'UserControllerAPI@block');
+Route::middleware('auth:api')->put('users/{user}/unblock', 'UserControllerAPI@unblock');
+Route::middleware('auth:api')->put('users/{user}/edit', 'UserControllerAPI@edit');
 //--------------------------------------------------------------------------------------------//
 //------------------------------------ITEMS---------------------------------------------------//
 //--------------------------------------------------------------------------------------------//
+Route::get('items/all', 'ItemControllerAPI@index');
 Route::get('items/type/{type}', 'ItemControllerAPI@getByType');
 Route::get('items/{item_id}', 'ItemControllerAPI@get');
 Route::get('items', 'ItemControllerAPI@all');
+Route::middleware('auth:api')->post('items', 'ItemControllerAPI@store');
+Route::middleware('auth:api')->put('items/{item}', 'ItemControllerAPI@update');
+Route::middleware('auth:api')->delete('items/{item}', 'ItemControllerAPI@destroy');
+Route::middleware('auth:api')->put('items/{item}/restore', 'ItemControllerAPI@restore');
 //--------------------------------------------------------------------------------------------//
 //------------------------------------TABLES--------------------------------------------------//
 //--------------------------------------------------------------------------------------------//
 Route::middleware('auth:api')->get('restaurantTables', 'RestaurantTableControllerAPI@index');
+Route::middleware('auth:api')->get('restaurantTables/all', 'RestaurantTableControllerAPI@paginate');
+Route::middleware('auth:api')->post('restaurantTables', 'RestaurantTableControllerAPI@store');
+Route::middleware('auth:api')->delete('restaurantTables/{table}', 'RestaurantTableControllerAPI@destroy');
+Route::middleware('auth:api')->put('restaurantTables/{table}', 'RestaurantTableControllerAPI@restore');
 //--------------------------------------------------------------------------------------------//
 //------------------------------------MEALS---------------------------------------------------//
 //--------------------------------------------------------------------------------------------//

@@ -21,7 +21,8 @@ class Item extends JsonResource
             'longDescription' => $this->description,
             'price' => $this->price,
             'type' => $this->type,
-            'photoUrl' => 'storage/items/' . $this->photo_url
+            'photoUrl' => 'storage/items/' . $this->photo_url,
+            'deleted' => $this->deleted_at !== null ? true : false
         ];
     }
 }

@@ -3,16 +3,24 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\User;
 
-define('YOUR_SERVER_URL', 'http://restaurant.test');
+define('YOUR_SERVER_URL', 'http://project.test');
 // Check "oauth_clients" table for next 2 values: 
 define('CLIENT_ID', '2'); 
-define('CLIENT_SECRET','HW4WNtNTaQdmpIuvJ3OgzVaAdcJYFktEL9jGujq9');
+define('CLIENT_SECRET','63qfOkezhyUvd9yEiPjIoOGRlVuBy59sJ7yGcwSK');
 
 class LoginControllerAPI extends Controller
 {
     public function login(Request $request)
     {
+        $active = User::where('email', $request->email)->where('deleted_at', null)->exists();
+        $blocked = User::where('email', $request->email)->where('blocked', 1)->exists();
+
+        if($blocked || !$active){
+            return response()->json(['msg'=>'Access unauthorized'], 401);
+        }
+
         $http = new \GuzzleHttp\Client;
         $response = $http->post(YOUR_SERVER_URL.'/oauth/token', [
                 'form_params' => [
@@ -20,8 +28,8 @@ class LoginControllerAPI extends Controller
                 'client_id' => CLIENT_ID, 
                 'client_secret' => CLIENT_SECRET, 
                 'username' => $request->email, 
-                'password' => $request->password, '
-                scope' => ''
+                'password' => $request->password, 
+                'scope' => ''
             ],
             'exceptions' => false,
         ]);
@@ -29,7 +37,7 @@ class LoginControllerAPI extends Controller
         if ($errorCode=='200') {
             return json_decode((string) $response->getBody(), true); 
         } else {
-            return response()->json(['msg'=>'User credentials are invalid'], $errorCode);
+            return response()->json(['msg'=>'Invalid credentials'], $errorCode);
         }
     }
 

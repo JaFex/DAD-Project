@@ -17,6 +17,10 @@ use Redirect;
 
 class UserControllerAPI extends Controller
 {
+    public function index()
+    {
+        return UserResource::collection(User::withTrashed()->paginate(10));    
+    }
     
     public function myProfile(Request $request)
     {
@@ -26,7 +30,7 @@ class UserControllerAPI extends Controller
     public function store(Request $request){
 
         $request->validate([
-            'username' => 'required|min:3|string',
+            'username' => 'required|min:3|string|unique:users,username',
             'email' => 'required|email|unique:users,email',
             'name' => 'required|string|min:3',
             'type' => 'required', Rule::in(['waiter', 'manager', 'cook', 'cashier']),
@@ -85,24 +89,27 @@ class UserControllerAPI extends Controller
 
         if($request->has('name') && $request['name'] != $user->name){
             $request->validate([
-                'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
+                'name' => 'required|min:3|string',
             ]);
         }
 
-        if($request->has('name') && $request['username'] != $user->username){
+        if($request->has('username') && $request['username'] != $user->username){
             $request->validate([
-                'username' => 'required|regex:/^[A-Za-z0-9]+$/|unique:users',
+                'username' => 'required|string|unique:users,username',
             ]);
         }
 
         if($request->has('password')){
             $request->validate([
-                'password' => 'min:3|string'
+                'password' => 'required|min:3|string'
             ]);
             $request['password'] = bcrypt($request['password']);
         }
 
         if($request->file('file')){
+            $request->validate([
+                'file' => 'required|image'
+            ]);
 
             if($user->photo_url != null){
                 Storage::delete('public/profiles/'.$user->photo_url);
@@ -113,6 +120,43 @@ class UserControllerAPI extends Controller
 
         $user->update($request->all());
         return new UserResource($user);
+    }
+
+    public function edit(Request $request, $id){
+
+        $user = User::findOrFail($id);
+
+        $request->validate([
+            'name' => 'required|required|min:3|string',
+        ]);
+
+        if($request['username'] !== $user->username){
+            $request->validate([
+                'username' => 'required|string|unique:users,username',
+            ]);
+        }
+
+        if($request['email'] !== $user->email){
+            $request->validate([
+                'email' => 'required|email|unique:users,email',
+            ]);
+        }
+
+        if($request->file('file')){
+            $request->validate([
+                'file' => 'required|image'
+            ]);
+
+            if($user->photo_url != null){
+                Storage::delete('public/profiles/'.$user->photo_url);
+            }
+
+            $request['photo_url'] = basename($request->file('file')->store('public/profiles'));
+        }
+
+        $user->update($request->all());
+        return new UserResource($user);
+
     }
 
     public function startShift(Request $request){
@@ -129,5 +173,27 @@ class UserControllerAPI extends Controller
         $user->last_shift_end = Carbon::now();
         $user->save();
         return new UserResource(User::findOrFail($user->id));
+    }
+
+    public function destroy($id){
+        $user = User::findOrFail($id);
+        $user->delete();
+    }
+
+    public function restore($id){
+        $user = User::withTrashed()->findOrFail($id);
+        $user->restore();
+    }
+
+    public function block($id){
+        $user = User::findOrFail($id);
+        $user->blocked = 1;
+        $user->save();
+    }
+
+    public function unblock($id){
+        $user = User::findOrFail($id);
+        $user->blocked = 0;
+        $user->save();
     }
 }

@@ -6,6 +6,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class User extends JsonResource
 {
+    
     /**
      * Transform the resource into an array.
      *
@@ -24,6 +25,8 @@ class User extends JsonResource
             'shift_active' => $this->shift_active,
             'last_shift_start' => $this->last_shift_start,
             'last_shift_end' => $this->last_shift_end,
+            'blocked' => $this->blocked,
+            'deleted' => $this->deleted_at !== null ? true : false,
         ];
     }
 }

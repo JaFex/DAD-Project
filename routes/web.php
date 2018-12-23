@@ -13,7 +13,7 @@
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('home');
 
 Route::get('/user/verify/{token}', function ($request) {
     return view('verifyAccount')->with('token', $request);

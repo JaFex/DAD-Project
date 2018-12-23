@@ -5,10 +5,18 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Resources\Item as ItemResource;
 use App\Item;
+use Illuminate\Validation\Rule;
+
 
 
 class ItemControllerAPI extends Controller
 {
+
+    public function index()
+    {
+        return ItemResource::collection(Item::withTrashed()->paginate(10));
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -42,16 +50,6 @@ class ItemControllerAPI extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -59,20 +57,21 @@ class ItemControllerAPI extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        $request->validate([
+            'description' => 'required|string',
+            'name' => 'required|string',
+            'price' => 'required|numeric',
+            'type' => 'required', Rule::in(['drink', 'dish']),
+            'file' => 'required|image'
+        ]);
 
-    
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Item  $item
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Item $item)
-    {
-        //
+        $item = new Item();
+        $item->description = $request['description'];
+        $item->name = $request['name'];
+        $item->price = $request['price'];
+        $item->type = $request['type'];
+        $item->photo_url = basename($request->file('file')->store('public/items'));
+        $item->save();   
     }
 
     /**
@@ -82,9 +81,34 @@ class ItemControllerAPI extends Controller
      * @param  \App\Item  $item
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Item $item)
+    public function update(Request $request, $id)
     {
-        //
+        $item = Item::findOrFail($id);
+
+        $request->validate([
+            'description' => 'required|string',
+            'name' => 'required|string',
+            'price' => 'required|numeric',
+            'type' => 'required', Rule::in(['drink', 'dish']),
+        ]);
+
+        if($request->file('file')){
+            $request->validate([
+                'file' => 'image'
+            ]);
+            if($item->photo_url != null){
+                Storage::delete('public/items/'.$item->photo_url);
+            }
+            $item->photo_url = basename($request->file('file')->store('public/items'));
+        }
+
+        
+        $item->description = $request['description'];
+        $item->name = $request['name'];
+        $item->price = $request['price'];
+        $item->type = $request['type'];
+        $item->save();
+        return new ItemResource($item);
     }
 
     /**
@@ -93,8 +117,15 @@ class ItemControllerAPI extends Controller
      * @param  \App\Item  $item
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Item $item)
+    public function destroy($id)
     {
-        //
+        $item = Item::findOrFail($id);
+        $item->delete();
+    }
+
+    public function restore($id)
+    {
+        $item = Item::withTrashed()->findOrFail($id);
+        $item->restore();
     }
 }

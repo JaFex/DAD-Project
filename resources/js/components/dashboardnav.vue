@@ -29,10 +29,19 @@
                 <li v-if="isAuthCook()" class="nav-item">
                     <router-link to="/orders" class="nav-link" tag="a">Orders</router-link>
                 </li>
-                <b-nav-item-dropdown v-if="isAuthManager()">
-                    <template slot="button-content">Users</template>
-                    <router-link to="/new-user" tag="a" role="manuitem" class="dropdown-item">New User</router-link>
-                </b-nav-item-dropdown>
+                <template v-if="isAuthManager()">
+                    <li class="nav-item">
+                        <router-link to="/tables" class="nav-link" tag="a">Tables</router-link>
+                    </li>
+                    <li class="nav-item">
+                        <router-link to="/items" class="nav-link" tag="a">Items</router-link>
+                    </li>
+                    <b-nav-item-dropdown >
+                        <template slot="button-content">Users</template>
+                        <router-link to="/users/create" tag="a" role="menuitem" class="dropdown-item">New User</router-link>
+                        <router-link to="/users" tag="a" role="menuitem" class="dropdown-item">List</router-link>
+                    </b-nav-item-dropdown>
+                </template>
                 <li class="nav-item">
                     <router-link to="/message" class="nav-link" tag="a">Send Message</router-link>
                 </li>
