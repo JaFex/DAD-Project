@@ -90449,6 +90449,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var sourceUser = received[0];
             var order = received[1];
             this.updateOrder(order);
+        },
+        msg_update_tables_from_server: function msg_update_tables_from_server() {
+            this.loadTables('restaurantTables');
+        },
+        msg_update_items_from_server: function msg_update_items_from_server() {
+            this.loadTables('restaurantTables');
         }
     }
 });
@@ -96579,7 +96585,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             axios.delete('/api/items/' + id).then(function (response) {
                 _this2.loadItems('items/all');
-                //this.$socket.emit('msg_update_items_from_client');
+                _this2.$socket.emit('msg_update_items_from_client');
                 _this2.$toasted.show('Item deleted successfully.', {
                     theme: "bubble",
                     position: "bottom-center",
@@ -96595,7 +96601,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             axios.put('api/items/' + id + '/restore').then(function (response) {
                 _this3.loadItems('items/all');
-                //this.$socket.emit('msg_update_items_from_client');
+                _this3.$socket.emit('msg_update_items_from_client');
                 _this3.$toasted.show('Item restored successfully.', {
                     theme: "bubble",
                     position: "bottom-center",
@@ -96616,6 +96622,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     created: function created() {
         this.loadItems('items/all');
+    },
+
+    sockets: {
+        msg_update_items_from_server: function msg_update_items_from_server() {
+            this.loadItems('items/all');
+        }
     }
 });
 
@@ -96790,7 +96802,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     duration: 5000,
                     className: ['success']
                 });
-                //Falta comunicar a todos a alteração
+                _this.$socket.emit('msg_update_items_from_client');
             }).catch(function (error) {
                 console.log(error);
                 _this.message = '';
@@ -97262,7 +97274,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     duration: 5000,
                     className: ['success']
                 });
-                //Falta comunicar a todos a alteração
+                _this.$socket.emit('msg_update_items_from_client');
             }).catch(function (error) {
                 console.log(error);
                 _this.message = '';
@@ -97954,6 +97966,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     created: function created() {
         this.loadUsers('users');
+    },
+
+    sockets: {
+        msg_update_users_from_server: function msg_update_users_from_server() {
+            this.loadUsers('users');
+        }
     }
 });
 
@@ -98121,7 +98139,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     duration: 5000,
                     className: ['success']
                 });
-                //Falta comunicar a todos os managers a alteração
+                _this.$socket.emit('msg_update_users_from_client');
             }).catch(function (error) {
                 console.log(error);
                 _this.message = '';

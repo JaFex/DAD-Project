@@ -127,6 +127,6 @@ export default {
     created() {
         this.meals = this.myMeals;
         this.selectedMeal = this.meal;
-    }
+    },
 }
 </script>

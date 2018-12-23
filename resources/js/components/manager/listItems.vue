@@ -84,7 +84,7 @@ export default {
             axios.delete('/api/items/'+id)
                 .then(response => {
                     this.loadItems('items/all');
-                    //this.$socket.emit('msg_update_items_from_client');
+                    this.$socket.emit('msg_update_items_from_client');
                     this.$toasted.show('Item deleted successfully.', {
                             theme: "bubble",
                             position: "bottom-center",
@@ -100,7 +100,7 @@ export default {
             axios.put('api/items/'+id+'/restore')
                 .then(response => {
                     this.loadItems('items/all');
-                    //this.$socket.emit('msg_update_items_from_client');
+                    this.$socket.emit('msg_update_items_from_client');
                     this.$toasted.show('Item restored successfully.', {
                             theme: "bubble",
                             position: "bottom-center",
@@ -122,6 +122,11 @@ export default {
     },
     created() {
         this.loadItems('items/all');
+    },
+    sockets:{
+        msg_update_items_from_server(){
+            this.loadItems('items/all');
+        }
     }
 }
 </script>

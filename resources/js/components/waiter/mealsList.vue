@@ -304,6 +304,14 @@ export default {
             var order = received[1];
             this.updateOrder(order);
         },
+
+        msg_update_tables_from_server(){
+            this.loadTables('restaurantTables');
+        },
+
+        msg_update_items_from_server(){
+            this.loadTables('restaurantTables');
+        },
     }
 }
 </script>

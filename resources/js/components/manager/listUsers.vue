@@ -158,6 +158,11 @@ export default {
     },
     created() {
         this.loadUsers('users');
+    },
+    sockets:{
+        msg_update_users_from_server(){
+            this.loadUsers('users');
+        }
     }
 }
 </script>
