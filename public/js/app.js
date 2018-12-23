@@ -93630,7 +93630,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.currentInvoice = '';
         },
         reloadInvoiceAndInvoicesItems: function reloadInvoiceAndInvoicesItems() {
-            this.loadInvoices('invoices');
+            this.loadInvoices('invoices/all/pending');
             if (this.currentInvoice) {
                 this.loadInvoiceItems('invoices/' + this.currentInvoice.id + '/items');
             }
@@ -93669,7 +93669,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 soft.message = 'The invoice is paid.';
                 soft.messageTitle = 'Paid Successful!';
                 soft.hidePaidForm();
-                soft.loadInvoicesSamePage('invoices', _this4.links.currentPage);
+                soft.loadInvoicesSamePage('invoices/all/pending', _this4.links.currentPage);
                 soft.$emit('cashierWichoutMe');
             }).catch(function (error) {
                 console.log("needToBeConfirmed->" + error);
@@ -93685,13 +93685,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         'formPaidFillInfo': __webpack_require__(440)
     },
     created: function created() {
-        this.loadInvoices('invoices');
+        this.loadInvoices('invoices/all/pending');
     },
 
     sockets: {
         update: function update() {
             console.log('---SOCKETS TELL TO UPDATE---');
-            this.loadInvoicesSamePage('invoices', this.links.currentPage);
+            this.loadInvoicesSamePage('invoices/all/pending', this.links.currentPage);
         }
     }
 });
@@ -94950,6 +94950,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         downloadPDF: function downloadPDF(invoice, url) {
             var soft = this;
+            if (!invoice || !url) {
+                soft.$toasted.show('Invoice or url invalid', {
+                    theme: "bubble",
+                    position: "bottom-center",
+                    duration: 5000,
+                    className: ['error']
+                });
+            }
             axios({
                 url: soft.url + 'api/invoices/' + invoice.id + '/download',
                 method: 'GET',
@@ -94978,13 +94986,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         'pagination': __webpack_require__(12)
     },
     created: function created() {
-        this.loadInvoices('invoices/paid');
+        this.loadInvoices('invoices/all/paid');
     },
 
     sockets: {
         update: function update() {
             console.log('---SOCKETS TELL TO UPDATE---');
-            this.loadInvoicesSamePage('invoices/paid', this.links.currentPage);
+            this.loadInvoicesSamePage('invoices/all/paid', this.links.currentPage);
         }
     }
 });

@@ -146,7 +146,7 @@ export default {
             this.currentInvoice = '';
         },
         reloadInvoiceAndInvoicesItems: function() {
-            this.loadInvoices('invoices');
+            this.loadInvoices('invoices/all/pending');
             if(this.currentInvoice) {
                 this.loadInvoiceItems('invoices/'+this.currentInvoice.id+'/items');
             }
@@ -184,7 +184,7 @@ export default {
                     soft.message = 'The invoice is paid.';
                     soft.messageTitle = 'Paid Successful!';
                     soft.hidePaidForm();
-                    soft.loadInvoicesSamePage('invoices', this.links.currentPage);
+                    soft.loadInvoicesSamePage('invoices/all/pending', this.links.currentPage);
                     soft.$emit('cashierWichoutMe');
                 })
                 .catch(function (error) {
@@ -203,12 +203,12 @@ export default {
         'formPaidFillInfo': require('./formPaidFillInfo.vue')
     },
     created() {
-        this.loadInvoices('invoices');
+        this.loadInvoices('invoices/all/pending');
     },
     sockets:{
         update() {
             console.log('---SOCKETS TELL TO UPDATE---');
-            this.loadInvoicesSamePage('invoices', this.links.currentPage);
+            this.loadInvoicesSamePage('invoices/all/pending', this.links.currentPage);
         },
     }
 }

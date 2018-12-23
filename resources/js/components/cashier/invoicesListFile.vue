@@ -97,6 +97,14 @@ export default {
         },
         downloadPDF: function(invoice, url) {
             let soft = this;
+            if(!invoice || !url) {
+                soft.$toasted.show('Invoice or url invalid', {
+                            theme: "bubble",
+                            position: "bottom-center",
+                            duration: 5000,
+                            className: ['error']
+                        });
+            }
             axios({
                 url: soft.url+'api/invoices/'+invoice.id+'/download',
                 method: 'GET',
@@ -127,12 +135,12 @@ export default {
         'pagination': require('../pagination.vue'),
     },
     created() {
-        this.loadInvoices('invoices/paid');
+        this.loadInvoices('invoices/all/paid');
     },
     sockets:{
         update() {
             console.log('---SOCKETS TELL TO UPDATE---');
-            this.loadInvoicesSamePage('invoices/paid', this.links.currentPage);
+            this.loadInvoicesSamePage('invoices/all/paid', this.links.currentPage);
         },
     }
 }

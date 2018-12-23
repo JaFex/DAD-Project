@@ -16,23 +16,14 @@ class InvoiceControllerAPI extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(String $state)
     {
         if($state != 'paid' && $state != 'pending' && $state != 'not paid') {
             return response([
                 'data' => 'Not Found Data'
             ], 404);
         }
-        return InvoiceResource::collection(Invoice::where('state', 'pending')->orderBy('date', 'asc')->paginate(10));
-    }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function paid()
-    {
-        return InvoiceResource::collection(Invoice::where('state', 'paid')->orderBy('date', 'desc')->paginate(10));
+        return InvoiceResource::collection(Invoice::where('state', $state)->orderBy('date', 'asc')->paginate(10));
     }
 
     /**
