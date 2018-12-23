@@ -18,7 +18,9 @@ class InvoiceControllerAPI extends Controller
      */
     public function index(String $state)
     {
-        if($state != 'paid' && $state != 'pending' && $state != 'not paid') {
+
+        
+        if($state !== 'paid' && $state !== 'pending' && $state !== 'not paid') {
             return response([
                 'data' => 'Not Found Data'
             ], 404);

@@ -20,7 +20,7 @@ Vue.use(Toasted);
 Vue.use(Vuelidate);
 Vue.use(new VueSocketio({
     debug: true,
-    connection: 'http://192.168.10.10:8080'
+    connection: 'http://192.168.10.1:8080'
 }));
 
 const home = Vue.component('home', require('./components/index.vue'));

@@ -48534,7 +48534,7 @@ Vue.use(__WEBPACK_IMPORTED_MODULE_4_vue_toasted___default.a);
 Vue.use(__WEBPACK_IMPORTED_MODULE_5_vuelidate___default.a);
 Vue.use(new __WEBPACK_IMPORTED_MODULE_6_vue_socket_io___default.a({
     debug: true,
-    connection: 'http://192.168.10.10:8080'
+    connection: 'http://192.168.10.1:8080'
 }));
 
 var home = Vue.component('home', __webpack_require__(360));

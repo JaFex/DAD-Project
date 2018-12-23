@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Meal;
+use App\User;
 
 class Invoice extends JsonResource
 {
@@ -17,6 +18,9 @@ class Invoice extends JsonResource
     {
         $meal = Meal::findOrFail($this->meal_id);
         $waiter = $meal->responsible_waiter;
+        if(!$waiter) {
+            $waiter = User::withTrashed()->findOrFail($meal->responsible_waiter_id);
+        }
         return [
             'id' => $this->id,
             'state' => $this->state,
