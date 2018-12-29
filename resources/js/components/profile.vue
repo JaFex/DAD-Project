@@ -110,6 +110,7 @@ import { required, minLength, alphaNum, alpha } from 'vuelidate/lib/validators'
 export default {
     data() {
         return {
+            //variaveis que existem neste componente
             message: '',
             showMessage: false,
             user: {},
@@ -144,6 +145,8 @@ export default {
                         this.photo_url = '';
                         Object.assign(this.user, response.data.data);
                         this.$store.commit('setUser',response.data.data);
+                        this.passwordError = false;
+                        this.showMessage = false;
                     }).catch(error => {
                         console.log(error);
                         this.message = '';
