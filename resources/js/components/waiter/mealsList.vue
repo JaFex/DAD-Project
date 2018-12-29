@@ -168,7 +168,7 @@ export default {
                 })
                 .then(function (response) {
                     self.loadMeals('meals');
-                    self.message = 'Meal as created successful to the table '+table_number;
+                    self.message = 'Meal was created successfully to the table '+table_number;
                     self.messageTitle = 'Success!';
                     self.showSuccess = true;
                 })
@@ -210,7 +210,7 @@ export default {
                         .then(response => {
                             order = response.data.data;
                             soft.messageTitle = "Order Confirmed!";
-                            soft.message = "Order ("+order.id+") as been confirmed on the meal "+order.meal_id+"!";
+                            soft.message = "Order ("+order.id+") has been confirmed on the meal "+order.meal_id+"!";
                             soft.showSuccess = true;
                             soft.selectedItemType = '';
                             soft.selectedItem = null;
@@ -220,7 +220,7 @@ export default {
                         .catch(function (error) {
                             console.log("timeRunOutOrderConfirmed->"+error);
                             if (error.response.status === 404) {
-                                console.log("timeRunOutOrderConfirmed->"+'Is 404 maybe order has deleted so he didn t find order');
+                                console.log("timeRunOutOrderConfirmed->"+'Is 404 maybe order has been deleted so he didn t find the order');
                             } else {
                                 soft.messageTitleErro = "Fail to confirm order!";
                                 soft.messageErro = "Ops! Order"+order.id+" not confirmed";
@@ -240,10 +240,10 @@ export default {
                     if(booleanCanBeTerminated == true) {
                         soft.sendUpdateToTerminateMeal(meal);
                     } else if(booleanCanBeTerminated == false) {
-                        if (confirm('The meal ('+meal.id+') have not all orders been delivered yet, and will they be excluded from payment! Is it okay?')) {
+                        if (confirm('This meal\'s ('+meal.id+') orders have not been delivered yet, and they will be excluded from the payment! Is this okay?')) {
                             soft.sendUpdateToTerminateMeal(meal);
                         } else {
-                            soft.$toasted.show('The meal ('+meal.id+') was not been terminated', {
+                            soft.$toasted.show('The meal ('+meal.id+') has not been terminated', {
                                 theme: "bubble",
                                 position: "bottom-center",
                                 duration: 5000,
@@ -263,7 +263,7 @@ export default {
             axios.put('/api/meals/'+meal.id+'/terminated', update)
                     .then(response => {
                         meal = response.data.data;
-                        soft.$toasted.show('The meal ('+meal.id+') was been terminated', {
+                        soft.$toasted.show('The meal ('+meal.id+') has been terminated', {
                                 theme: "bubble",
                                 position: "bottom-center",
                                 duration: 5000,
@@ -276,7 +276,7 @@ export default {
                     })
                     .catch(function (error) {
                         console.log("sendUpdateToTerminateMeal->"+error);
-                        soft.$toasted.show('ERRO: The meal ('+meal.id+') was not been terminated', {
+                        soft.$toasted.show('ERRO: The meal ('+meal.id+') has not been terminated', {
                                 theme: "bubble",
                                 position: "bottom-center",
                                 duration: 5000,
