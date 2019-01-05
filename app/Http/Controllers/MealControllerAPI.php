@@ -29,6 +29,19 @@ class MealControllerAPI extends Controller
         return MealResource::collection(Meal::whereNull('end')->where('responsible_waiter_id', \Auth::guard('api')->user()->id)->paginate(10));
     }
 
+    public function indexByState(String $state)
+    {
+
+        
+        if($state !== 'active' && $state !== 'terminated' && $state !== 'paid' && $state !== 'not paid') {
+            return response([
+                'data' => 'Not Found Data'
+            ], 404);
+        }
+        //return InvoiceResource::collection(Invoice::where('state', $state)->orderBy('date', 'asc')->paginate(10));
+        return MealResource::collection(Meal::where('state', $state)->orderBy('id', 'desc')->paginate(10));
+    }
+
     /**
      * Display a listing of the resource.
      *  @param  int  $meal

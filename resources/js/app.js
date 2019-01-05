@@ -20,9 +20,10 @@ Vue.use(Toasted);
 Vue.use(Vuelidate);
 Vue.use(new VueSocketio({
     debug: true,
-    connection: 'http://192.168.10.1:8080'
+    connection: 'http://192.168.10.10:8080'
 }));
 
+//Components
 const home = Vue.component('home', require('./components/index.vue'));
 const dashboard = Vue.component('dashboard', require('./components/dashboard.vue'));
 const login = Vue.component('login', require('./components/login.vue'));
@@ -39,6 +40,7 @@ const tables = Vue.component('tables', require('./components/manager/listTables.
 const items = Vue.component('items', require('./components/manager/listItems.vue'));
 const users = Vue.component('users', require('./components/manager/listUsers.vue'));
 const notfound = Vue.component('notfound', require('./components/erro/404.vue'));
+const dashboardManagers = Vue.component('dashboardManagers', require('./components/dashboardManagers.vue'));
 
 const routes = [
     { path: '/', redirect: '/home', name: 'root' },
@@ -57,6 +59,7 @@ const routes = [
     { path: '/tables', component: tables, name: 'Tables' },
     { path: '/items', component: items, name: 'Items' },
     { path: '/users', component: users, name: 'Users' },
+    { path: '/dashboardManagers', component: dashboardManagers, name: 'Dashboard Managers'},
 
     { path: '/404', meta: { title: 'Not Found 404' }, component: notfound, name: 'NotFound' },
     { path: '*', redirect: '/404' }

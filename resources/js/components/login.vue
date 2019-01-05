@@ -33,7 +33,8 @@ export default {
         return { 
                 user: {
                     email:"",
-                    password:""
+                    password:"",
+                    type:""
                 },
                 showMessage: false,
                 message: "",
@@ -47,6 +48,7 @@ export default {
                         return axios.get('api/users/me');
                     })
                     .then(response => {
+                        this.user.type = response.data.data.type;
                         this.$store.commit('setUser',response.data.data);
                         this.$toasted.show('Logged successfully.', {
                             theme: "bubble",
@@ -57,7 +59,12 @@ export default {
                         if(this.$store.state.user.shift_active){
                             this.$socket.emit('user_enter', this.$store.state.user);
                         }
-                        this.$router.push("/dashboard");
+                        if(this.user.type === "manager"){
+                            this.$router.push("/dashboardManagers");
+                        }else{
+                            this.$router.push("/dashboard");
+                        }
+                        
                     })
                     .catch(error => {
                         this.$store.commit('clearUserAndToken');
