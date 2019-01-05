@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Resources\Invoice as InvoiceResource;
 use App\Http\Resources\InvoiceItem as InvoiceItemResource;
 use App\Invoice;
+use App\Item;
 use PDF;
 
 class InvoiceControllerAPI extends Controller
@@ -76,7 +77,11 @@ class InvoiceControllerAPI extends Controller
                 'data' => 'Invoice need to be paid for Download'
             ], 405);
         }
-        $pdf = PDF::loadView('pdf', compact('invoice'));
+        $items = [];
+        foreach($invoice->invoice_items as $invoice_item) {
+            array_push($items,Item::withTrashed()->findOrFail($invoice_item->item_id));
+        }
+        $pdf = PDF::loadView('pdf', compact('invoice', 'items'));
         return $pdf->download('invoice.pdf');
     }
 }
