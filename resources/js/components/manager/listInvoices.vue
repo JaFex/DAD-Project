@@ -29,12 +29,8 @@
                             </div>
                             <div class="col-sm-10">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="gridCheck1" v-model="selectedActive">
-                                    <label class="form-check-label" for="gridCheck1">Active</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="gridCheck2" v-model="selectedTerminated">
-                                    <label class="form-check-label" for="gridCheck1">Terminated</label>
+                                    <input class="form-check-input" type="checkbox" id="gridCheck1" v-model="selectedPending">
+                                    <label class="form-check-label" for="gridCheck1">Pending</label>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="gridCheck3" v-model="selectedPaid">
@@ -62,38 +58,39 @@
                         <thead>
                             <tr class="table-active">
                                 <th>ID</th>
+                                <th>Meal ID</th>
+                                <th>Waiter (ID)-Name</th>
+                                <th>Table Number</th>
                                 <th>State</th>
-                                <th>Table number</th>
-                                <th>Waiter</th>
-                                <th>Start</th>
-                                <th>End</th>
-                                <th>Total price preview</th>
+                                <th>Date</th>
+                                <th>Total price</th>
                                 <th>Accion</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <template  v-for="meal in meals">
-                                <tr :key="meal.id">
-                                    <td>{{meal.id}}</td>
-                                    <td>{{meal.state}}</td>
-                                    <td>{{meal.table_number}}</td>
-                                    <td>{{'('+meal.responsible_waiter_id+')-'+ meal.responsible_waiter_name}}</td>
-                                    <td>{{meal.start}}</td>
-                                    <td>{{meal.end}}</td>
-                                    <td>{{meal.total_price_preview}}</td>
+                            <template v-for="invoice in invoices">
+                                <tr :key="invoice.id">
+                                    <td>{{invoice.id}}</td>
+                                    <td>{{invoice.meal_id}}</td>
+                                    <td>{{'('+invoice.waiter_id+')-'+ invoice.waiter_name}}</td>
+                                    <td>{{invoice.table_number}}</td>
+                                    <td>{{invoice.state}}</td>
+                                    <td>{{invoice.date}}</td>
+                                    <td>{{invoice.total_price}}</td>
                                     <td>
-                                        <button v-if="meal.total_price_preview > 0" type="button" class="btn btn-primary" @click.prevent="openOrders(meal);">See all orders</button>
+                                        <button v-if="invoice.total_price > 0" type="button" class="btn btn-primary" @click.prevent="openInvoicesItems(invoice);">See all invoices items</button>
+                                        <button v-if="invoice.state === 'paid'" type="button" class="btn btn-success" @click.prevent="downloadPDF(invoice)">Download PDF</button>
                                     </td>
                                 </tr>
-                                <tr v-if='currentMeal && meal.id == currentMeal.id' :key="'meal_'+meal.id">
-                                    <td colspan="10">
+                                <tr v-if='currentInvoice && invoice.id == currentInvoice.id' :key="'invoice_'+invoice.id">
+                                    <td colspan="8">
                                         <div class="card">
                                             <div class="card-header">
-                                                <h5 class="card-title float-left">Order of meal {{ meal.id }}</h5>
-                                                <button type="button" class="btn btn-danger float-right" @click.prevent="closeListOrders()">Close</button>
+                                                <h5 class="card-title float-left">Invoice ({{ invoice.id }}) items</h5>
+                                                <button type="button" class="btn btn-danger float-right" @click.prevent="closeListInvoicesItems()">Close</button>
                                             </div>
                                             <div class="card-body">
-                                                <ordersListMeal :method="loadOrders" :meal="currentMeal" :orders="orders" :links="linksOrders"></ordersListMeal>
+                                                <invoiceListItems :method="loadInvoiceItems" :invoice="currentInvoice" :invoiceItems="invoiceItems" :links="linksInvoiceItems"></invoiceListItems>
                                             </div>
                                         </div>
                                     </td>
@@ -102,7 +99,7 @@
                         </tbody>
                     </table>
                 </div>
-                <pagination :method="loadMeals" :links="links"></pagination>
+                <pagination :method="loadInvoices" :links="links"></pagination>
             </div>
         </div>
     </div>
@@ -111,30 +108,29 @@
 export default {
     data() {
         return {
-            meals: {},
-            orders: {},
+            invoices: {},
+            invoiceItems: {},
             links: {},
-            linksOrders: {},
+            linksInvoiceItems: {},
+            currentInvoice: '',
             waiters: {},
             selectedWaiter: 0,
-            selectedActive: true,
-            selectedTerminated: true,
+            selectedPending: true,
             selectedPaid: false,
             selectedNotPaid: false,
             selectedDateShow: false,
             selectedDate: '',
             currentMeal: '',
+            url: window.location.protocol + "//" + window.location.host + "/" + window.location.pathname.split('/')[1],
         }
     },
     methods: {
-        loadMeals: function(url){
-            if(this.selectedActive || this.selectedTerminated || this.selectedPaid || this.selectedNotPaid) {
+        loadInvoices: function(url){
+            if(this.selectedPending || this.selectedPaid || this.selectedNotPaid) {
+                console.log("is in");
                 var info = {};
-                if(this.selectedActive) {
-                    info["active"] = this.selectedActive;
-                }
-                if(this.selectedTerminated) {
-                    info["terminated"] = this.selectedTerminated;
+                if(this.selectedPending) {
+                    info["pending"] = this.selectedPending;
                 }
                 if(this.selectedPaid) {
                     info["paid"] = this.selectedPaid;
@@ -152,8 +148,9 @@ export default {
                 axios.get('/api/'+url, {
                             params: info
                         }
-                    ).then(response => {
-                        this.meals = response.data.data;
+                    )
+                    .then(response => {
+                        this.invoices = response.data.data;
                         this.links = {
                             prev: response.data.links.prev,
                             next: response.data.links.next,
@@ -163,15 +160,19 @@ export default {
                         }
                     })
                     .catch(function (error) {
-                        console.log("loadMeals-"+error);
+                        console.log("loadInvoices-"+error);
                     });
             }
         },
-        loadOrders: function(url){
+        openInvoicesItems: function(invoice) {
+            this.currentInvoice = invoice;
+            this.loadInvoiceItems('invoices/'+invoice.id+'/items');
+        },
+        loadInvoiceItems: function(url){
             axios.get('/api/'+url)
                 .then(response => {
-                    this.orders = response.data.data;
-                    this.linksOrders = {
+                    this.invoiceItems = response.data.data;
+                    this.linksInvoiceItems = {
                         prev: response.data.links.prev,
                         next: response.data.links.next,
                         currentPage: response.data.meta.current_page,
@@ -180,8 +181,11 @@ export default {
                     }
                 })
                 .catch(function (error) {
-                    console.log("loadOrders-"+error);
+                    console.log("loadInvoiceItems-"+error);
                 });
+        },
+        closeListInvoicesItems: function(){
+            this.currentInvoice = '';
         },
         loadWaiters: function(url){
             axios.get('/api/'+url)
@@ -192,16 +196,9 @@ export default {
                     console.log("loadWaiters-"+error);
                 });
         },
-        openOrders: function(meal) {
-            this.currentMeal = meal;
-            this.loadOrders('meals/'+meal.id+'/orders/all');
-        },
-        closeListOrders: function(){
-            this.currentMeal = '';
-        },
         search: function(){
             this.currentMeal = '';
-            this.loadMeals('meals/filter');
+            this.loadInvoices('invoices/filter');
         },
         clear: function(){
             this.selectedWaiter = 0;
@@ -214,7 +211,38 @@ export default {
             this.selectedDate = date.getFullYear()+'-'+((date.getMonth()+1)<10?'0':'')+''+(date.getMonth()+1)+'-'+(date.getDate()<10?'0':'')+date.getDate();
 
             this.currentMeal = '';
-            this.loadMeals('meals/filter');
+            this.loadInvoices('invoices/filter');
+        },
+        downloadPDF: function(invoice) {
+            let soft = this;
+            if(!invoice || invoice.state !== 'paid') {
+                soft.$toasted.show('Invoice invalid', {
+                            theme: "bubble",
+                            position: "bottom-center",
+                            duration: 5000,
+                            className: ['error']
+                        });
+            }
+            axios({
+                url: 'api/invoices/'+invoice.id+'/download',
+                method: 'GET',
+                responseType: 'blob', // important
+            }).then((response) => {
+                const urlLocal = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = urlLocal;
+                link.setAttribute('download', 'invoice_'+invoice.id+'.pdf');
+                document.body.appendChild(link);
+                link.click();
+            }).catch(function (error) {
+                    console.log("downloadPDF-"+error.response.data.data);
+                    soft.$toasted.show(error.response.data.data, {
+                            theme: "bubble",
+                            position: "bottom-center",
+                            duration: 5000,
+                            className: ['error']
+                        });
+                });
         }
     },
     computed: {
@@ -223,10 +251,10 @@ export default {
     components:{
         'nav-bar': require('../dashboardnav.vue'),
         'pagination': require('../pagination.vue'),
-        'ordersListMeal': require('./ordersListMeal.vue')
+        'invoiceListItems': require('./invoiceListItems.vue')
     },
     created() {
-        this.loadMeals('meals/filter');
+        this.loadInvoices('invoices/filter');
         this.loadWaiters('users/search/waiter');
         var date = new Date();
         this.selectedDate = date.getFullYear()+'-'+((date.getMonth()+1)<10?'0':'')+''+(date.getMonth()+1)+'-'+(date.getDate()<10?'0':'')+date.getDate();

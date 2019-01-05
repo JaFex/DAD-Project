@@ -55,7 +55,7 @@ class MealControllerAPI extends Controller
         }
 
         if(!isset($_GET['date']) && !isset($_GET['waiter'])) {
-            return MealResource::collection(Meal::whereIn('state', $array)->paginate(10));
+            return MealResource::collection(Meal::whereIn('state', $array)->orderBy('start', 'desc')->paginate(10));
         }
         $sql = Meal::whereIn('state', $array);
         if(isset($_GET['date'])) {

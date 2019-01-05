@@ -37,7 +37,10 @@
                         <router-link to="/items" class="nav-link" tag="a">Items</router-link>
                     </li>
                     <li class="nav-item">
-                        <router-link to="/mealsfilter" class="nav-link" tag="a">Meals</router-link>
+                        <router-link to="/meals/filter" class="nav-link" tag="a">Meals</router-link>
+                    </li>
+                    <li class="nav-item">
+                        <router-link to="/invoices/filter" class="nav-link" tag="a">Invoices</router-link>
                     </li>
                     <b-nav-item-dropdown >
                         <template slot="button-content">Users</template>

@@ -4,22 +4,24 @@
             <table class="table">
                 <thead>
                     <tr class="table-active">
-                        <th>ID</th>
-                        <th>State</th>
-                        <th>Cook</th>
-                        <th>Item</th>
-                        <th>Start</th>
-                        <th>End</th>
+                        <th>Item Name</th>
+                        <th>Quantity</th>
+                        <th>Unit Price</th>
+                        <th>Sub Total Price</th>
+                        <th>Item Type</th>
+                        <th>Accion</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="order in orders" :key="order.id">
-                        <td>{{order.id}}</td>
-                        <td>{{order.state}}</td>
-                        <td>{{order.responsible_cook_id?'('+order.responsible_cook_id+')-'+ order.responsible_cook_name:''}}</td>
-                        <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter" @click="seeInfoIteam(order.item_id)">Show me item</button></td>
-                        <td>{{order.start}}</td>
-                        <td>{{order.end}}</td>
+                    <tr v-for="invoiceItem in invoiceItems" :key="invoiceItem.id+'-'+invoiceItem.item_id">
+                        <td>{{invoiceItem.item_name}}</td>
+                        <td>{{invoiceItem.quantity}}</td>
+                        <td>{{invoiceItem.unit_price}}</td>
+                        <td>{{invoiceItem.sub_total_price}}</td>
+                        <td>{{invoiceItem.item_type}}</td>
+                        <td>
+                            <button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter" @click="seeInfoIteam(invoiceItem.item_id)">Show Details the item</button>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -30,11 +32,10 @@
 </template>
 <script>
 export default {
-    props: ['method', 'meal', 'orders', 'links'],
+    props: ['method', 'invoice', 'invoiceItems', 'links'],
     data() {
         return {
-            currentIteam: '',
-            orderLocal: '',
+            currentIteam: ''
         }
     },
     methods: {

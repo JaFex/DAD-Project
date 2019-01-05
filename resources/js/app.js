@@ -39,6 +39,7 @@ const tables = Vue.component('tables', require('./components/manager/listTables.
 const items = Vue.component('items', require('./components/manager/listItems.vue'));
 const users = Vue.component('users', require('./components/manager/listUsers.vue'));
 const mealsManager = Vue.component('mealsManager', require('./components/manager/listMeals.vue'));
+const invoicesManager = Vue.component('invoicesManager', require('./components/manager/listInvoices.vue'));
 const notfound = Vue.component('notfound', require('./components/erro/404.vue'));
 
 const routes = [
@@ -58,7 +59,8 @@ const routes = [
     { path: '/tables', component: tables, name: 'Tables' },
     { path: '/items', component: items, name: 'Items' },
     { path: '/users', component: users, name: 'Users' },
-    { path: '/mealsfilter', component: mealsManager, name: 'Meals' },
+    { path: '/meals/filter', component: mealsManager, name: 'Meals' },
+    { path: '/invoices/filter', component: invoicesManager, name: 'Invoices' },
 
     { path: '/404', meta: { title: 'Not Found 404' }, component: notfound, name: 'NotFound' },
     { path: '*', redirect: '/404' }
