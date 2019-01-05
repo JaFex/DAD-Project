@@ -25,6 +25,9 @@ class InvoiceControllerAPI extends Controller
                 'data' => 'Not Found Data'
             ], 404);
         }
+        if($state === 'paid') {
+            return InvoiceResource::collection(Invoice::where('state', $state)->orderBy('date', 'desc')->paginate(10)); 
+        }
         return InvoiceResource::collection(Invoice::where('state', $state)->orderBy('date', 'asc')->paginate(10));
     }
 

@@ -117,15 +117,61 @@ export default {
     },
     sockets:{
         privateUpdatePrepared(received){
+            if(this.isAuthWaiter()) {
             var sourceUser = received[0];
             var order = received[1];
-            this.$toasted.show('New order('+order.id+') is prepared on meal "'+order.meal_id+'" from "' + sourceUser.name + '"', {
-                            theme: "bubble",
-                            position: "bottom-center",
-                            duration: 5000,
-                            className: ['success']
-                        });
+            this.$toasted.show('New order('+order.id+') is prepared on meal "'+order.meal_id+'" from "' + sourceUser.name + '!', {
+                    theme: "bubble",
+                    position: "bottom-center",
+                    duration: 5000,
+                    className: ['show'],
+                    action : {
+                        text : 'Show me',
+                        onClick : (e, toastObject) => {
+                            toastObject.goAway(0);
+                            e.preventDefault();
+                            // in here redirect the user via $router
+                            this.$router.push({ path: 'orders-to-deliver', query: { meal_id: order.meal_id } });
+                        }
+                    }
+                });
+            }
         },
+        update() {
+            if(this.isAuthCook()) {
+                this.$toasted.show('Orders was changed!!', {
+                    theme: "bubble",
+                    position: "bottom-center",
+                    duration: 5000,
+                    className: ['show'],
+                    action : {
+                        text : 'Show me',
+                        onClick : (e, toastObject) => {
+                            toastObject.goAway(0);
+                            e.preventDefault();
+                            // in here redirect the user via $router
+                            this.$router.push({ path: 'orders'});
+                        }
+                    }
+                });
+            } else if(this.isAuthCashier()) {
+                this.$toasted.show('Invoices was changed!', {
+                    theme: "bubble",
+                    position: "bottom-center",
+                    duration: 5000,
+                    className: ['show'],
+                    action : {
+                        text : 'Show me',
+                        onClick : (e, toastObject) => {
+                            toastObject.goAway(0);
+                            e.preventDefault();
+                            // in here redirect the user via $router
+                            this.$router.push({ path: 'invoices'});
+                        }
+                    }
+                });
+            }
+        }
     }
 }
 </script>
