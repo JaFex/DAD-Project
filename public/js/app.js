@@ -86669,6 +86669,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['method', 'links', 'path'],
@@ -86696,6 +86698,32 @@ var render = function() {
       "ul",
       { staticClass: "pagination justify-content-center" },
       [
+        _c(
+          "li",
+          {
+            staticClass: "page-item",
+            class: { disabled: _vm.links.prev == null }
+          },
+          [
+            _c(
+              "a",
+              {
+                staticClass: "page-link",
+                attrs: { href: "#" },
+                on: {
+                  click: function($event) {
+                    $event.preventDefault()
+                    _vm.links.currentPage != 1
+                      ? _vm.loadMethod(_vm.links.path + 1)
+                      : "#"
+                  }
+                }
+              },
+              [_vm._v("First")]
+            )
+          ]
+        ),
+        _vm._v(" "),
         _c(
           "li",
           {
@@ -86866,6 +86894,32 @@ var render = function() {
                 }
               },
               [_vm._v("Next")]
+            )
+          ]
+        ),
+        _vm._v(" "),
+        _c(
+          "li",
+          {
+            staticClass: "page-item",
+            class: { disabled: _vm.links.next == null }
+          },
+          [
+            _c(
+              "a",
+              {
+                staticClass: "page-link",
+                attrs: { href: "#" },
+                on: {
+                  click: function($event) {
+                    $event.preventDefault()
+                    _vm.links.currentPage != _vm.links.lastPage
+                      ? _vm.loadMethod(_vm.links.path + _vm.links.lastPage)
+                      : "#"
+                  }
+                }
+              },
+              [_vm._v("Last")]
             )
           ]
         )
