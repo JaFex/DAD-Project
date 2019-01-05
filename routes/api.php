@@ -18,6 +18,7 @@ Route::middleware('auth:api')->post('logout','LoginControllerAPI@logout');
 //------------------------------------USERS---------------------------------------------------//
 //--------------------------------------------------------------------------------------------//
 Route::middleware('auth:api')->get('users', 'UserControllerAPI@index');
+Route::middleware('auth:api')->get('users/{type}', 'UserControllerAPI@usersByType');
 Route::middleware('auth:api')->get('users/me', 'UserControllerAPI@myProfile');
 Route::middleware('auth:api')->post('users', 'UserControllerAPI@store');
 Route::middleware('auth:api')->put('users/{user}/start', 'UserControllerAPI@startShift');
@@ -55,9 +56,11 @@ Route::middleware('auth:api')->put('meals/{meal_id}/terminated', 'MealController
 Route::middleware('auth:api')->get('meals/{meal_id}/summarys', 'MealControllerAPI@summaryItems');
 Route::middleware('auth:api')->get('meals/{meal_id}/delived', 'MealControllerAPI@toDelived');
 Route::middleware('auth:api')->get('meals/{meal_id}/orders', 'MealControllerAPI@orders');
+Route::middleware('auth:api')->get('meals/{meal_id}/orders/all', 'MealControllerAPI@allOrders');
 Route::middleware('auth:api')->put('meals/{meal_id}', 'MealControllerAPI@update');
 Route::middleware('auth:api')->get('meals/{meal_id}', 'MealControllerAPI@show');
 Route::middleware('auth:api')->post('meals', 'MealControllerAPI@store');
+Route::get('mealsFilter', 'MealControllerAPI@filter');
 Route::middleware('auth:api')->get('meals', 'MealControllerAPI@index');
 //--------------------------------------------------------------------------------------------//
 //------------------------------------ORDER---------------------------------------------------//

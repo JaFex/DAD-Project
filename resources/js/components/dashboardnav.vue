@@ -36,6 +36,9 @@
                     <li class="nav-item">
                         <router-link to="/items" class="nav-link" tag="a">Items</router-link>
                     </li>
+                    <li class="nav-item">
+                        <router-link to="/mealsfilter" class="nav-link" tag="a">Meals</router-link>
+                    </li>
                     <b-nav-item-dropdown >
                         <template slot="button-content">Users</template>
                         <router-link to="/users/create" tag="a" role="menuitem" class="dropdown-item">New User</router-link>
