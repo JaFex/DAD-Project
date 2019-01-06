@@ -9,19 +9,24 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-4">
-                    <b-card class="text-center">
+                <div class="col">
+                    <b-card class="text-center" title="Waiters Average">
                         <bar-chart v-if="wloaded" :chartdata="waiterAvarage"></bar-chart>.
                     </b-card>
                 </div>
-                <div class="col-4">
-                    <b-card class="text-center">
+                <div class="col">
+                    <b-card class="text-center" title="Cooks Average">
                         <bar-chart v-if="cloaded" :chartdata="cooksAvarage"></bar-chart>.
                     </b-card>
                 </div>
-                <div class="col-4">
-                    <b-card class="text-center">
-                        <bar-chart></bar-chart>.
+                <div class="col">
+                    <b-card class="text-center" title="Monthly Meals">
+                        <line-chart v-if="mloaded" :chartdata="mealsMonth"></line-chart>.
+                    </b-card>
+                </div>
+                <div class="col">
+                    <b-card class="text-center" title="Monthly Orders">
+                        <line-chart v-if="oloaded" :chartdata="ordersMonth"></line-chart>.
                     </b-card>
                 </div>
             </div>
@@ -29,16 +34,20 @@
     </div>
 </template>
 <script>
-import barChart from './lineChart.vue';
+import barChart from './barChart.vue';
+import lineChart from './lineChart.vue';
 export default {
     components: {
         'nav-bar': require('../dashboardnav.vue'),
-        'bar-chart': barChart
+        'bar-chart': barChart,
+        'line-chart': lineChart
     },
     data() {
         return {
             wloaded: false,
             cloaded: false,
+            mloaded: false,
+            oloaded: false,
             waiterAvarage: {
                 labels: [],
                 datasets: [{
@@ -55,6 +64,22 @@ export default {
                     backgroundColor: 'rgba(54,73,93,.5)',
                 }],
             },
+            mealsMonth: {
+                labels: [],
+                datasets: [{
+                    label: 'Monthly Meals',
+                    data: [],
+                    backgroundColor: 'rgba(54,73,93,.5)',
+                }],
+            },
+            ordersMonth: {
+                labels: [],
+                datasets: [{
+                    label: 'Monthly Orders',
+                    data: [],
+                    backgroundColor: 'rgba(54,73,93,.5)',
+                }]
+            }
         }
     },
     methods: {
@@ -85,11 +110,39 @@ export default {
                 .catch(function (error) {
                     console.log(error);
                 });
+        },
+        getMonthlyValues(){
+            axios.get('/api/statistics/meals/monthly')
+                .then(response => {
+                    response.data.forEach(element => {
+                            this.mealsMonth.labels.push(element['date']);
+                            this.mealsMonth.datasets[0].data.push(element['total']);
+                    });
+                    this.mloaded = true;
+                })
+                .catch(function (error) {
+                    console.log(error);
+            });
+        },
+        getMonthlyOrders(){
+            axios.get('/api/statistics/orders/monthly')
+                    .then(response => {
+                        response.data.forEach(element => {
+                            this.ordersMonth.labels.push(element['date']);
+                            this.ordersMonth.datasets[0].data.push(element['total']);
+                        });
+                        this.oloaded = true;
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
         }
     },
     created() {
         this.getMealsByWaiter();
         this.getOrdersByCook();
+        this.getMonthlyValues();
+        this.getMonthlyOrders();
     }
      
 }

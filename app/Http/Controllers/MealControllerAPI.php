@@ -326,4 +326,8 @@ class MealControllerAPI extends Controller
                 ->groupBy('a.responsible_waiter_id')
                 ->get();   
     }
+
+    public function mealsByMonth(){
+        return Meal::select(DB::raw("count(*) as 'total', DATE_FORMAT(start, '%m-%Y') date"))->groupBy('date')->get();
+    }
 }

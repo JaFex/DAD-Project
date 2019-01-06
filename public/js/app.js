@@ -105458,8 +105458,10 @@ module.exports = Component.exports
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__lineChart_vue__ = __webpack_require__(512);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__lineChart_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__lineChart_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__barChart_vue__ = __webpack_require__(571);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__barChart_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__barChart_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__lineChart_vue__ = __webpack_require__(512);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__lineChart_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__lineChart_vue__);
 //
 //
 //
@@ -105490,17 +105492,26 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     components: {
         'nav-bar': __webpack_require__(9),
-        'bar-chart': __WEBPACK_IMPORTED_MODULE_0__lineChart_vue___default.a
+        'bar-chart': __WEBPACK_IMPORTED_MODULE_0__barChart_vue___default.a,
+        'line-chart': __WEBPACK_IMPORTED_MODULE_1__lineChart_vue___default.a
     },
     data: function data() {
         return {
             wloaded: false,
             cloaded: false,
+            mloaded: false,
+            oloaded: false,
             waiterAvarage: {
                 labels: [],
                 datasets: [{
@@ -105513,6 +105524,22 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 labels: [],
                 datasets: [{
                     label: 'Cooks avarage',
+                    data: [],
+                    backgroundColor: 'rgba(54,73,93,.5)'
+                }]
+            },
+            mealsMonth: {
+                labels: [],
+                datasets: [{
+                    label: 'Monthly Meals',
+                    data: [],
+                    backgroundColor: 'rgba(54,73,93,.5)'
+                }]
+            },
+            ordersMonth: {
+                labels: [],
+                datasets: [{
+                    label: 'Monthly Orders',
                     data: [],
                     backgroundColor: 'rgba(54,73,93,.5)'
                 }]
@@ -105548,11 +105575,39 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }).catch(function (error) {
                 console.log(error);
             });
+        },
+        getMonthlyValues: function getMonthlyValues() {
+            var _this3 = this;
+
+            axios.get('/api/statistics/meals/monthly').then(function (response) {
+                response.data.forEach(function (element) {
+                    _this3.mealsMonth.labels.push(element['date']);
+                    _this3.mealsMonth.datasets[0].data.push(element['total']);
+                });
+                _this3.mloaded = true;
+            }).catch(function (error) {
+                console.log(error);
+            });
+        },
+        getMonthlyOrders: function getMonthlyOrders() {
+            var _this4 = this;
+
+            axios.get('/api/statistics/orders/monthly').then(function (response) {
+                response.data.forEach(function (element) {
+                    _this4.ordersMonth.labels.push(element['date']);
+                    _this4.ordersMonth.datasets[0].data.push(element['total']);
+                });
+                _this4.oloaded = true;
+            }).catch(function (error) {
+                console.log(error);
+            });
         }
     },
     created: function created() {
         this.getMealsByWaiter();
         this.getOrdersByCook();
+        this.getMonthlyValues();
+        this.getMonthlyOrders();
     }
 });
 
@@ -105614,7 +105669,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  extends: __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__["a" /* Bar */],
+  extends: __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__["b" /* Line */],
   props: {
     chartdata: {
       type: Object,
@@ -105644,7 +105699,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["a"]; });
 /* unused harmony reexport HorizontalBar */
 /* unused harmony reexport Doughnut */
-/* unused harmony reexport Line */
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return __WEBPACK_IMPORTED_MODULE_1__BaseCharts__["e"]; });
 /* unused harmony reexport Pie */
 /* unused harmony reexport PolarArea */
 /* unused harmony reexport Radar */
@@ -116171,11 +116226,14 @@ var render = function() {
           _c("div", { staticClass: "row" }, [
             _c(
               "div",
-              { staticClass: "col-4" },
+              { staticClass: "col" },
               [
                 _c(
                   "b-card",
-                  { staticClass: "text-center" },
+                  {
+                    staticClass: "text-center",
+                    attrs: { title: "Waiters Average" }
+                  },
                   [
                     _vm.wloaded
                       ? _c("bar-chart", {
@@ -116192,11 +116250,14 @@ var render = function() {
             _vm._v(" "),
             _c(
               "div",
-              { staticClass: "col-4" },
+              { staticClass: "col" },
               [
                 _c(
                   "b-card",
-                  { staticClass: "text-center" },
+                  {
+                    staticClass: "text-center",
+                    attrs: { title: "Cooks Average" }
+                  },
                   [
                     _vm.cloaded
                       ? _c("bar-chart", {
@@ -116213,12 +116274,46 @@ var render = function() {
             _vm._v(" "),
             _c(
               "div",
-              { staticClass: "col-4" },
+              { staticClass: "col" },
               [
                 _c(
                   "b-card",
-                  { staticClass: "text-center" },
-                  [_c("bar-chart"), _vm._v(".\n                ")],
+                  {
+                    staticClass: "text-center",
+                    attrs: { title: "Monthly Meals" }
+                  },
+                  [
+                    _vm.mloaded
+                      ? _c("line-chart", {
+                          attrs: { chartdata: _vm.mealsMonth }
+                        })
+                      : _vm._e(),
+                    _vm._v(".\n                ")
+                  ],
+                  1
+                )
+              ],
+              1
+            ),
+            _vm._v(" "),
+            _c(
+              "div",
+              { staticClass: "col" },
+              [
+                _c(
+                  "b-card",
+                  {
+                    staticClass: "text-center",
+                    attrs: { title: "Monthly Orders" }
+                  },
+                  [
+                    _vm.oloaded
+                      ? _c("line-chart", {
+                          attrs: { chartdata: _vm.ordersMonth }
+                        })
+                      : _vm._e(),
+                    _vm._v(".\n                ")
+                  ],
                   1
                 )
               ],
@@ -117638,6 +117733,84 @@ if (false) {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 570 */,
+/* 571 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(3)
+/* script */
+var __vue_script__ = __webpack_require__(572)
+/* template */
+var __vue_template__ = null
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/manager/barChart.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-58f66378", Component.options)
+  } else {
+    hotAPI.reload("data-v-58f66378", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 572 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__ = __webpack_require__(514);
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  extends: __WEBPACK_IMPORTED_MODULE_0_vue_chartjs__["a" /* Bar */],
+  props: {
+    chartdata: {
+      type: Object,
+      default: null
+    },
+    options: {
+      type: {
+        responsive: true
+      },
+      default: null
+    }
+  },
+
+  mounted: function mounted() {
+    this.renderChart(this.chartdata, this.options);
+  }
+});
 
 /***/ })
 /******/ ]);

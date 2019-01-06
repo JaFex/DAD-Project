@@ -91,8 +91,9 @@ Route::middleware('auth:api')->put('invoices/{invoice_id}/notpaid', 'InvoiceCont
 //------------------------------------STATISTICS----------------------------------------------//
 //--------------------------------------------------------------------------------------------//
 Route::middleware('auth:api', 'manager')->get('statistics/meals', 'MealControllerAPI@mealsWaiterAvarage');
-Route::get('statistics/orders', 'OrderControllerAPI@ordersCooksAvarage');
-
+Route::middleware('auth:api', 'manager')->get('statistics/orders', 'OrderControllerAPI@ordersCooksAvarage');
+Route::get('statistics/meals/monthly', 'MealControllerAPI@mealsByMonth');
+Route::get('statistics/orders/monthly', 'OrderControllerAPI@ordersByMonth');
 //--------------------------------------------------------------------------------------------//
 //--------------------------------------------------------------------------------------------//
 //--------------------------------------------------------------------------------------------//

@@ -156,4 +156,8 @@ class OrderControllerAPI extends Controller
                 ->groupBy('a.responsible_cook_id')
                 ->get();   
     }
+
+    public function ordersByMonth(){
+        return Order::select(DB::raw("count(*) as 'total', DATE_FORMAT(start, '%m-%Y') date"))->groupBy('date')->get();
+    }
 }
