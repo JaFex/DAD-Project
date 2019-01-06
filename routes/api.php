@@ -76,7 +76,7 @@ Route::middleware('auth:api')->get('invoices/all/{state}', 'InvoiceControllerAPI
 Route::middleware('auth:api')->get('invoices/{invoice_id}/items', 'InvoiceControllerAPI@items');
 Route::middleware('auth:api')->get('invoices/{invoice_id}/download', 'InvoiceControllerAPI@downloadPDF');
 Route::middleware('auth:api')->put('invoices/{invoice_id}', 'InvoiceControllerAPI@update');
-
+Route::middleware('auth:api')->put('invoices/{invoice_id}/notpaid', 'InvoiceControllerAPI@notPaid');
 //--------------------------------------------------------------------------------------------//
 //----------------------------------INVOICES_ITEMS--------------------------------------------//
 //--------------------------------------------------------------------------------------------//

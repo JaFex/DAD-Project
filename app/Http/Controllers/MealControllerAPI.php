@@ -243,4 +243,27 @@ class MealControllerAPI extends Controller
     {
         //
     }
+
+    public function notPaid(Request $request, int $meal_id)
+    {
+        $meal = Meal::findOrFail($meal_id);
+        $meal->state = 'not paid';
+
+        $meal->invoice->state = 'not paid';
+
+        $orders = Order::where('meal_id', $meal_id)->get();
+
+        foreach ($orders as $order) {
+            if($order->state != 'delivered'){
+                $order->state = 'not delivered';
+                $order->save();
+            } 
+        }
+
+        $meal->invoice->save();
+
+        $meal->save();
+        
+        return new MealResource($meal);
+    }
 }

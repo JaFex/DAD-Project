@@ -9,6 +9,7 @@ use App\Http\Resources\InvoiceItem as InvoiceItemResource;
 use App\Invoice;
 use App\Item;
 use PDF;
+use App\Meal;
 
 class InvoiceControllerAPI extends Controller
 {
@@ -83,5 +84,28 @@ class InvoiceControllerAPI extends Controller
         }
         $pdf = PDF::loadView('pdf', compact('invoice', 'items'));
         return $pdf->download('invoice.pdf');
+    }
+
+    public function notPaid(Request $request, int $invoice_id)
+    {
+        $invoice = Invoice::findOrFail($invoice_id);
+        $invoice->state = 'not paid';
+
+        /*$meal->invoice->state = 'not paid';
+
+        $orders = Order::where('meal_id', $meal_id)->get();
+
+        foreach ($orders as $order) {
+            if($order->state != 'delivered'){
+                $order->state = 'not delivered';
+                $order->save();
+            } 
+        }
+
+        $meal->invoice->save();*/
+
+        $invoice->save();
+        
+        return new InvoiceResource($invoice);
     }
 }

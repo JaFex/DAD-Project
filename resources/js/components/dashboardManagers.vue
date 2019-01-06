@@ -52,7 +52,7 @@
                     <button
                       type="button"
                       class="btn btn-primary"
-                      @click.prevent="openOrders(meal);"
+                      @click.prevent="sendUpdateToNotPaidInvoice(invoice);"
                     >Not paid</button>
                   </td>
                 </tr>
@@ -85,15 +85,8 @@
                     <button
                       type="button"
                       class="btn btn-primary"
-                      @click.prevent="openOrders(meal);"
+                      @click.prevent="notPaidMeal(meal);"
                     >See orders</button>
-                  </td>
-                  <td>
-                    <button
-                      type="button"
-                      class="btn btn-primary"
-                      @click.prevent="openOrders(meal);"
-                    >Not paid</button>
                   </td>
                 </tr>
                 <tr v-if="currentMeal && meal.id == currentMeal.id" :key="'meal_'+meal.id">
@@ -136,8 +129,14 @@
                       @click.prevent="openOrders(meal);"
                     >See orders</button>
                   </td>
+                  <td>
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      @click.prevent="notPaidMeal(meal);"
+                    >Not paid</button>
+                  </td>
                 </tr>
-                
               </template>
             </tbody>
           </table>
@@ -162,6 +161,75 @@ export default {
     };
   },
   methods: {
+    sendUpdateToNotPaidInvoice: function(invoice) {
+      let soft = this;
+      var update = {};
+      update["state"] = "notpaid";
+      axios
+        .put("/api/invoices/" + invoice.id + "/notpaid", update)
+        .then(response => {
+          invoice = response.data.data;
+          soft.$toasted.show("The invoice (" + invoice.id + ") is not paid", {
+            theme: "bubble",
+            position: "bottom-center",
+            duration: 5000,
+            className: ["success"]
+          });
+          this.loadPendingInvoices();
+          /*soft.$socket.emit("kitchen");
+          soft.$socket.emit("cashier");*/
+        })
+        .catch(function(error) {
+          console.log("sendUpdateToNotPaidInvoice->" + error);
+          soft.$toasted.show(
+            "ERRO: Couldn´t change state of (" + invoice.id + ") to not paid",
+            {
+              theme: "bubble",
+              position: "bottom-center",
+              duration: 5000,
+              className: ["error"]
+            }
+          );
+        });
+    },
+    loadPendingInvoices: function() {
+      axios
+        .get("/api/invoices/all/pending")
+        .then(response => {
+          this.invoices = response.data.data;
+          /*this.links = {
+                        prev: response.data.links.prev,
+                        next: response.data.links.next,
+                        currentPage: response.data.meta.current_page,
+                        lastPage: response.data.meta.last_page,
+                        path: url+'?page='
+                    }*/
+        })
+        .catch(function(error) {
+          console.log("loadPendingInvoices-" + error);
+        });
+    },
+    loadActiveAndTerminatedMeals: function() {
+      axios
+        .get("/api/meals/all/state/active")
+        .then(response => {
+          this.activemeals = response.data.data;
+          console.log(this.activemeals);
+        })
+        .catch(function(error) {
+          console.log("loadActiveAndTerminatedMeals-" + error);
+        });
+
+      axios
+        .get("/api/meals/all/state/terminated")
+        .then(response => {
+          this.terminatedmeals = response.data.data;
+          console.log(this.terminatedmeals);
+        })
+        .catch(function(error) {
+          console.log("loadActiveAndTerminatedMeals-" + error);
+        });
+    },
     loadPendingInvoices: function() {
       axios
         .get("/api/invoices/all/pending")

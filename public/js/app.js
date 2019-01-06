@@ -98818,7 +98818,10 @@ module.exports = Component.exports
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_moment__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_moment___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_moment__);
-//
+var _methods;
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
@@ -98982,12 +98985,39 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     };
   },
 
-  methods: {
-    loadPendingInvoices: function loadPendingInvoices() {
+  methods: (_methods = {
+    sendUpdateToNotPaidInvoice: function sendUpdateToNotPaidInvoice(invoice) {
       var _this = this;
 
+      var soft = this;
+      var update = {};
+      update["state"] = "notpaid";
+      axios.put("/api/invoices/" + invoice.id + "/notpaid", update).then(function (response) {
+        invoice = response.data.data;
+        soft.$toasted.show("The invoice (" + invoice.id + ") is not paid", {
+          theme: "bubble",
+          position: "bottom-center",
+          duration: 5000,
+          className: ["success"]
+        });
+        _this.loadPendingInvoices();
+        /*soft.$socket.emit("kitchen");
+        soft.$socket.emit("cashier");*/
+      }).catch(function (error) {
+        console.log("sendUpdateToNotPaidInvoice->" + error);
+        soft.$toasted.show("ERRO: Couldn´t change state of (" + invoice.id + ") to not paid", {
+          theme: "bubble",
+          position: "bottom-center",
+          duration: 5000,
+          className: ["error"]
+        });
+      });
+    },
+    loadPendingInvoices: function loadPendingInvoices() {
+      var _this2 = this;
+
       axios.get("/api/invoices/all/pending").then(function (response) {
-        _this.invoices = response.data.data;
+        _this2.invoices = response.data.data;
         /*this.links = {
                       prev: response.data.links.prev,
                       next: response.data.links.next,
@@ -99000,60 +99030,85 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       });
     },
     loadActiveAndTerminatedMeals: function loadActiveAndTerminatedMeals() {
-      var _this2 = this;
+      var _this3 = this;
 
       axios.get("/api/meals/all/state/active").then(function (response) {
-        _this2.activemeals = response.data.data;
-        console.log(_this2.activemeals);
+        _this3.activemeals = response.data.data;
+        console.log(_this3.activemeals);
       }).catch(function (error) {
         console.log("loadActiveAndTerminatedMeals-" + error);
       });
 
       axios.get("/api/meals/all/state/terminated").then(function (response) {
-        _this2.terminatedmeals = response.data.data;
-        console.log(_this2.terminatedmeals);
+        _this3.terminatedmeals = response.data.data;
+        console.log(_this3.terminatedmeals);
       }).catch(function (error) {
         console.log("loadActiveAndTerminatedMeals-" + error);
       });
-    },
-    openOrders: function openOrders(meal) {
-      this.currentMeal = meal;
-      this.loadOrders("meals/" + meal.id + "/orders");
-    },
-    closeListOrders: function closeListOrders() {
-      this.currentMeal = "";
-    },
-    loadOrders: function loadOrders(url) {
-      var _this3 = this;
-
-      axios.get("/api/" + url).then(function (response) {
-        _this3.orders = response.data.data;
-        _this3.linksOrders = {
-          prev: response.data.links.prev,
-          next: response.data.links.next,
-          currentPage: response.data.meta.current_page,
-          lastPage: response.data.meta.last_page,
-          path: url + "?page="
-        };
-      }).catch(function (error) {
-        console.log("loadOrders-" + error);
-      });
-    },
-    reloadMealAndOrder: function reloadMealAndOrder() {
-      this.loadMeals("meals");
-      if (this.currentMeal && this.currentMealCreate && this.currentMeal.id == this.currentMealCreate.id) {
-        this.loadOrders("meals/" + this.currentMeal.id + "/orders");
-      }
-    },
-    updateKitchen: function updateKitchen() {
-      this.$socket.emit("kitchen");
-    },
-    updateOrder: function updateOrder(order) {
-      if (this.currentMeal && order && this.currentMeal.id == order.meal_id) {
-        this.loadOrders("meals/" + this.currentMeal.id + "/orders");
-      }
     }
-  },
+  }, _defineProperty(_methods, "loadPendingInvoices", function loadPendingInvoices() {
+    var _this4 = this;
+
+    axios.get("/api/invoices/all/pending").then(function (response) {
+      _this4.invoices = response.data.data;
+      /*this.links = {
+                    prev: response.data.links.prev,
+                    next: response.data.links.next,
+                    currentPage: response.data.meta.current_page,
+                    lastPage: response.data.meta.last_page,
+                    path: url+'?page='
+                }*/
+    }).catch(function (error) {
+      console.log("loadPendingInvoices-" + error);
+    });
+  }), _defineProperty(_methods, "loadActiveAndTerminatedMeals", function loadActiveAndTerminatedMeals() {
+    var _this5 = this;
+
+    axios.get("/api/meals/all/state/active").then(function (response) {
+      _this5.activemeals = response.data.data;
+      console.log(_this5.activemeals);
+    }).catch(function (error) {
+      console.log("loadActiveAndTerminatedMeals-" + error);
+    });
+
+    axios.get("/api/meals/all/state/terminated").then(function (response) {
+      _this5.terminatedmeals = response.data.data;
+      console.log(_this5.terminatedmeals);
+    }).catch(function (error) {
+      console.log("loadActiveAndTerminatedMeals-" + error);
+    });
+  }), _defineProperty(_methods, "openOrders", function openOrders(meal) {
+    this.currentMeal = meal;
+    this.loadOrders("meals/" + meal.id + "/orders");
+  }), _defineProperty(_methods, "closeListOrders", function closeListOrders() {
+    this.currentMeal = "";
+  }), _defineProperty(_methods, "loadOrders", function loadOrders(url) {
+    var _this6 = this;
+
+    axios.get("/api/" + url).then(function (response) {
+      _this6.orders = response.data.data;
+      _this6.linksOrders = {
+        prev: response.data.links.prev,
+        next: response.data.links.next,
+        currentPage: response.data.meta.current_page,
+        lastPage: response.data.meta.last_page,
+        path: url + "?page="
+      };
+    }).catch(function (error) {
+      console.log("loadOrders-" + error);
+    });
+  }), _defineProperty(_methods, "reloadMealAndOrder", function reloadMealAndOrder() {
+    this.loadMeals("meals");
+    if (this.currentMeal && this.currentMealCreate && this.currentMeal.id == this.currentMealCreate.id) {
+      this.loadOrders("meals/" + this.currentMeal.id + "/orders");
+    }
+  }), _defineProperty(_methods, "updateKitchen", function updateKitchen() {
+    this.$socket.emit("kitchen");
+  }), _defineProperty(_methods, "updateOrder", function updateOrder(order) {
+    if (this.currentMeal && order && this.currentMeal.id == order.meal_id) {
+      this.loadOrders("meals/" + this.currentMeal.id + "/orders");
+    }
+  }), _methods),
   components: {
     "nav-bar": __webpack_require__(10),
     ordersMealList: __webpack_require__(208)
@@ -99197,7 +99252,7 @@ var render = function() {
                               on: {
                                 click: function($event) {
                                   $event.preventDefault()
-                                  _vm.openOrders(_vm.meal)
+                                  _vm.sendUpdateToNotPaidInvoice(invoice)
                                 }
                               }
                             },
@@ -99242,28 +99297,11 @@ var render = function() {
                               on: {
                                 click: function($event) {
                                   $event.preventDefault()
-                                  _vm.openOrders(meal)
+                                  _vm.notPaidMeal(meal)
                                 }
                               }
                             },
                             [_vm._v("See orders")]
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("td", [
-                          _c(
-                            "button",
-                            {
-                              staticClass: "btn btn-primary",
-                              attrs: { type: "button" },
-                              on: {
-                                click: function($event) {
-                                  $event.preventDefault()
-                                  _vm.openOrders(meal)
-                                }
-                              }
-                            },
-                            [_vm._v("Not paid")]
                           )
                         ])
                       ]),
@@ -99350,6 +99388,23 @@ var render = function() {
                               }
                             },
                             [_vm._v("See orders")]
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-primary",
+                              attrs: { type: "button" },
+                              on: {
+                                click: function($event) {
+                                  $event.preventDefault()
+                                  _vm.notPaidMeal(meal)
+                                }
+                              }
+                            },
+                            [_vm._v("Not paid")]
                           )
                         ])
                       ])
