@@ -89,7 +89,7 @@ export default {
             axios.delete('api/users/'+id)
                 .then(response => {
                     this.loadUsers('users');
-                    //this.$socket.emit('msg_update_tables_from_client');
+                    this.$socket.emit('msg_update_tables_from_client');
                     this.$toasted.show('User deleted successfully.', {
                             theme: "bubble",
                             position: "bottom-center",
@@ -105,7 +105,7 @@ export default {
             axios.put('api/users/'+id+'/restore')
                 .then(response => {
                     this.loadUsers('users');
-                    //this.$socket.emit('msg_update_tables_from_client');
+                    this.$socket.emit('msg_update_tables_from_client');
                     this.$toasted.show('User restored successfully.', {
                             theme: "bubble",
                             position: "bottom-center",
@@ -121,7 +121,7 @@ export default {
             axios.put('api/users/'+id+'/block')
                 .then(response => {
                     this.loadUsers('users');
-                    //this.$socket.emit('msg_update_tables_from_client');
+                    this.$socket.emit('msg_update_tables_from_client');
                     this.$toasted.show('User blocked successfully.', {
                             theme: "bubble",
                             position: "bottom-center",
