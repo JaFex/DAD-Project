@@ -48566,7 +48566,8 @@ var router = new __WEBPACK_IMPORTED_MODULE_0_vue_router__["a" /* default */]({
 });
 
 router.beforeEach(function (to, from, next) {
-    console.log('---------------------------------------------------------------------------------------------------------------');
+    var user = JSON.parse(sessionStorage.getItem('user'));
+
     //Routes for not auth
     var notAuthRoutes = ['Root', 'Home', 'Login'];
 
@@ -48585,9 +48586,8 @@ router.beforeEach(function (to, from, next) {
     //Routes only for managers
     var managersRoutes = ['Manager New User', 'Manager Users', 'Manager Tables', 'Manager Items', 'Manager Meals', 'Manager Invoices'];
 
-    console.log(to.name + '-----------------------' + !__WEBPACK_IMPORTED_MODULE_7__stores_global_store__["a" /* default */].state.user + '-----------------------' + !notAuthRoutes.includes(to.name));
     //Check worker login
-    if (!__WEBPACK_IMPORTED_MODULE_7__stores_global_store__["a" /* default */].state.user) {
+    if (!user) {
         if (!notAuthRoutes.includes(to.name)) {
             next("/login");
             return;
@@ -48596,14 +48596,15 @@ router.beforeEach(function (to, from, next) {
         next();
         return;
     }
-    if (__WEBPACK_IMPORTED_MODULE_7__stores_global_store__["a" /* default */].state.user && to.name === 'Login') {
+
+    if (user && to.name === 'Login') {
         next("/dashboard");
         return;
     }
 
     //Check if its cook
     if (cooksRoutes.includes(to.name)) {
-        if (__WEBPACK_IMPORTED_MODULE_7__stores_global_store__["a" /* default */].state.user.type !== 'cook') {
+        if (user.type !== 'cook') {
             next("/401");
             return;
         }
@@ -48611,7 +48612,7 @@ router.beforeEach(function (to, from, next) {
 
     //Check if its waiter
     if (waitersRoutes.includes(to.name)) {
-        if (__WEBPACK_IMPORTED_MODULE_7__stores_global_store__["a" /* default */].state.user.type !== 'waiter') {
+        if (user.type !== 'waiter') {
             next("/401");
             return;
         }
@@ -48619,7 +48620,7 @@ router.beforeEach(function (to, from, next) {
 
     //Check if its cashier
     if (cashiersRoutes.includes(to.name)) {
-        if (__WEBPACK_IMPORTED_MODULE_7__stores_global_store__["a" /* default */].state.user.type !== 'cashier') {
+        if (user.type !== 'cashier') {
             next("/401");
             return;
         }
@@ -48627,7 +48628,7 @@ router.beforeEach(function (to, from, next) {
 
     //Check if its manager
     if (managersRoutes.includes(to.name)) {
-        if (__WEBPACK_IMPORTED_MODULE_7__stores_global_store__["a" /* default */].state.user.type !== 'manager') {
+        if (user.type !== 'manager') {
             next("/401");
             return;
         }
@@ -87836,7 +87837,7 @@ var render = function() {
     [
       _c(
         "router-link",
-        { staticClass: "navbar-brand", attrs: { to: "/", tag: "a" } },
+        { staticClass: "navbar-brand", attrs: { to: "/home", tag: "a" } },
         [_vm._v("Restaurant")]
       ),
       _vm._v(" "),

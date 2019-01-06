@@ -1,6 +1,6 @@
 <template>
     <b-navbar toggleable="md" type="dark" variant="dark" class="fixed-top">
-            <router-link to="/" tag="a" class="navbar-brand">Restaurant</router-link>
+            <router-link to="/home" tag="a" class="navbar-brand">Restaurant</router-link>
             <b-navbar-nav>
                 <li class="nav-item">
                     <router-link to="/dashboard" class="nav-link" tag="a">Dashboard</router-link>

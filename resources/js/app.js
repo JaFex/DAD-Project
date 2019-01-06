@@ -74,7 +74,8 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    console.log('---------------------------------------------------------------------------------------------------------------');
+    let user = JSON.parse(sessionStorage.getItem('user'));
+    
     //Routes for not auth
     let notAuthRoutes = ['Root', 'Home', 'Login'];
 
@@ -93,9 +94,8 @@ router.beforeEach((to, from, next) => {
     //Routes only for managers
     let managersRoutes = ['Manager New User', 'Manager Users', 'Manager Tables', 'Manager Items', 'Manager Meals', 'Manager Invoices'];
 
-    console.log(to.name+'-----------------------'+!store.state.user+'-----------------------'+!notAuthRoutes.includes(to.name));
     //Check worker login
-    if (!store.state.user) {
+    if (!user) {
         if (!notAuthRoutes.includes(to.name)) {
             next("/login");
             return;
@@ -104,14 +104,15 @@ router.beforeEach((to, from, next) => {
         next();
         return;
     }
-    if(store.state.user && to.name === 'Login') {
+
+    if(user && to.name === 'Login') {
         next("/dashboard");
         return;
     }
 
     //Check if its cook
     if(cooksRoutes.includes(to.name)){
-        if(store.state.user.type !== 'cook'){
+        if(user.type !== 'cook'){
             next("/401");
             return;
         }
@@ -119,7 +120,7 @@ router.beforeEach((to, from, next) => {
 
     //Check if its waiter
     if(waitersRoutes.includes(to.name)){
-        if(store.state.user.type !== 'waiter'){
+        if(user.type !== 'waiter'){
             next("/401");
             return;
         }
@@ -127,7 +128,7 @@ router.beforeEach((to, from, next) => {
 
     //Check if its cashier
     if(cashiersRoutes.includes(to.name)){
-        if(store.state.user.type !== 'cashier'){
+        if(user.type !== 'cashier'){
             next("/401");
             return;
         }
@@ -135,7 +136,7 @@ router.beforeEach((to, from, next) => {
 
     //Check if its manager
     if(managersRoutes.includes(to.name)){
-        if(store.state.user.type !== 'manager'){
+        if(user.type !== 'manager'){
             next("/401");
             return;
         }
