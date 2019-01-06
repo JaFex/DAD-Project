@@ -48554,9 +48554,11 @@ var items = Vue.component('items', __webpack_require__(459));
 var users = Vue.component('users', __webpack_require__(474));
 var mealsManager = Vue.component('mealsManager', __webpack_require__(482));
 var invoicesManager = Vue.component('invoicesManager', __webpack_require__(488));
+
+var notAllowed = Vue.component('notAllowed', __webpack_require__(499));
 var notfound = Vue.component('notfound', __webpack_require__(494));
 
-var routes = [{ path: '/', redirect: '/home', name: 'root' }, { path: '/home', component: home, name: 'home' }, { path: '/login', component: login, name: 'login' }, { path: '/dashboard', component: dashboard, name: 'dashboard' }, { path: '/profile', component: profile, name: 'profile' }, { path: '/users/create', component: newUser, name: 'newUser' }, { path: '/orders', component: orders, name: 'Cooks' }, { path: '/meals', component: meals, name: 'Waiters' }, { path: '/summary', component: summaryMealList, name: 'Waiters Summary' }, { path: '/orders-to-deliver', component: ordersToDeliver, name: 'Waiters Deliver' }, { path: '/invoices', component: invoices, name: 'Cashier' }, { path: '/invoicesPDF', component: invoicesListFile, name: 'Invoice PDF' }, { path: '/message', component: message, name: 'Message' }, { path: '/tables', component: tables, name: 'Tables' }, { path: '/items', component: items, name: 'Items' }, { path: '/users', component: users, name: 'Users' }, { path: '/meals/filter', component: mealsManager, name: 'Meals' }, { path: '/invoices/filter', component: invoicesManager, name: 'Invoices' }, { path: '/404', meta: { title: 'Not Found 404' }, component: notfound, name: 'NotFound' }, { path: '*', redirect: '/404' }];
+var routes = [{ path: '/', redirect: '/home', name: 'Root' }, { path: '/home', component: home, name: 'Home' }, { path: '/login', component: login, name: 'Login' }, { path: '/dashboard', component: dashboard, name: 'User Dashboard' }, { path: '/profile', component: profile, name: 'User Profile' }, { path: '/users/create', component: newUser, name: 'Manager New User' }, { path: '/orders', component: orders, name: 'Cooks Orders' }, { path: '/meals', component: meals, name: 'Waiter Meals' }, { path: '/summary', component: summaryMealList, name: 'Waiter Summary' }, { path: '/orders-to-deliver', component: ordersToDeliver, name: 'Waiter Deliver' }, { path: '/invoices', component: invoices, name: 'Cashier Invoices' }, { path: '/invoicesPDF', component: invoicesListFile, name: 'Cashier Invoices PDF' }, { path: '/message', component: message, name: 'User Message' }, { path: '/tables', component: tables, name: 'Manager Tables' }, { path: '/items', component: items, name: 'Manager Items' }, { path: '/users', component: users, name: 'Manager Users' }, { path: '/meals/filter', component: mealsManager, name: 'Manager Meals' }, { path: '/invoices/filter', component: invoicesManager, name: 'Manager Invoices' }, { path: '/401', meta: { title: 'Not Allowed 401' }, component: notAllowed, name: 'NotAllowed' }, { path: '/404', meta: { title: 'Not Found 404' }, component: notfound, name: 'NotFound' }, { path: '*', redirect: '/404' }];
 
 var router = new __WEBPACK_IMPORTED_MODULE_0_vue_router__["a" /* default */]({
     routes: routes
@@ -48591,34 +48593,44 @@ var app = new Vue({
 }).$mount('#app');
 
 router.beforeEach(function (to, from, next) {
+    //Routes for not auth
+    var notAuthRoutes = ['Root', 'Home', 'Login'];
 
     //Routes for all workers
-    var protectedRoutes = ['dashboard', 'profile', 'message'];
+    var protectedRoutes = ['User Dashboard', 'User Profile', 'User Message'];
 
     //Routes only for cooks
-    var cooksRoutes = ['orders'];
+    var cooksRoutes = ['Cooks Orders'];
 
     //Routes only for waiters
-    var waitersRoutes = ['meals'];
+    var waitersRoutes = ['Waiter Meals', 'Waiter Summary', 'Waiter Deliver'];
 
     //Routes only for cashiers
-    var cashiersRoutes = ['invoices', 'invoicesPDF'];
+    var cashiersRoutes = ['Cashier Invoices', 'Cashier Invoices PDF'];
 
     //Routes only for managers
-    var managersRoutes = ['newUser', 'users', 'tables', 'items'];
+    var managersRoutes = ['Manager New User', 'Manager Users', 'Manager Tables', 'Manager Items', 'Manager Meals', 'Manager Invoices'];
 
+    console.log(to.name + '---------------' + !__WEBPACK_IMPORTED_MODULE_7__stores_global_store__["a" /* default */].state.user + '---------------' + !notAuthRoutes.includes(to.name));
     //Check worker login
-    if (protectedRoutes.includes(to.name) || managersRoutes.includes(to.name) || cashiersRoutes.includes(to.name) || waitersRoutes.includes(to.name) || cooksRoutes.includes(to.name)) {
-        if (!__WEBPACK_IMPORTED_MODULE_7__stores_global_store__["a" /* default */].state.user) {
+    if (!__WEBPACK_IMPORTED_MODULE_7__stores_global_store__["a" /* default */].state.user) {
+        if (!notAuthRoutes.includes(to.name)) {
             next("/login");
             return;
         }
+        document.title = to.meta.title !== undefined ? to.meta.title : 'Restaurant';
+        next();
+        return;
+    }
+    if (__WEBPACK_IMPORTED_MODULE_7__stores_global_store__["a" /* default */].state.user && to.name === 'Login') {
+        next("/dashboard");
+        return;
     }
 
     //Check if its cook
     if (cooksRoutes.includes(to.name)) {
         if (__WEBPACK_IMPORTED_MODULE_7__stores_global_store__["a" /* default */].state.user.type !== 'cook') {
-            next("/dashboard");
+            next("/401");
             return;
         }
     }
@@ -48626,7 +48638,7 @@ router.beforeEach(function (to, from, next) {
     //Check if its waiter
     if (waitersRoutes.includes(to.name)) {
         if (__WEBPACK_IMPORTED_MODULE_7__stores_global_store__["a" /* default */].state.user.type !== 'waiter') {
-            next("/dashboard");
+            next("/401");
             return;
         }
     }
@@ -48634,7 +48646,7 @@ router.beforeEach(function (to, from, next) {
     //Check if its cashier
     if (cashiersRoutes.includes(to.name)) {
         if (__WEBPACK_IMPORTED_MODULE_7__stores_global_store__["a" /* default */].state.user.type !== 'cashier') {
-            next("/dashboard");
+            next("/401");
             return;
         }
     }
@@ -48642,7 +48654,7 @@ router.beforeEach(function (to, from, next) {
     //Check if its manager
     if (managersRoutes.includes(to.name)) {
         if (__WEBPACK_IMPORTED_MODULE_7__stores_global_store__["a" /* default */].state.user.type !== 'manager') {
-            next("/dashboard");
+            next("/401");
             return;
         }
     }
@@ -87673,7 +87685,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this = this;
 
             axios.post('api/logout').then(function (response) {
-                if (_this.$store.state.user.shift_active) {
+                if (_this.$store.state.user && _this.$store.state.user.shift_active) {
                     _this.$socket.emit('user_exit', _this.$store.state.user);
                 }
                 _this.$store.commit('clearUserAndToken');
@@ -87707,16 +87719,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             return 'storage/profiles/' + img;
         },
         isAuthCook: function isAuthCook() {
-            return this.$store.state.user.type === 'cook';
+            return this.$store.state.user && this.$store.state.user.type === 'cook';
         },
         isAuthWaiter: function isAuthWaiter() {
-            return this.$store.state.user.type === 'waiter';
+            return this.$store.state.user && this.$store.state.user.type === 'waiter';
         },
         isAuthManager: function isAuthManager() {
-            return this.$store.state.user.type === 'manager';
+            return this.$store.state.user && this.$store.state.user.type === 'manager';
         },
         isAuthCashier: function isAuthCashier() {
-            return this.$store.state.user.type === 'cashier';
+            return this.$store.state.user && this.$store.state.user.type === 'cashier';
         }
     },
     sockets: {
@@ -88074,7 +88086,7 @@ var render = function() {
         "b-navbar-nav",
         { staticClass: "ml-auto" },
         [
-          this.$store.state.user.shift_active === 1
+          this.$store.state.user && this.$store.state.user.shift_active === 1
             ? _c(
                 "b-nav-item",
                 { staticClass: "mr-2", attrs: { disabled: "" } },
@@ -88114,6 +88126,7 @@ var render = function() {
                 [_vm._v("Profile")]
               ),
               _vm._v(" "),
+              this.$store.state.user &&
               this.$store.state.user.shift_active === 1
                 ? _c(
                     "b-dropdown-item",
@@ -100977,6 +100990,282 @@ if (false) {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 498 */,
+/* 499 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(3)
+/* script */
+var __vue_script__ = __webpack_require__(500)
+/* template */
+var __vue_template__ = __webpack_require__(501)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/erro/401.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-c0df02ca", Component.options)
+  } else {
+    hotAPI.reload("data-v-c0df02ca", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 500 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    data: function data() {
+        return {};
+    },
+
+    methods: {
+        isAuth: function isAuth() {
+            return this.$store.state.user !== null;
+        }
+    },
+    computed: {},
+    components: {
+        'nav-bar': __webpack_require__(11)
+    }
+});
+
+/***/ }),
+/* 501 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    [
+      !_vm.isAuth()
+        ? _c(
+            "nav",
+            {
+              staticClass:
+                "navbar navbar-expand-lg navbar-dark bg-dark fixed-top"
+            },
+            [
+              _c("a", { staticClass: "navbar-brand", attrs: { href: "#" } }, [
+                _vm._v("Restaurant")
+              ]),
+              _vm._v(" "),
+              _vm._m(0),
+              _vm._v(" "),
+              _c(
+                "div",
+                {
+                  staticClass: "collapse navbar-collapse",
+                  attrs: { id: "navbarNav" }
+                },
+                [
+                  _vm._m(1),
+                  _vm._v(" "),
+                  _c(
+                    "router-link",
+                    {
+                      directives: [
+                        {
+                          name: "show",
+                          rawName: "v-show",
+                          value: !this.$store.state.user,
+                          expression: "!this.$store.state.user"
+                        }
+                      ],
+                      staticClass: "btn btn-outline-light",
+                      attrs: { to: "/login", tag: "a" }
+                    },
+                    [_vm._v("Login")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "router-link",
+                    {
+                      directives: [
+                        {
+                          name: "show",
+                          rawName: "v-show",
+                          value: this.$store.state.user,
+                          expression: "this.$store.state.user"
+                        }
+                      ],
+                      staticClass: "btn btn-outline-light mr-3",
+                      attrs: { to: "/dashboard", tag: "a" }
+                    },
+                    [_vm._v("Dashboard")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    {
+                      directives: [
+                        {
+                          name: "show",
+                          rawName: "v-show",
+                          value: this.$store.state.user,
+                          expression: "this.$store.state.user"
+                        }
+                      ],
+                      staticClass: "btn btn-outline-light",
+                      on: {
+                        click: function($event) {
+                          $event.preventDefault()
+                          return _vm.logout($event)
+                        }
+                      }
+                    },
+                    [_vm._v("Logout")]
+                  )
+                ],
+                1
+              )
+            ]
+          )
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.isAuth() ? _c("nav-bar") : _vm._e(),
+      _vm._v(" "),
+      _c("div", { attrs: { id: "notfound" } }, [
+        _c(
+          "div",
+          { staticClass: "notfound" },
+          [
+            _vm._m(2),
+            _vm._v(" "),
+            _c("h2", [_vm._v("Oops! You can not access this page.")]),
+            _vm._v(" "),
+            _c("p", [
+              _vm._v(
+                "I'm sorry but you're not allowed to access this page talk to the admin or try again later."
+              )
+            ]),
+            _vm._v(" "),
+            _c(
+              "router-link",
+              { staticClass: "navbar-brand", attrs: { to: "/", tag: "a" } },
+              [_vm._v("Back to homepage")]
+            )
+          ],
+          1
+        )
+      ])
+    ],
+    1
+  )
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "button",
+      {
+        staticClass: "navbar-toggler",
+        attrs: {
+          type: "button",
+          "data-toggle": "collapse",
+          "data-target": "#navbarNav",
+          "aria-controls": "navbarNav",
+          "aria-expanded": "false",
+          "aria-label": "Toggle navigation"
+        }
+      },
+      [_c("span", { staticClass: "navbar-toggler-icon" })]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("ul", { staticClass: "navbar-nav mr-auto" }, [
+      _c("li", { staticClass: "nav-item" })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "notfound-404" }, [
+      _c("h1", [_vm._v("4"), _c("span"), _vm._v("1")])
+    ])
+  }
+]
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-c0df02ca", module.exports)
+  }
+}
 
 /***/ })
 /******/ ]);

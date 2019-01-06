@@ -53,7 +53,7 @@
                 </li>
             </b-navbar-nav>
             <b-navbar-nav class="ml-auto">
-                <b-nav-item v-if="this.$store.state.user.shift_active === 1" class="mr-2" disabled>Working</b-nav-item>
+                <b-nav-item v-if="this.$store.state.user && this.$store.state.user.shift_active === 1" class="mr-2" disabled>Working</b-nav-item>
                 <b-nav-item v-else class="mr-2" disabled>Not working</b-nav-item>
                 <b-img rounded width="30" height="30" alt="photo" class="m-1" :src="imagePath(this.$store.state.user.photo_url)" />
                 <b-nav-item-dropdown right>
@@ -61,7 +61,7 @@
                         <em>{{this.$store.state.user.name}}</em>
                     </template>
                     <router-link to="/profile" tag="a" role="manuitem" class="dropdown-item">Profile</router-link>
-                    <b-dropdown-item v-if="this.$store.state.user.shift_active === 1" @click.prevent="endShift">End Shift</b-dropdown-item>
+                    <b-dropdown-item v-if="this.$store.state.user && this.$store.state.user.shift_active === 1" @click.prevent="endShift">End Shift</b-dropdown-item>
                     <b-dropdown-item v-else @click.prevent="startShift">Start Shift</b-dropdown-item>
                     <b-dropdown-item v-on:click.prevent="logout">Logout</b-dropdown-item>
                 </b-nav-item-dropdown>
@@ -74,7 +74,7 @@ export default {
         logout() {
             axios.post('api/logout')
                 .then(response => {
-                    if(this.$store.state.user.shift_active){
+                    if(this.$store.state.user && this.$store.state.user.shift_active){
                         this.$socket.emit('user_exit', this.$store.state.user);
                     }
                     this.$store.commit('clearUserAndToken');
@@ -109,16 +109,16 @@ export default {
             return 'storage/profiles/'+img;
         },
         isAuthCook() {
-            return this.$store.state.user.type  === 'cook';
+            return this.$store.state.user && this.$store.state.user.type  === 'cook';
         },
         isAuthWaiter() {
-            return this.$store.state.user.type  === 'waiter';
+            return this.$store.state.user && this.$store.state.user.type  === 'waiter';
         },
         isAuthManager() {
-            return this.$store.state.user.type  === 'manager';
+            return this.$store.state.user && this.$store.state.user.type  === 'manager';
         },
         isAuthCashier() {
-            return this.$store.state.user.type  === 'cashier';
+            return this.$store.state.user && this.$store.state.user.type  === 'cashier';
         }
     },
     sockets:{
