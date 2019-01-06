@@ -1,30 +1,24 @@
 <script>
-import { Line } from 'vue-chartjs'
+import { Bar } from 'vue-chartjs'
 
 export default {
-  extends: Line,
-  data() {
-    return {
-      datacollection: {
-        labels: ['Mercury', 'Venus', 'Earth', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune'],
-        datasets: [
-          {
-            label: 'Number of Moons',
-            data: [0, 0, 1, 2, 67, 62, 27, 14],
-            backgroundColor: [
-              'rgba(44,168,30,.5)',
-            ],
-          }
-        ]
+  extends: Bar,
+  props: {
+    chartdata: {
+      type: Object,
+      default: null
+    },
+    options: {
+      type: {
+        responsive: true,
       },
-      options: {
-        maintainAspectRatio: true,
-      }
+      default: null
     }
   },
 
   mounted () {
-    this.renderChart(this.datacollection, this.options)
+    this.renderChart(this.chartdata, this.options)
   }
+
 }
 </script>

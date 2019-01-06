@@ -316,4 +316,14 @@ class MealControllerAPI extends Controller
         
         return new MealResource($meal);
     }
+
+    public function mealsWaiterAvarage()
+    {
+        return DB::query()->fromSub(function ($query) {
+            $query->from('meals')
+                ->select('responsible_waiter_id', DB::raw('Date(start) as date'), DB::raw('COUNT(*) as total'))->groupBy('date', 'responsible_waiter_id');}, 'a')
+                ->select('a.responsible_waiter_id', DB::raw('AVG(a.total) as average'))
+                ->groupBy('a.responsible_waiter_id')
+                ->get();   
+    }
 }

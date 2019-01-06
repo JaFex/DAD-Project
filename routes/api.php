@@ -90,8 +90,8 @@ Route::middleware('auth:api')->put('invoices/{invoice_id}/notpaid', 'InvoiceCont
 //--------------------------------------------------------------------------------------------//
 //------------------------------------STATISTICS----------------------------------------------//
 //--------------------------------------------------------------------------------------------//
-Route::get('statistics/meals', 'MealControllerAPI@mealsByWaiter');
-Route::get('statistics/meals/daily', 'MealControllerAPI@mealsByDay');
+Route::middleware('auth:api', 'manager')->get('statistics/meals', 'MealControllerAPI@mealsWaiterAvarage');
+Route::get('statistics/orders', 'OrderControllerAPI@ordersCooksAvarage');
 
 //--------------------------------------------------------------------------------------------//
 //--------------------------------------------------------------------------------------------//

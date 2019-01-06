@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use DB;
 use App\Http\Resources\Order as OrderResource;
 use App\Order;
 use App\Http\Resources\User as UserResource;
@@ -144,5 +145,15 @@ class OrderControllerAPI extends Controller
         $order->delete();
         
         return new OrderResource($order);
+    }
+
+    public function ordersCooksAvarage()
+    {
+        return DB::query()->fromSub(function ($query) {
+            $query->from('orders')
+                ->select('responsible_cook_id', DB::raw('Date(start) as date'), DB::raw('COUNT(*) as total'))->groupBy('date', 'responsible_cook_id');}, 'a')
+                ->select('a.responsible_cook_id', DB::raw('AVG(a.total) as average'))
+                ->groupBy('a.responsible_cook_id')
+                ->get();   
     }
 }

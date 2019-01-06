@@ -11,12 +11,12 @@
             <div class="row">
                 <div class="col-4">
                     <b-card class="text-center">
-                        <bar-chart></bar-chart>.
+                        <bar-chart v-if="wloaded" :chartdata="waiterAvarage"></bar-chart>.
                     </b-card>
                 </div>
                 <div class="col-4">
                     <b-card class="text-center">
-                        <bar-chart></bar-chart>.
+                        <bar-chart v-if="cloaded" :chartdata="cooksAvarage"></bar-chart>.
                     </b-card>
                 </div>
                 <div class="col-4">
@@ -37,22 +37,59 @@ export default {
     },
     data() {
         return {
-            results: ''
+            wloaded: false,
+            cloaded: false,
+            waiterAvarage: {
+                labels: [],
+                datasets: [{
+                    label: 'Waiters avarage',
+                    data: [],
+                    backgroundColor: 'rgba(54,73,93,.5)',
+                }],
+            },
+            cooksAvarage: {
+                labels: [],
+                datasets: [{
+                    label: 'Cooks avarage',
+                    data: [],
+                    backgroundColor: 'rgba(54,73,93,.5)',
+                }],
+            },
         }
     },
     methods: {
         getMealsByWaiter(){
             axios.get('/api/statistics/meals')
                 .then(response => {
-                    console.log(response);
+                    response.data.forEach(element => {
+                        this.waiterAvarage.labels.push(element['responsible_waiter_id']);
+                        this.waiterAvarage.datasets[0].data.push(element['average'])
+                    });
+                    this.wloaded = true;
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        },
+        getOrdersByCook(){
+            axios.get('/api/statistics/orders')
+                .then(response => {
+                    response.data.forEach(element => {
+                        if(element['responsible_cook_id'] !== null){
+                            this.cooksAvarage.labels.push(element['responsible_cook_id']);
+                            this.cooksAvarage.datasets[0].data.push(element['average']);
+                        }
+                    });
+                    this.cloaded = true;
                 })
                 .catch(function (error) {
                     console.log(error);
                 });
         }
     },
-    mounted() {
+    created() {
         this.getMealsByWaiter();
+        this.getOrdersByCook();
     }
      
 }
