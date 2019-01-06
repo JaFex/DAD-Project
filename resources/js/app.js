@@ -118,7 +118,6 @@ router.beforeEach((to, from, next) => {
     //Routes only for managers
     let managersRoutes = ['Manager New User', 'Manager Users', 'Manager Tables', 'Manager Items', 'Manager Meals', 'Manager Invoices'];
 
-    console.log(to.name+'---------------'+!store.state.user+'---------------'+!notAuthRoutes.includes(to.name));
     //Check worker login
     if (!store.state.user) {
         if (!notAuthRoutes.includes(to.name)) {

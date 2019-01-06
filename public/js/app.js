@@ -48611,7 +48611,6 @@ router.beforeEach(function (to, from, next) {
     //Routes only for managers
     var managersRoutes = ['Manager New User', 'Manager Users', 'Manager Tables', 'Manager Items', 'Manager Meals', 'Manager Invoices'];
 
-    console.log(to.name + '---------------' + !__WEBPACK_IMPORTED_MODULE_7__stores_global_store__["a" /* default */].state.user + '---------------' + !notAuthRoutes.includes(to.name));
     //Check worker login
     if (!__WEBPACK_IMPORTED_MODULE_7__stores_global_store__["a" /* default */].state.user) {
         if (!notAuthRoutes.includes(to.name)) {
