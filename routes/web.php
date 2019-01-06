@@ -20,3 +20,7 @@ Route::get('/user/verify/{token}', function ($request) {
 });
 
 Route::put('/user/verify/{token}', 'UserControllerAPI@verifyUser')->name('user.verification');
+
+Route::get('/{vue_capture?}', function () {
+    return view('welcome');
+})->where('vue_capture', '[\/\w\.-]*');

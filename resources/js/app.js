@@ -69,37 +69,12 @@ const routes = [
 ];
 
 const router = new VueRouter({
+    mode: 'history',
     routes:routes
 });
 
-const app = new Vue({
-    router,
-    store,
-    data: {},
-    created() {
-        //console.log('-----');
-        //console.log(this.$store.state.user);
-        this.$store.commit('loadTokenAndUserFromSession');
-        //console.log(this.$store.state.user);
-    },
-    sockets:{
-        connect(){
-            console.log('socket connected (socket ID = '+this.$socket.id+')');
-            if(this.$store.state.user != null && this.$store.state.user.shift_active){
-                this.$socket.emit('user_enter', this.$store.state.user);
-            }
-        },
-        msg_to_managers_from_server(dataFromServer){
-            this.$toasted.show(dataFromServer, { 
-                position: "top-right", 
-                duration: 15000,
-                className: ['info']
-           });
-        }
-    }
-}).$mount('#app');
-
 router.beforeEach((to, from, next) => {
+    console.log('---------------------------------------------------------------------------------------------------------------');
     //Routes for not auth
     let notAuthRoutes = ['Root', 'Home', 'Login'];
 
@@ -118,6 +93,7 @@ router.beforeEach((to, from, next) => {
     //Routes only for managers
     let managersRoutes = ['Manager New User', 'Manager Users', 'Manager Tables', 'Manager Items', 'Manager Meals', 'Manager Invoices'];
 
+    console.log(to.name+'-----------------------'+!store.state.user+'-----------------------'+!notAuthRoutes.includes(to.name));
     //Check worker login
     if (!store.state.user) {
         if (!notAuthRoutes.includes(to.name)) {
@@ -168,3 +144,32 @@ router.beforeEach((to, from, next) => {
     document.title = to.meta.title !== undefined ? to.meta.title : 'Restaurant';
     next();
 });
+
+const app = new Vue({
+    router,
+    store,
+    data: {},
+    created() {
+        //console.log('-----');
+        //console.log(this.$store.state.user);
+        this.$store.commit('loadTokenAndUserFromSession');
+        //console.log(this.$store.state.user);
+    },
+    sockets:{
+        connect(){
+            console.log('socket connected (socket ID = '+this.$socket.id+')');
+            if(this.$store.state.user != null && this.$store.state.user.shift_active){
+                this.$socket.emit('user_enter', this.$store.state.user);
+            }
+        },
+        msg_to_managers_from_server(dataFromServer){
+            this.$toasted.show(dataFromServer, { 
+                position: "top-right", 
+                duration: 15000,
+                className: ['info']
+           });
+        }
+    }
+}).$mount('#app');
+
+
