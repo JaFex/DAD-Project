@@ -35,6 +35,45 @@ class InvoiceControllerAPI extends Controller
 
     /**
      * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function filter()
+    {
+        $array = [];
+        
+        if(isset($_GET['pending']) && $_GET['pending'] == 'true') {
+            array_push($array,"pending");
+        }
+        if(isset($_GET['paid']) && $_GET['paid'] == 'true') {
+            array_push($array,"paid");
+        }
+        if(isset($_GET['not_paid']) && $_GET['not_paid'] == 'true') {
+            array_push($array,"not paid");
+        }
+        if (empty($array)) {
+            array_push($array, "pending");
+        }
+
+        if(!isset($_GET['date']) && !isset($_GET['waiter'])) {
+            return InvoiceResource::collection(Invoice::whereIn('state', $array)->orderBy('invoices.date', 'desc')->paginate(10));
+        }
+
+        if(isset($_GET['waiter'])) {
+            $sql = Invoice::join('meals', 'invoices.meal_id', '=', 'meals.id')->whereIn('invoices.state', $array)->where('meals.responsible_waiter_id', $_GET['waiter']);
+        } else {
+            $sql = Invoice::whereIn('state', $array);
+        }
+        if(isset($_GET['date'])) {
+            $sql->whereDate('invoices.date', '=', date('Y-m-d',strtotime($_GET['date'])));
+        }
+        
+
+        return InvoiceResource::collection($sql->orderBy('invoices.date', 'desc')->paginate(10));
+    }
+
+    /**
+     * Display a listing of the resource.
      *  @param  int  $invoice_id
      * @return \Illuminate\Http\Response
      */

@@ -40,8 +40,7 @@
                                     <td>{{invoice.date}}</td>
                                     <td>{{invoice.total_price}}</td>
                                     <td>
-                                        <button type="button" class="btn btn-success" @click.prevent="downloadPDF(invoice, url+'api/invoices/'+invoice.id+'/download')">Download PDF</button>
-                                       <!-- <a :href= type="application/pdf" class="btn btn-success">Download PDF</a>-->
+                                        <button type="button" class="btn btn-success" @click.prevent="downloadPDF(invoice)">Download PDF</button>
                                     </td>
                                 </tr>
                             </template >
@@ -58,8 +57,7 @@ export default {
     data() {
         return {
             invoices: {},
-            links: {},
-            url: window.location.protocol + "//" + window.location.host + "/" + window.location.pathname.split('/')[1],
+            links: {}
         }
     },
     methods: {
@@ -95,10 +93,10 @@ export default {
                     console.log("loadInvoicesSamePage-"+error);
                 });
         },
-        downloadPDF: function(invoice, url) {
+        downloadPDF: function(invoice) {
             let soft = this;
-            if(!invoice || !url) {
-                soft.$toasted.show('Invoice or url invalid', {
+            if(!invoice || invoice.state !== 'paid') {
+                soft.$toasted.show('Invoice invalid', {
                             theme: "bubble",
                             position: "bottom-center",
                             duration: 5000,
@@ -106,7 +104,7 @@ export default {
                         });
             }
             axios({
-                url: soft.url+'api/invoices/'+invoice.id+'/download',
+                url: 'api/invoices/'+invoice.id+'/download',
                 method: 'GET',
                 responseType: 'blob', // important
             }).then((response) => {

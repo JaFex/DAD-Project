@@ -1,6 +1,6 @@
 <template>
     <b-navbar toggleable="md" type="dark" variant="dark" class="fixed-top">
-            <router-link to="/" tag="a" class="navbar-brand">Restaurant</router-link>
+            <router-link to="/home" tag="a" class="navbar-brand">Restaurant</router-link>
             <b-navbar-nav>
                 <li class="nav-item">
                     <router-link to="/dashboard" class="nav-link" tag="a">Dashboard</router-link>
@@ -36,6 +36,12 @@
                     <li class="nav-item">
                         <router-link to="/items" class="nav-link" tag="a">Items</router-link>
                     </li>
+                    <li class="nav-item">
+                        <router-link to="/meals/filter" class="nav-link" tag="a">Meals</router-link>
+                    </li>
+                    <li class="nav-item">
+                        <router-link to="/invoices/filter" class="nav-link" tag="a">Invoices</router-link>
+                    </li>
                     <b-nav-item-dropdown >
                         <template slot="button-content">Users</template>
                         <router-link to="/users/create" tag="a" role="menuitem" class="dropdown-item">New User</router-link>
@@ -47,7 +53,7 @@
                 </li>
             </b-navbar-nav>
             <b-navbar-nav class="ml-auto">
-                <b-nav-item v-if="this.$store.state.user.shift_active === 1" class="mr-2" disabled>Working</b-nav-item>
+                <b-nav-item v-if="this.$store.state.user && this.$store.state.user.shift_active === 1" class="mr-2" disabled>Working</b-nav-item>
                 <b-nav-item v-else class="mr-2" disabled>Not working</b-nav-item>
                 <b-img rounded width="30" height="30" alt="photo" class="m-1" :src="imagePath(this.$store.state.user.photo_url)" />
                 <b-nav-item-dropdown right>
@@ -55,7 +61,7 @@
                         <em>{{this.$store.state.user.name}}</em>
                     </template>
                     <router-link to="/profile" tag="a" role="manuitem" class="dropdown-item">Profile</router-link>
-                    <b-dropdown-item v-if="this.$store.state.user.shift_active === 1" @click.prevent="endShift">End Shift</b-dropdown-item>
+                    <b-dropdown-item v-if="this.$store.state.user && this.$store.state.user.shift_active === 1" @click.prevent="endShift">End Shift</b-dropdown-item>
                     <b-dropdown-item v-else @click.prevent="startShift">Start Shift</b-dropdown-item>
                     <b-dropdown-item v-on:click.prevent="logout">Logout</b-dropdown-item>
                 </b-nav-item-dropdown>
@@ -68,7 +74,7 @@ export default {
         logout() {
             axios.post('api/logout')
                 .then(response => {
-                    if(this.$store.state.user.shift_active){
+                    if(this.$store.state.user && this.$store.state.user.shift_active){
                         this.$socket.emit('user_exit', this.$store.state.user);
                     }
                     this.$store.commit('clearUserAndToken');
@@ -103,16 +109,16 @@ export default {
             return 'storage/profiles/'+img;
         },
         isAuthCook() {
-            return this.$store.state.user.type  === 'cook';
+            return this.$store.state.user && this.$store.state.user.type  === 'cook';
         },
         isAuthWaiter() {
-            return this.$store.state.user.type  === 'waiter';
+            return this.$store.state.user && this.$store.state.user.type  === 'waiter';
         },
         isAuthManager() {
-            return this.$store.state.user.type  === 'manager';
+            return this.$store.state.user && this.$store.state.user.type  === 'manager';
         },
         isAuthCashier() {
-            return this.$store.state.user.type  === 'cashier';
+            return this.$store.state.user && this.$store.state.user.type  === 'cashier';
         }
     },
     sockets:{
@@ -171,7 +177,27 @@ export default {
                     }
                 });
             }
-        }
+        },
+        mealTERMINATEDandPAID(received){
+            if(this.isAuthManager()) {
+            var mealID = received[0];
+            var mealState = received[1];
+            this.$toasted.show('Meal('+mealID+') is now '+mealState+'!', {
+                    theme: "bubble",
+                    position: "bottom-center",
+                    duration: 5000,
+                    className: ['show'],
+                    action : {
+                        text : 'Show me',
+                        onClick : (e, toastObject) => {
+                            toastObject.goAway(0);
+                            e.preventDefault();
+                            this.$router.push({ path: '/meals/filter'});
+                        }
+                    }
+                });
+            }
+        },
     }
 }
 </script>

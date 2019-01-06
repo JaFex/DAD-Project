@@ -39,34 +39,114 @@ const message = Vue.component('message', require('./components/message.vue'));
 const tables = Vue.component('tables', require('./components/manager/listTables.vue'));
 const items = Vue.component('items', require('./components/manager/listItems.vue'));
 const users = Vue.component('users', require('./components/manager/listUsers.vue'));
+const mealsManager = Vue.component('mealsManager', require('./components/manager/listMeals.vue'));
+const invoicesManager = Vue.component('invoicesManager', require('./components/manager/listInvoices.vue'));
+
+const notAllowed = Vue.component('notAllowed', require('./components/erro/401.vue'));
 const notfound = Vue.component('notfound', require('./components/erro/404.vue'));
 const dashboardManagers = Vue.component('dashboardManagers', require('./components/dashboardManagers.vue'));
 
 const routes = [
-    { path: '/', redirect: '/home', name: 'root' },
-    { path: '/home', component:  home, name: 'home' },
-    { path: '/login', component:  login, name: 'login' },
-    { path: '/dashboard', component: dashboard, name: 'dashboard' },
-    { path: '/profile', component: profile, name: 'profile' },
-    { path: '/users/create', component: newUser, name: 'newUser' },
-    { path: '/orders', component: orders, name: 'Cooks' },
-    { path: '/meals', component: meals, name: 'Waiters' },
-    { path: '/summary', component: summaryMealList, name: 'Waiters Summary' },
-    { path: '/orders-to-deliver', component: ordersToDeliver, name: 'Waiters Deliver' },
-    { path: '/invoices', component: invoices, name: 'Cashier' },
-    { path: '/invoicesPDF', component: invoicesListFile, name: 'Invoice PDF' },
-    { path: '/message', component: message, name: 'Message' },
-    { path: '/tables', component: tables, name: 'Tables' },
-    { path: '/items', component: items, name: 'Items' },
-    { path: '/users', component: users, name: 'Users' },
+    { path: '/', redirect: '/home', name: 'Root' },
+    { path: '/home', component:  home, name: 'Home' },
+    { path: '/login', component:  login, name: 'Login' },
+    { path: '/dashboard', component: dashboard, name: 'User Dashboard' },
+    { path: '/profile', component: profile, name: 'User Profile' },
+    { path: '/users/create', component: newUser, name: 'Manager New User' },
+    { path: '/orders', component: orders, name: 'Cooks Orders' },
+    { path: '/meals', component: meals, name: 'Waiter Meals' },
+    { path: '/summary', component: summaryMealList, name: 'Waiter Summary' },
+    { path: '/orders-to-deliver', component: ordersToDeliver, name: 'Waiter Deliver' },
+    { path: '/invoices', component: invoices, name: 'Cashier Invoices' },
+    { path: '/invoicesPDF', component: invoicesListFile, name: 'Cashier Invoices PDF' },
+    { path: '/message', component: message, name: 'User Message' },
+    { path: '/tables', component: tables, name: 'Manager Tables' },
+    { path: '/items', component: items, name: 'Manager Items' },
+    { path: '/users', component: users, name: 'Manager Users' },
+    { path: '/meals/filter', component: mealsManager, name: 'Manager Meals' },
+    { path: '/invoices/filter', component: invoicesManager, name: 'Manager Invoices' },
+    { path: '/401', meta: { title: 'Not Allowed 401' }, component: notAllowed, name: 'NotAllowed' },
     { path: '/dashboardManagers', component: dashboardManagers, name: 'Dashboard Managers'},
-
     { path: '/404', meta: { title: 'Not Found 404' }, component: notfound, name: 'NotFound' },
     { path: '*', redirect: '/404' }
 ];
 
 const router = new VueRouter({
+    mode: 'history',
     routes:routes
+});
+
+router.beforeEach((to, from, next) => {
+    let user = JSON.parse(sessionStorage.getItem('user'));
+    
+    //Routes for not auth
+    let notAuthRoutes = ['Root', 'Home', 'Login'];
+
+    //Routes for all workers
+    let protectedRoutes = ['User Dashboard', 'User Profile', 'User Message'];
+
+    //Routes only for cooks
+    let cooksRoutes = ['Cooks Orders']; 
+
+    //Routes only for waiters
+    let waitersRoutes = ['Waiter Meals', 'Waiter Summary', 'Waiter Deliver'];
+
+    //Routes only for cashiers
+    let cashiersRoutes = ['Cashier Invoices', 'Cashier Invoices PDF'];
+
+    //Routes only for managers
+    let managersRoutes = ['Manager New User', 'Manager Users', 'Manager Tables', 'Manager Items', 'Manager Meals', 'Manager Invoices'];
+
+    //Check worker login
+    if (!user) {
+        if (!notAuthRoutes.includes(to.name)) {
+            next("/login");
+            return;
+        }
+        document.title = to.meta.title !== undefined ? to.meta.title : 'Restaurant';
+        next();
+        return;
+    }
+
+    if(user && to.name === 'Login') {
+        next("/dashboard");
+        return;
+    }
+
+    //Check if its cook
+    if(cooksRoutes.includes(to.name)){
+        if(user.type !== 'cook'){
+            next("/401");
+            return;
+        }
+    }
+
+    //Check if its waiter
+    if(waitersRoutes.includes(to.name)){
+        if(user.type !== 'waiter'){
+            next("/401");
+            return;
+        }
+    }
+
+    //Check if its cashier
+    if(cashiersRoutes.includes(to.name)){
+        if(user.type !== 'cashier'){
+            next("/401");
+            return;
+        }
+    }
+
+    //Check if its manager
+    if(managersRoutes.includes(to.name)){
+        if(user.type !== 'manager'){
+            next("/401");
+            return;
+        }
+    }
+
+    document.title = to.meta.title !== undefined ? to.meta.title : 'Restaurant';
+    next();
 });
 
 const app = new Vue({
@@ -96,63 +176,4 @@ const app = new Vue({
     }
 }).$mount('#app');
 
-router.beforeEach((to, from, next) => {
 
-    //Routes for all workers
-    let protectedRoutes = ['dashboard', 'profile', 'message'];
-
-    //Routes only for cooks
-    let cooksRoutes = ['orders']; 
-
-    //Routes only for waiters
-    let waitersRoutes = ['meals'];
-
-    //Routes only for cashiers
-    let cashiersRoutes = ['invoices', 'invoicesPDF'];
-
-    //Routes only for managers
-    let managersRoutes = ['newUser', 'users', 'tables', 'items'];
-
-    //Check worker login
-    if (protectedRoutes.includes(to.name) || managersRoutes.includes(to.name) || cashiersRoutes.includes(to.name) || waitersRoutes.includes(to.name) || cooksRoutes.includes(to.name)) {
-        if (!store.state.user) {
-            next("/login");
-            return;
-        }
-    }
-
-    //Check if its cook
-    if(cooksRoutes.includes(to.name)){
-        if(store.state.user.type !== 'cook'){
-            next("/dashboard");
-            return;
-        }
-    }
-
-    //Check if its waiter
-    if(waitersRoutes.includes(to.name)){
-        if(store.state.user.type !== 'waiter'){
-            next("/dashboard");
-            return;
-        }
-    }
-
-    //Check if its cashier
-    if(cashiersRoutes.includes(to.name)){
-        if(store.state.user.type !== 'cashier'){
-            next("/dashboard");
-            return;
-        }
-    }
-
-    //Check if its manager
-    if(managersRoutes.includes(to.name)){
-        if(store.state.user.type !== 'manager'){
-            next("/dashboard");
-            return;
-        }
-    }
-
-    document.title = to.meta.title !== undefined ? to.meta.title : 'Restaurant';
-    next();
-});

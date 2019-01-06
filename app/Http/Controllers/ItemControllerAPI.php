@@ -35,7 +35,7 @@ class ItemControllerAPI extends Controller
      */
     public function get(int $item_id)
     {
-        return new ItemResource(Item::findOrFail($item_id));//::where('id', $item_id)->get());
+        return new ItemResource(Item::withTrashed()->findOrFail($item_id));//::where('id', $item_id)->get());
     }
 
     /**

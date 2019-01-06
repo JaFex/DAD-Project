@@ -44,6 +44,45 @@ class MealControllerAPI extends Controller
 
     /**
      * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function filter()
+    {
+        $array = [];
+        
+        if(isset($_GET['active']) && $_GET['active'] == 'true') {
+            array_push($array,"active");
+        }
+        if(isset($_GET['terminated']) && $_GET['terminated'] == 'true') {
+            array_push($array,"terminated");
+        }
+        if(isset($_GET['paid']) && $_GET['paid'] == 'true') {
+            array_push($array,"paid");
+        }
+        if(isset($_GET['not_paid']) && $_GET['not_paid'] == 'true') {
+            array_push($array,"not paid");
+        }
+        if (empty($array)) {
+            array_push($array, "terminated", "active");
+        }
+
+        if(!isset($_GET['date']) && !isset($_GET['waiter'])) {
+            return MealResource::collection(Meal::whereIn('state', $array)->orderBy('start', 'desc')->paginate(10));
+        }
+        $sql = Meal::whereIn('state', $array);
+        if(isset($_GET['date'])) {
+            $sql->whereDate('start', '=', date('Y-m-d',strtotime($_GET['date'])));
+        }
+        if(isset($_GET['waiter'])) {
+            $sql->where('responsible_waiter_id', $_GET['waiter']);
+        }
+
+        return MealResource::collection($sql->orderBy('start', 'desc')->paginate(10));
+    }
+
+    /**
+     * Display a listing of the resource.
      *  @param  int  $meal
      * @return \Illuminate\Http\Response
      */
@@ -51,6 +90,17 @@ class MealControllerAPI extends Controller
     {
         $meal = Meal::findOrFail($meal_id);
         return OrderResource::collection($meal->orders()->whereIn('state', ['pending', 'confirmed'])->paginate(10));
+    }
+
+    /**
+     * Display a listing of the resource.
+     *  @param  int  $meal
+     * @return \Illuminate\Http\Response
+     */
+    public function allOrders(int $meal_id)
+    {
+        $meal = Meal::findOrFail($meal_id);
+        return OrderResource::collection($meal->orders()->orderBy('start', 'desc')->paginate(10));
     }
 
     /**

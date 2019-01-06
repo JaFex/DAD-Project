@@ -24,7 +24,8 @@ class InvoiceItem extends JsonResource
             'quantity' => $this->quantity,
             'unit_price' => $this->unit_price,
             'sub_total_price' => $this->sub_total_price,
-            'item_name' => $item->name
+            'item_name' => $item->name,
+            'item_type' => $item->type
         ];
     }
 }

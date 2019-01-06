@@ -21,6 +21,16 @@ class UserControllerAPI extends Controller
     {
         return UserResource::collection(User::withTrashed()->paginate(10));    
     }
+
+    public function usersByType(string $type)
+    {
+        if($type !== "waiter" && $type !== "manager" && $type !== "cook" && $type !== "cashier"){
+            return response([
+                'message' => 'No data found!'
+            ], 404);
+        }
+        return UserResource::collection(User::where('type', $type)->get());    
+    }
     
     public function myProfile(Request $request)
     {

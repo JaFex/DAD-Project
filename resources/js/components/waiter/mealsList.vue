@@ -290,8 +290,97 @@ export default {
               soft.messageErro = "Ops! Order" + order.id + " not confirmed";
               soft.showErro = true;
             }
-          });
-      }, 5000);
+        },
+        updateOrder: function(order) {
+            if(this.currentMeal && order && this.currentMeal.id == order.meal_id) {
+                this.loadOrders('meals/'+this.currentMeal.id+'/orders');
+            }
+        },
+        timeRunOutOrderConfirmed: function(order) {
+            this.reloadMealAndOrder();
+            let soft = this;
+            setTimeout(function () {
+                var update = {};
+                update["state"] = 'confirmed';
+                axios.put('/api/orders/'+order.id, update)
+                        .then(response => {
+                            order = response.data.data;
+                            soft.messageTitle = "Order Confirmed!";
+                            soft.message = "Order ("+order.id+") has been confirmed on the meal "+order.meal_id+"!";
+                            soft.showSuccess = true;
+                            soft.selectedItemType = '';
+                            soft.selectedItem = null;
+                            soft.updateOrder(order);
+                            soft.$socket.emit('kitchen');
+                        })
+                        .catch(function (error) {
+                            console.log("timeRunOutOrderConfirmed->"+error);
+                            if (error.response.status === 404) {
+                                console.log("timeRunOutOrderConfirmed->"+'Is 404 maybe order has been deleted so he didn t find the order');
+                            } else {
+                                soft.messageTitleErro = "Fail to confirm order!";
+                                soft.messageErro = "Ops! Order"+order.id+" not confirmed";
+                                soft.showErro = true;
+                            }
+                        });
+            }, 5000);
+        },
+        updateKitchen: function() {
+            this.$socket.emit('kitchen');
+        },
+        terminateMeal: function(meal){
+            let soft = this;
+            axios.get('/api/meals/'+meal.id+'/terminated')
+                .then(response => {
+                    var booleanCanBeTerminated = response.data['terminated'];
+                    if(booleanCanBeTerminated == true) {
+                        soft.sendUpdateToTerminateMeal(meal);
+                    } else if(booleanCanBeTerminated == false) {
+                        if (confirm('This meal\'s ('+meal.id+') orders have not been delivered yet, and they will be excluded from the payment! Is this okay?')) {
+                            soft.sendUpdateToTerminateMeal(meal);
+                        } else {
+                            soft.$toasted.show('The meal ('+meal.id+') has not been terminated', {
+                                theme: "bubble",
+                                position: "bottom-center",
+                                duration: 5000,
+                                className: ['success']
+                            });
+                        }
+                    }
+                })
+                .catch(function (error) {
+                    console.log("terminateMeal->"+error);
+                });
+        },
+        sendUpdateToTerminateMeal: function(meal) {
+            let soft = this;
+            var update = {};
+            update["state"] = 'terminated';
+            axios.put('/api/meals/'+meal.id+'/terminated', update)
+                    .then(response => {
+                        meal = response.data.data;
+                        soft.$toasted.show('The meal ('+meal.id+') has been terminated', {
+                                theme: "bubble",
+                                position: "bottom-center",
+                                duration: 5000,
+                                className: ['success']
+                            });
+                        soft.currentMeal = soft.currentMeal.id==meal.id?null:soft.currentMeal;
+                        soft.reloadMealAndOrder();
+                        soft.$socket.emit('kitchen');
+                        soft.$socket.emit('cashier');
+                        soft.$socket.emit('managerMeal', meal.id, meal.state);
+                    })
+                    .catch(function (error) {
+                        console.log("sendUpdateToTerminateMeal->"+error);
+                        soft.$toasted.show('ERRO: The meal ('+meal.id+') has not been terminated', {
+                                theme: "bubble",
+                                position: "bottom-center",
+                                duration: 5000,
+                                className: ['error']
+                            });
+                    });
+        }
     },
     updateKitchen: function() {
       this.$socket.emit("kitchen");

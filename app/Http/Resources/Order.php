@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\User;
 
 class Order extends JsonResource
 {
@@ -15,21 +16,19 @@ class Order extends JsonResource
 
     public function toArray($request)
     {
-        return parent::toArray($request);
-
-        //$meal = User::withTrashed()->findOrFail($this->meal_id);
-
-        /*return [
+        $cook = null;
+        if($this->responsible_cook_id) {
+            $cook = User::withTrashed()->findOrFail($this->responsible_cook_id);
+        }
+        return [
             'id' => $this->id,
             'state' => $this->state,
             'item_id' => $this->item_id,
             'meal_id' => $this->meal_id,
-            'responsible_cook_id' => $this->responsible_cook_id,
+            'responsible_cook_id' => $cook?$cook->id:'',
+            'responsible_cook_name' => $cook?$cook->name:'',
             'start' => $this->start,
-            'end' => $this->end,
-            'meal_name' => $meal->name,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at
-        ];*/
+            'end' => $this->end
+        ];
     }
 }
