@@ -2,10 +2,10 @@
     <b-navbar toggleable="md" type="dark" variant="dark" class="fixed-top">
             <router-link to="/home" tag="a" class="navbar-brand">Restaurant</router-link>
             <b-navbar-nav>
-                <li class="nav-item">
-                    <router-link to="/dashboard" class="nav-link" tag="a">Dashboard</router-link>
-                </li>
                 <template v-if="isAuthWaiter()">
+                    <li class="nav-item">
+                        <router-link to="/dashboard" class="nav-link" tag="a">Dashboard</router-link>
+                    </li>
                     <li class="nav-item">
                         <router-link to="/meals" class="nav-link" tag="a">Meals</router-link>
                     </li>
@@ -18,6 +18,9 @@
                 </template>
                 <template v-if="isAuthCashier()">
                     <li class="nav-item">
+                        <router-link to="/dashboard" class="nav-link" tag="a">Dashboard</router-link>
+                    </li>
+                    <li class="nav-item">
                         <router-link to="/invoices" class="nav-link" tag="a">Invoices</router-link>
                     </li>
                     <li class="nav-item">
@@ -25,11 +28,18 @@
                     </li>
                 </template>
                 
-                
-                <li v-if="isAuthCook()" class="nav-item">
-                    <router-link to="/orders" class="nav-link" tag="a">Orders</router-link>
-                </li>
+                <template v-if="isAuthCook()">
+                    <li class="nav-item">
+                        <router-link to="/dashboard" class="nav-link" tag="a">Dashboard</router-link>
+                    </li>
+                    <li class="nav-item">
+                        <router-link to="/orders" class="nav-link" tag="a">Orders</router-link>
+                    </li>
+                </template>
                 <template v-if="isAuthManager()">
+                    <li class="nav-item">
+                        <router-link to="/dashboardManagers" class="nav-link" tag="a">Dashboard</router-link>
+                    </li>
                     <li class="nav-item">
                         <router-link to="/tables" class="nav-link" tag="a">Tables</router-link>
                     </li>
