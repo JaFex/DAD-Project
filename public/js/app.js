@@ -86718,6 +86718,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['method', 'links', 'path'],
@@ -86745,6 +86747,32 @@ var render = function() {
       "ul",
       { staticClass: "pagination justify-content-center" },
       [
+        _c(
+          "li",
+          {
+            staticClass: "page-item",
+            class: { disabled: _vm.links.prev == null }
+          },
+          [
+            _c(
+              "a",
+              {
+                staticClass: "page-link",
+                attrs: { href: "#" },
+                on: {
+                  click: function($event) {
+                    $event.preventDefault()
+                    _vm.links.currentPage != 1
+                      ? _vm.loadMethod(_vm.links.path + 1)
+                      : "#"
+                  }
+                }
+              },
+              [_vm._v("First")]
+            )
+          ]
+        ),
+        _vm._v(" "),
         _c(
           "li",
           {
@@ -86915,6 +86943,32 @@ var render = function() {
                 }
               },
               [_vm._v("Next")]
+            )
+          ]
+        ),
+        _vm._v(" "),
+        _c(
+          "li",
+          {
+            staticClass: "page-item",
+            class: { disabled: _vm.links.next == null }
+          },
+          [
+            _c(
+              "a",
+              {
+                staticClass: "page-link",
+                attrs: { href: "#" },
+                on: {
+                  click: function($event) {
+                    $event.preventDefault()
+                    _vm.links.currentPage != _vm.links.lastPage
+                      ? _vm.loadMethod(_vm.links.path + _vm.links.lastPage)
+                      : "#"
+                  }
+                }
+              },
+              [_vm._v("Last")]
             )
           ]
         )
@@ -87708,14 +87762,64 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     sockets: {
         privateUpdatePrepared: function privateUpdatePrepared(received) {
-            var sourceUser = received[0];
-            var order = received[1];
-            this.$toasted.show('New order(' + order.id + ') is prepared on meal "' + order.meal_id + '" from "' + sourceUser.name + '"', {
-                theme: "bubble",
-                position: "bottom-center",
-                duration: 5000,
-                className: ['success']
-            });
+            var _this4 = this;
+
+            if (this.isAuthWaiter()) {
+                var sourceUser = received[0];
+                var order = received[1];
+                this.$toasted.show('New order(' + order.id + ') is prepared on meal "' + order.meal_id + '" from "' + sourceUser.name + '!', {
+                    theme: "bubble",
+                    position: "bottom-center",
+                    duration: 5000,
+                    className: ['show'],
+                    action: {
+                        text: 'Show me',
+                        onClick: function onClick(e, toastObject) {
+                            toastObject.goAway(0);
+                            e.preventDefault();
+                            // in here redirect the user via $router
+                            _this4.$router.push({ path: 'orders-to-deliver', query: { meal_id: order.meal_id } });
+                        }
+                    }
+                });
+            }
+        },
+        update: function update() {
+            var _this5 = this;
+
+            if (this.isAuthCook()) {
+                this.$toasted.show('Orders was changed!!', {
+                    theme: "bubble",
+                    position: "bottom-center",
+                    duration: 5000,
+                    className: ['show'],
+                    action: {
+                        text: 'Show me',
+                        onClick: function onClick(e, toastObject) {
+                            toastObject.goAway(0);
+                            e.preventDefault();
+                            // in here redirect the user via $router
+                            _this5.$router.push({ path: 'orders' });
+                        }
+                    }
+                });
+            } else if (this.isAuthCashier()) {
+                this.$toasted.show('Invoices was changed!', {
+                    theme: "bubble",
+                    position: "bottom-center",
+                    duration: 5000,
+                    className: ['show'],
+                    action: {
+                        text: 'Show me',
+                        onClick: function onClick(e, toastObject) {
+                            toastObject.goAway(0);
+                            e.preventDefault();
+                            // in here redirect the user via $router
+                            _this5.$router.push({ path: 'invoices' });
+                        }
+                    }
+                });
+            }
         }
     }
 });
@@ -93008,17 +93112,24 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     methods: {
         loadMeals: function loadMeals(url) {
-            var _this = this;
-
+            var soft = this;
             axios.get('/api/' + url).then(function (response) {
-                _this.meals = response.data.data;
-                _this.links = {
+                soft.meals = response.data.data;
+                soft.links = {
                     prev: response.data.links.prev,
                     next: response.data.links.next,
                     currentPage: response.data.meta.current_page,
                     lastPage: response.data.meta.last_page,
                     path: url + '?page='
                 };
+                if (soft.$route.query.meal_id) {
+                    var meal_id = soft.$route.query.meal_id;
+                    soft.meals.forEach(function (meal) {
+                        if (meal_id + '' === meal.id + '') {
+                            soft.openOrders(meal);
+                        }
+                    });
+                }
             }).catch(function (error) {
                 console.log("loadMeals->" + error);
             });
@@ -93028,15 +93139,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.loadOrders('meals/' + meal.id + '/delived');
         },
         loadOrders: function loadOrders(url) {
-            var _this2 = this;
+            var _this = this;
 
             var res = url.split("?");
             if (res.length > 2) {
                 url = res[0] + "?" + res[2];
             }
             axios.get('/api/' + url).then(function (response) {
-                _this2.orders = response.data.data;
-                _this2.linksOrders = {
+                _this.orders = response.data.data;
+                _this.linksOrders = {
                     prev: response.data.links.prev,
                     next: response.data.links.next,
                     currentPage: response.data.meta.current_page,
@@ -93891,8 +94002,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 soft.message = 'The invoice is paid.';
                 soft.messageTitle = 'Paid Successful!';
                 soft.hidePaidForm();
+                soft.$socket.emit('cashierWichoutMe');
                 soft.loadInvoicesSamePage('invoices/all/pending', _this4.links.currentPage);
-                soft.$emit('cashierWichoutMe');
             }).catch(function (error) {
                 console.log("needToBeConfirmed->" + error);
                 soft.messageToForm = 'Something went wrong with the server.';
@@ -98839,6 +98950,22 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -99059,7 +99186,24 @@ var render = function() {
                         _vm._v(" "),
                         _c("td", [_vm._v(_vm._s(invoice.waiter_name))]),
                         _vm._v(" "),
-                        _c("td", [_vm._v(_vm._s(invoice.total_price))])
+                        _c("td", [_vm._v(_vm._s(invoice.total_price))]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-primary",
+                              attrs: { type: "button" },
+                              on: {
+                                click: function($event) {
+                                  $event.preventDefault()
+                                  _vm.openOrders(_vm.meal)
+                                }
+                              }
+                            },
+                            [_vm._v("Not paid")]
+                          )
+                        ])
                       ])
                     ]
                   })
@@ -99103,6 +99247,23 @@ var render = function() {
                               }
                             },
                             [_vm._v("See orders")]
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-primary",
+                              attrs: { type: "button" },
+                              on: {
+                                click: function($event) {
+                                  $event.preventDefault()
+                                  _vm.openOrders(meal)
+                                }
+                              }
+                            },
+                            [_vm._v("Not paid")]
                           )
                         ])
                       ]),
@@ -99234,7 +99395,9 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Waiter Name")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Current Total Price")])
+        _c("th", [_vm._v("Current Total Price")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Change State")])
       ])
     ])
   },
@@ -99254,7 +99417,9 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Current Total Price")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Action")])
+        _c("th", [_vm._v("Action")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Change State")])
       ])
     ])
   }

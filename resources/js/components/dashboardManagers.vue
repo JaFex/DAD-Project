@@ -36,6 +36,7 @@
                 <th>Table Number</th>
                 <th>Waiter Name</th>
                 <th>Current Total Price</th>
+                <th>Change State</th>
               </tr>
             </thead>
             <tbody>
@@ -47,6 +48,13 @@
                   <td>{{invoice.table_number}}</td>
                   <td>{{invoice.waiter_name}}</td>
                   <td>{{invoice.total_price}}</td>
+                  <td>
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      @click.prevent="openOrders(meal);"
+                    >Not paid</button>
+                  </td>
                 </tr>
               </template>
             </tbody>
@@ -62,6 +70,7 @@
                 <th>Waiter Name</th>
                 <th>Current Total Price</th>
                 <th>Action</th>
+                <th>Change State</th>
               </tr>
             </thead>
             <tbody>
@@ -78,6 +87,13 @@
                       class="btn btn-primary"
                       @click.prevent="openOrders(meal);"
                     >See orders</button>
+                  </td>
+                  <td>
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      @click.prevent="openOrders(meal);"
+                    >Not paid</button>
                   </td>
                 </tr>
                 <tr v-if="currentMeal && meal.id == currentMeal.id" :key="'meal_'+meal.id">

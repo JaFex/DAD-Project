@@ -1,6 +1,7 @@
 <template>
     <nav>
         <ul class="pagination justify-content-center">
+            <li class="page-item" :class="{'disabled' : links.prev == null}"><a href="#" class="page-link" @click.prevent="links.currentPage != 1 ? loadMethod(links.path+(1)) : '#'">First</a></li>
             <li class="page-item" :class="{'disabled' : links.prev == null}"><a href="#" class="page-link" @click.prevent="links.prev != null ? loadMethod(links.path+(links.currentPage-1)) : '#'">Previous</a></li>
             
             <template v-if="links.lastPage > 5">
@@ -26,6 +27,7 @@
             
             
             <li class="page-item" :class="{'disabled' : links.next == null}"><a href="#" class="page-link" @click.prevent="links.next != null ? loadMethod(links.path+(links.currentPage+1)) : '#'">Next</a></li>
+            <li class="page-item" :class="{'disabled' : links.next == null}"><a href="#" class="page-link" @click.prevent="links.currentPage != links.lastPage ? loadMethod(links.path+(links.lastPage)) : '#'">Last</a></li>
         </ul>
     </nav>
 </template>

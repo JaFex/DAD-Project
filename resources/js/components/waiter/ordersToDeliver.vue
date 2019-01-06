@@ -86,15 +86,24 @@ export default {
     },
     methods: {
         loadMeals: function(url){
+            let soft = this;
             axios.get('/api/'+url)
                 .then(response => {
-                    this.meals = response.data.data;
-                    this.links = {
+                    soft.meals = response.data.data;
+                    soft.links = {
                         prev: response.data.links.prev,
                         next: response.data.links.next,
                         currentPage: response.data.meta.current_page,
                         lastPage: response.data.meta.last_page,
                         path: url+'?page='
+                    }
+                    if(soft.$route.query.meal_id) {
+                        var meal_id = soft.$route.query.meal_id;
+                        soft.meals.forEach(function(meal) {
+                            if(meal_id+'' === meal.id+'') {
+                                soft.openOrders(meal);
+                            }
+                        });
                     }
                 })
                 .catch(function (error) {

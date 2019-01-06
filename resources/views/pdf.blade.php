@@ -50,11 +50,15 @@
             <tbody>
                 @foreach ($invoice->invoice_items as $invoice_item)
                 <tr>
-                    <th scope="row">{{$invoice_item->item_id}}</td>
-                    <td>{{$invoice_item->item->name}}</td>
-                    <td align="right">{{$invoice_item->quantity}}</td>
-                    <td align="right">{{$invoice_item->unit_price}} €</td>
-                    <td align="right">{{$invoice_item->sub_total_price}} €</td>
+                    <th scope="row">{{ $invoice_item->item_id }}</td>
+                    @foreach ($items as $item)
+                        @if($item->id === $invoice_item->item_id)
+                        <td>{{ $item->name }}</td>
+                        @endif
+                    @endforeach
+                    <td align="right">{{ $invoice_item->quantity }}</td>
+                    <td align="right">{{ $invoice_item->unit_price }} €</td>
+                    <td align="right">{{ $invoice_item->sub_total_price }} €</td>
                 </tr>
                 @endforeach
             </tbody>
@@ -63,7 +67,7 @@
                 <tr>
                     <td colspan="3"></td>
                     <td align="right">Total €</td>
-                    <td align="right" class="gray">{{$invoice->total_price}} €</td>
+                    <td align="right" class="gray">{{ $invoice->total_price }} €</td>
                 </tr>
             </tfoot>
         </table>

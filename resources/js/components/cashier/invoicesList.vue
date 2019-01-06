@@ -184,8 +184,8 @@ export default {
                     soft.message = 'The invoice is paid.';
                     soft.messageTitle = 'Paid Successful!';
                     soft.hidePaidForm();
+                    soft.$socket.emit('cashierWichoutMe');
                     soft.loadInvoicesSamePage('invoices/all/pending', this.links.currentPage);
-                    soft.$emit('cashierWichoutMe');
                 })
                 .catch(function (error) {
                     console.log("needToBeConfirmed->"+error);
