@@ -30,9 +30,6 @@
                                         <div class="invalid" v-if="!$v.user.username.minLength">
                                             Username must have at least {{$v.user.username.$params.minLength.min}} letters.
                                         </div>
-                                        <div class="invalid" v-if="!$v.user.username.alphaNum">
-                                            Username must be alpha numeric..
-                                        </div>
                                     </b-form-group>
                                     <b-form-group id="emailLabel"
                                                 label="Email:"
@@ -148,7 +145,6 @@ export default {
             username: {
                 required,
                 minLength: minLength(2),
-                alphaNum
             }, 
             email: {
                 required,
@@ -157,7 +153,6 @@ export default {
             name: {
                 required,
                 minLength: minLength(3),
-                alpha
             },
             type: {
                 required

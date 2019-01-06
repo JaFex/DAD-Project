@@ -39,10 +39,10 @@
                                 </td>
                                 <td >
                                     <button v-if="user.id !== $store.state.user.id && !user.deleted && !user.blocked" type="button" class="btn btn-warning btn-sm" @click.prevent="edit(user)" data-toggle="modal" data-target="#exampleModalCenter"><i class="fas fa-user-edit"></i></button>
-                                    <button v-if="!user.deleted && user.blocked" type="button" class="btn btn-success btn-sm" @click.prevent="unblock(user.id)"><i class="fas fa-lock-open"></i></button>
-                                    <button v-if="!user.deleted && !user.blocked" type="button" class="btn btn-danger btn-sm" @click.prevent="block(user.id)"><i class="fas fa-lock"></i></button>
-                                    <button v-if="user.deleted" type="button" class="btn btn-success btn-sm" @click.prevent="restoreUser(user.id)"><i class="fas fa-sync-alt"></i></button>
-                                    <button v-if="!user.deleted" type="button" class="btn btn-danger btn-sm" @click.prevent="deleteUser(user.id)"><i class="fas fa-trash-alt"></i></button>
+                                    <button v-if="user.id !== $store.state.user.id && !user.deleted && user.blocked" type="button" class="btn btn-success btn-sm" @click.prevent="unblock(user.id)"><i class="fas fa-lock-open"></i></button>
+                                    <button v-if="user.id !== $store.state.user.id && !user.deleted && !user.blocked" type="button" class="btn btn-danger btn-sm" @click.prevent="block(user.id)"><i class="fas fa-lock"></i></button>
+                                    <button v-if="user.id !== $store.state.user.id && user.deleted" type="button" class="btn btn-success btn-sm" @click.prevent="restoreUser(user.id)"><i class="fas fa-sync-alt"></i></button>
+                                    <button v-if="user.id !== $store.state.user.id && !user.deleted" type="button" class="btn btn-danger btn-sm" @click.prevent="deleteUser(user.id)"><i class="fas fa-trash-alt"></i></button>
                                 </td>
                             </tr>
                         </tbody>
@@ -138,7 +138,7 @@ export default {
                 .then(response => {
                     this.loadUsers('users');
                     //this.$socket.emit('msg_update_tables_from_client');
-                    this.$toasted.show('User blocked successfully.', {
+                    this.$toasted.show('User unblocked successfully.', {
                             theme: "bubble",
                             position: "bottom-center",
                             duration: 5000,
