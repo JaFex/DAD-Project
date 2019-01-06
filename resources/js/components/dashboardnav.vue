@@ -57,6 +57,9 @@
                         <router-link to="/users/create" tag="a" role="menuitem" class="dropdown-item">New User</router-link>
                         <router-link to="/users" tag="a" role="menuitem" class="dropdown-item">List</router-link>
                     </b-nav-item-dropdown>
+                    <li class="nav-item">
+                        <router-link to="/statistics" class="nav-link" tag="a">Statistics</router-link>
+                    </li>
                 </template>
                 <li class="nav-item">
                     <router-link to="/message" class="nav-link" tag="a">Send Message</router-link>

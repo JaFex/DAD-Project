@@ -41,12 +41,14 @@ const items = Vue.component('items', require('./components/manager/listItems.vue
 const users = Vue.component('users', require('./components/manager/listUsers.vue'));
 const mealsManager = Vue.component('mealsManager', require('./components/manager/listMeals.vue'));
 const invoicesManager = Vue.component('invoicesManager', require('./components/manager/listInvoices.vue'));
+const statistics = Vue.component('statistics', require('./components/manager/statistics.vue'));
 
 const notAllowed = Vue.component('notAllowed', require('./components/erro/401.vue'));
 const notfound = Vue.component('notfound', require('./components/erro/404.vue'));
 const dashboardManagers = Vue.component('dashboardManagers', require('./components/dashboardManagers.vue'));
 
 const routes = [
+    { path: '/statistics', component: statistics, name: 'Statistics' },
     { path: '/', redirect: '/home', name: 'Root' },
     { path: '/home', component:  home, name: 'Home' },
     { path: '/login', component:  login, name: 'Login' },
