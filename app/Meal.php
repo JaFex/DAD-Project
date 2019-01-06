@@ -18,4 +18,9 @@ class Meal extends Model
     {
         return $this->belongsTo('App\User');
     }
+
+    public function invoice()
+    {
+        return $this->hasOne('App\Invoice');
+    }
 }

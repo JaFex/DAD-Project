@@ -130,18 +130,7 @@ class InvoiceControllerAPI extends Controller
         $invoice = Invoice::findOrFail($invoice_id);
         $invoice->state = 'not paid';
 
-        /*$meal->invoice->state = 'not paid';
-
-        $orders = Order::where('meal_id', $meal_id)->get();
-
-        foreach ($orders as $order) {
-            if($order->state != 'delivered'){
-                $order->state = 'not delivered';
-                $order->save();
-            } 
-        }
-
-        $meal->invoice->save();*/
+        $invoice->meal->state = 'not paid';
 
         $invoice->save();
         

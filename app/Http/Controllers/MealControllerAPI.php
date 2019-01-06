@@ -207,10 +207,10 @@ class MealControllerAPI extends Controller
      */
     public function update(Request $request, int $meal_id)
     {
-        /*$meal = Meal::findOrFail($meal_id);
+        $meal = Meal::findOrFail($meal_id);
         $meal->update($request->all());
         $meal->save();
-        return new MealResource($meal);*/
+        return new MealResource($meal);
     }
 
 

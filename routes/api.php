@@ -63,6 +63,8 @@ Route::middleware('auth:api')->get('meals/{meal_id}', 'MealControllerAPI@show');
 Route::middleware('auth:api')->post('meals', 'MealControllerAPI@store');
 Route::middleware('auth:api')->get('meals', 'MealControllerAPI@index');
 Route::middleware('auth:api')->get('meals/all/state/{state}', 'MealControllerAPI@indexByState');
+Route::middleware('auth:api')->put('meals/{meal_id}', 'MealControllerAPI@update');
+Route::middleware('auth:api')->put('meals/{meal_id}/notpaid', 'MealControllerAPI@notPaid');
 //--------------------------------------------------------------------------------------------//
 //------------------------------------ORDER---------------------------------------------------//
 //--------------------------------------------------------------------------------------------//

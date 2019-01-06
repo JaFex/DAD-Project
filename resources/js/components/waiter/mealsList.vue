@@ -290,7 +290,9 @@ export default {
               soft.messageErro = "Ops! Order" + order.id + " not confirmed";
               soft.showErro = true;
             }
-        },
+        });
+      });
+    },
         updateOrder: function(order) {
             if(this.currentMeal && order && this.currentMeal.id == order.meal_id) {
                 this.loadOrders('meals/'+this.currentMeal.id+'/orders');
@@ -451,7 +453,6 @@ export default {
             }
           );
         });
-    }
   },
   computed: {},
   components: {

@@ -85,7 +85,7 @@
                     <button
                       type="button"
                       class="btn btn-primary"
-                      @click.prevent="notPaidMeal(meal);"
+                      @click.prevent="openOrders(meal);"
                     >See orders</button>
                   </td>
                 </tr>
@@ -133,7 +133,7 @@
                     <button
                       type="button"
                       class="btn btn-primary"
-                      @click.prevent="notPaidMeal(meal);"
+                      @click.prevent="sendUpdateToNotPaidMeal(meal);"
                     >Not paid</button>
                   </td>
                 </tr>
@@ -161,6 +161,38 @@ export default {
     };
   },
   methods: {
+    sendUpdateToNotPaidMeal: function(meal) {
+      let soft = this;
+      var update = {};
+      update["state"] = "notpaid";
+      axios
+        .put("/api/meals/" + meal.id + "/notpaid", update)
+        .then(response => {
+          meal = response.data.data;
+          soft.$toasted.show("The meal (" + meal.id + ") is not paid", {
+            theme: "bubble",
+            position: "bottom-center",
+            duration: 5000,
+            className: ["success"]
+          });
+          this.loadActiveAndTerminatedMeals();
+          this.loadPendingInvoices();
+          soft.$socket.emit("kitchen");
+          soft.$socket.emit("cashier");
+        })
+        .catch(function(error) {
+          console.log("sendUpdateToNotPaidMeal->" + error);
+          soft.$toasted.show(
+            "ERRO: Couldn´t change state of (" + meal.id + ") to not paid",
+            {
+              theme: "bubble",
+              position: "bottom-center",
+              duration: 5000,
+              className: ["error"]
+            }
+          );
+        });
+    },
     sendUpdateToNotPaidInvoice: function(invoice) {
       let soft = this;
       var update = {};
@@ -276,6 +308,8 @@ export default {
       this.currentMeal = "";
     },
     loadOrders: function(url) {
+      console.log("cheguei ");
+      console.log(url);
       axios
         .get("/api/" + url)
         .then(response => {
