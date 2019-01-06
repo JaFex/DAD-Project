@@ -53,7 +53,7 @@ export default {
                 datasets: [{
                     label: 'Waiters avarage',
                     data: [],
-                    backgroundColor: 'rgba(54,73,93,.5)',
+                    backgroundColor: 'rgba(0,123,255,.7)',
                 }],
             },
             cooksAvarage: {
@@ -61,7 +61,7 @@ export default {
                 datasets: [{
                     label: 'Cooks avarage',
                     data: [],
-                    backgroundColor: 'rgba(54,73,93,.5)',
+                    backgroundColor: 'rgba(0,123,255,.7)',
                 }],
             },
             mealsMonth: {
@@ -69,7 +69,7 @@ export default {
                 datasets: [{
                     label: 'Monthly Meals',
                     data: [],
-                    backgroundColor: 'rgba(54,73,93,.5)',
+                    backgroundColor: 'rgba(0,123,255,.7)',
                 }],
             },
             ordersMonth: {
@@ -77,7 +77,7 @@ export default {
                 datasets: [{
                     label: 'Monthly Orders',
                     data: [],
-                    backgroundColor: 'rgba(54,73,93,.5)',
+                    backgroundColor: 'rgba(0,123,255,.7)',
                 }]
             }
         }
