@@ -86,6 +86,7 @@ export default {
             
             axios.put('/api/orders/'+order.id, update)
                 .then(response => {
+                    soft.$socket.emit('managerUpdateOrders', order);
                     order = response.data.data;
                     soft.loadOrdersSamePage('meals/'+soft.meal.id+'/delived', soft.links.currentPage);
                 })

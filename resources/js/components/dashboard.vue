@@ -24,6 +24,7 @@
                 </div>
             </div>
         </div>
+        <dashboardManagers v-if="this.$store.state.user.type === 'manager'"></dashboardManagers>
     </div>
 </template>
 <script>
@@ -33,7 +34,8 @@ export default {
 
     },
     components: {
-        'nav-bar': require('./dashboardnav.vue')
+        'nav-bar': require('./dashboardnav.vue'),
+        'dashboardManagers': require('./manager/dashboardManagers.vue')
     },
     computed: {
         startDate() {

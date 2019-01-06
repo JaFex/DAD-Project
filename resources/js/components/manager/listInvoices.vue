@@ -127,7 +127,6 @@ export default {
     methods: {
         loadInvoices: function(url){
             if(this.selectedPending || this.selectedPaid || this.selectedNotPaid) {
-                console.log("is in");
                 var info = {};
                 if(this.selectedPending) {
                     info["pending"] = this.selectedPending;
@@ -232,7 +231,7 @@ export default {
                         });
             }
             axios({
-                url: 'api/invoices/'+invoice.id+'/download',
+                url: '/api/invoices/'+invoice.id+'/download',
                 method: 'GET',
                 responseType: 'blob', // important
             }).then((response) => {

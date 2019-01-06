@@ -55,7 +55,7 @@ export default {
             formData.append('name', this.user.name);
             formData.append('username', this.user.username);
             formData.append('email', this.user.email);
-            axios.post('api/users/' + this.user.id+'/edit', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+            axios.post('/api/users/' + this.user.id+'/edit', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
                 .then(response => {
                     this.$toasted.show('User edited successfully.', {
                         theme: "bubble",

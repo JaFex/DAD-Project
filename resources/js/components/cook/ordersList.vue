@@ -113,6 +113,7 @@ export default {
                     if(order.state === "in preparation") {
                         soft.$socket.emit('kitchenWichoutMe');
                     }
+                    soft.$socket.emit('managerUpdateOrders', order);
                     soft.loadOrdersSamePage('orders', this.links.currentPage);
                 })
                 .catch(function (error) {

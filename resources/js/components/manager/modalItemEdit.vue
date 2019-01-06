@@ -62,7 +62,7 @@ export default {
             formData.append('type', this.item.type);
             formData.append('price', this.item.price);
             formData.append('description', this.item.longDescription);
-            axios.post('api/items/' + this.item.id, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+            axios.post('/api/items/' + this.item.id, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
                 .then(response => {
                     this.$toasted.show('User edited successfully.', {
                         theme: "bubble",

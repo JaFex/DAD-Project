@@ -19,7 +19,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="item in items">
+                            <tr v-for="item in items" :key="item.id">
                                 <td>{{item.name}}</td>
                                 <td>{{item.type}}</td>
                                 <td>{{item.shortDescription}}</td>
@@ -97,7 +97,7 @@ export default {
                 });
         },
         restoreItem(id){
-            axios.put('api/items/'+id+'/restore')
+            axios.put('/api/items/'+id+'/restore')
                 .then(response => {
                     this.loadItems('items/all');
                     this.$socket.emit('msg_update_items_from_client');

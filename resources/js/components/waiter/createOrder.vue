@@ -105,6 +105,7 @@ export default {
                         soft.selectedItemType = '';
                         soft.selectedItem = null;
                         soft.$emit('clickTimeRunOutOrderConfirmed', order);
+                        soft.$socket.emit('managerUpdateOrders', order);
                     })
                     .catch(function (error) {
                         console.log("createOrder- "+error);

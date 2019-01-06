@@ -20,7 +20,7 @@ Vue.use(Toasted);
 Vue.use(Vuelidate);
 Vue.use(new VueSocketio({
     debug: true,
-    connection: 'http://192.168.10.10:8080'
+    connection: 'http://192.168.10.1:8080'
 }));
 
 //Components
@@ -45,7 +45,6 @@ const statistics = Vue.component('statistics', require('./components/manager/sta
 
 const notAllowed = Vue.component('notAllowed', require('./components/erro/401.vue'));
 const notfound = Vue.component('notfound', require('./components/erro/404.vue'));
-const dashboardManagers = Vue.component('dashboardManagers', require('./components/dashboardManagers.vue'));
 
 const routes = [
     { path: '/statistics', component: statistics, name: 'Statistics' },
@@ -54,7 +53,7 @@ const routes = [
     { path: '/login', component:  login, name: 'Login' },
     { path: '/dashboard', component: dashboard, name: 'User Dashboard' },
     { path: '/profile', component: profile, name: 'User Profile' },
-    { path: '/users/create', component: newUser, name: 'Manager New User' },
+    { path: '/users-create', component: newUser, name: 'Manager New User' },
     { path: '/orders', component: orders, name: 'Cooks Orders' },
     { path: '/meals', component: meals, name: 'Waiter Meals' },
     { path: '/summary', component: summaryMealList, name: 'Waiter Summary' },
@@ -65,10 +64,9 @@ const routes = [
     { path: '/tables', component: tables, name: 'Manager Tables' },
     { path: '/items', component: items, name: 'Manager Items' },
     { path: '/users', component: users, name: 'Manager Users' },
-    { path: '/meals/filter', component: mealsManager, name: 'Manager Meals' },
-    { path: '/invoices/filter', component: invoicesManager, name: 'Manager Invoices' },
+    { path: '/meals-filter', component: mealsManager, name: 'Manager Meals' },
+    { path: '/invoices-filter', component: invoicesManager, name: 'Manager Invoices' },
     { path: '/401', meta: { title: 'Not Allowed 401' }, component: notAllowed, name: 'NotAllowed' },
-    { path: '/dashboardManagers', component: dashboardManagers, name: 'Dashboard Managers'},
     { path: '/404', meta: { title: 'Not Found 404' }, component: notfound, name: 'NotFound' },
     { path: '*', redirect: '/404' }
 ];

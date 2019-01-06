@@ -118,7 +118,7 @@ export default {
                 formData.append('name', this.user.name);
                 formData.append('email', this.user.email);
                 formData.append('type', this.user.type);
-                axios.post("api/users", formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+                axios.post("/api/users", formData, { headers: { 'Content-Type': 'multipart/form-data' } })
                     .then(response => {
                         this.$toasted.show('User created and confirmation email sent.', {
                             theme: "bubble",

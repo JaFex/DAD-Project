@@ -179,13 +179,13 @@ export default {
             
             axios.put('/api/invoices/'+this.currentInvoiceToPaid.id, array)
                 .then(response => {
+                    soft.$socket.emit('managerMeal', soft.currentInvoiceToPaid.meal_id, soft.currentInvoiceToPaid.state);
+                    soft.$socket.emit('cashierWichoutMe');
                     soft.currentInvoiceToPaid = response.data.data;
                     soft.showSuccess = true;
                     soft.message = 'The invoice is paid.';
                     soft.messageTitle = 'Paid Successful!';
-                    soft.$socket.emit('managerMeal', soft.currentInvoiceToPaid.meal_id, soft.currentInvoiceToPaid.state);
                     soft.hidePaidForm();
-                    soft.$socket.emit('cashierWichoutMe');
                     soft.loadInvoicesSamePage('invoices/all/pending', this.links.currentPage);
                 })
                 .catch(function (error) {

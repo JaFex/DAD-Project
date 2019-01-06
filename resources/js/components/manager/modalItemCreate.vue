@@ -65,7 +65,7 @@ export default {
             formData.append('type', this.type);
             formData.append('price', this.price);
             formData.append('description', this.description);
-            axios.post('api/items', formData)
+            axios.post('/api/items', formData)
                 .then(response => {
                     this.$toasted.show('Item created successfully.', {
                         theme: "bubble",

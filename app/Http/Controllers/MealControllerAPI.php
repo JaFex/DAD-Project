@@ -29,19 +29,6 @@ class MealControllerAPI extends Controller
         return MealResource::collection(Meal::whereNull('end')->where('responsible_waiter_id', \Auth::guard('api')->user()->id)->paginate(10));
     }
 
-    public function indexByState(String $state)
-    {
-
-        
-        if($state !== 'active' && $state !== 'terminated' && $state !== 'paid' && $state !== 'not paid') {
-            return response([
-                'data' => 'Not Found Data'
-            ], 404);
-        }
-        //return InvoiceResource::collection(Invoice::where('state', $state)->orderBy('date', 'asc')->paginate(10));
-        return MealResource::collection(Meal::where('state', $state)->orderBy('id', 'desc')->paginate(10));
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -296,24 +283,25 @@ class MealControllerAPI extends Controller
 
     public function notPaid(Request $request, int $meal_id)
     {
+        $this->validate(request(), [
+            'state' => 'required|in:"not paid"'
+        ]);
+        
         $meal = Meal::findOrFail($meal_id);
-        $meal->state = 'not paid';
+        if($meal->state === 'terminated'){
+            $meal->state = $request['state'];
 
-        $meal->invoice->state = 'not paid';
+            $meal->invoice->state = $request['state'];
 
-        $orders = Order::where('meal_id', $meal_id)->get();
-
-        foreach ($orders as $order) {
-            if($order->state != 'delivered'){
+            $orders = Order::where('meal_id', $meal_id)->where('state', '!=' , 'delivered')->where('state', '!=' , 'not delivered')->get();
+            foreach ($orders as $order) {
                 $order->state = 'not delivered';
                 $order->save();
-            } 
+            }
+
+            $meal->invoice->save();
+            $meal->save();
         }
-
-        $meal->invoice->save();
-
-        $meal->save();
-        
         return new MealResource($meal);
     }
 

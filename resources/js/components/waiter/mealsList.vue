@@ -12,12 +12,8 @@
           <div class="input-group-prepend">
             <span class="input-group-text" id="basic-addon1">Table Number:</span>
           </div>
-          <select
-            class="form-control"
-            aria-describedby="basic-addon2"
-            v-model="selectedRestaurantTables"
-          >
-            <option v-for="restaurantTable in restaurantTables">{{restaurantTable.table_number}}</option>
+          <select class="form-control" aria-describedby="basic-addon2" v-model="selectedRestaurantTables">
+            <option v-for="restaurantTable in restaurantTables" :key="restaurantTable.table_number">{{restaurantTable.table_number}}</option>
           </select>
           <div class="input-group-append">
             <button
@@ -220,6 +216,7 @@ export default {
             "Meal was created successfully to the table " + table_number;
           self.messageTitle = "Success!";
           self.showSuccess = true;
+          self.$socket.emit('managerUpdateMealOrInvoice', 'meal');
         })
         .catch(function(error) {
           console.log("creatMeal-" + error.response.data);
@@ -242,11 +239,7 @@ export default {
     },
     reloadMealAndOrder: function() {
       this.loadMeals("meals");
-      if (
-        this.currentMeal &&
-        this.currentMealCreate &&
-        this.currentMeal.id == this.currentMealCreate.id
-      ) {
+      if(this.currentMeal && this.currentMealCreate && this.currentMeal.id == this.currentMealCreate.id) {
         this.loadOrders("meals/" + this.currentMeal.id + "/orders");
       }
     },
@@ -261,21 +254,16 @@ export default {
       setTimeout(function() {
         var update = {};
         update["state"] = "confirmed";
-        axios
-          .put("/api/orders/" + order.id, update)
+        axios.put("/api/orders/" + order.id, update)
           .then(response => {
             order = response.data.data;
             soft.messageTitle = "Order Confirmed!";
-            soft.message =
-              "Order (" +
-              order.id +
-              ") has been confirmed on the meal " +
-              order.meal_id +
-              "!";
+            soft.message = "Order (" + order.id + ") has been confirmed on the meal " + order.meal_id + "!";
             soft.showSuccess = true;
             soft.selectedItemType = "";
             soft.selectedItem = null;
             soft.updateOrder(order);
+            soft.$socket.emit('managerUpdateOrders', order);
             soft.$socket.emit("kitchen");
           })
           .catch(function(error) {
@@ -314,6 +302,7 @@ export default {
                             soft.selectedItem = null;
                             soft.updateOrder(order);
                             soft.$socket.emit('kitchen');
+                            soft.$socket.emit('managerUpdateOrders', order);
                         })
                         .catch(function (error) {
                             console.log("timeRunOutOrderConfirmed->"+error);

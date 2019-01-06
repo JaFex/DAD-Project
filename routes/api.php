@@ -51,20 +51,19 @@ Route::middleware('auth:api', 'manager')->put('restaurantTables/{table}', 'Resta
 //--------------------------------------------------------------------------------------------//
 //------------------------------------MEALS---------------------------------------------------//
 //--------------------------------------------------------------------------------------------//
-Route::middleware('auth:api', 'manager')->get('meals/filter', 'MealControllerAPI@filter');
+Route::middleware('auth:api')->get('meals/filter', 'MealControllerAPI@filter');
 Route::middleware('auth:api', 'waiter')->get('meals/{meal_id}/terminated', 'MealControllerAPI@canBeTerminated');
 Route::middleware('auth:api', 'waiter')->put('meals/{meal_id}/terminated', 'MealControllerAPI@terminated');
 Route::middleware('auth:api', 'waiter')->get('meals/{meal_id}/summarys', 'MealControllerAPI@summaryItems');
 Route::middleware('auth:api', 'waiter')->get('meals/{meal_id}/delived', 'MealControllerAPI@toDelived');
 Route::middleware('auth:api')->get('meals/{meal_id}/orders', 'MealControllerAPI@orders');
 Route::middleware('auth:api')->get('meals/{meal_id}/orders/all', 'MealControllerAPI@allOrders');
+Route::middleware('auth:api')->put('meals/{meal_id}/notpaid', 'MealControllerAPI@notPaid');
 Route::middleware('auth:api')->put('meals/{meal_id}', 'MealControllerAPI@update');
 Route::middleware('auth:api')->get('meals/{meal_id}', 'MealControllerAPI@show');
 Route::middleware('auth:api', 'waiter')->post('meals', 'MealControllerAPI@store');
 Route::middleware('auth:api')->get('meals', 'MealControllerAPI@index');
-Route::middleware('auth:api')->get('meals/all/state/{state}', 'MealControllerAPI@indexByState');
-Route::middleware('auth:api')->put('meals/{meal_id}', 'MealControllerAPI@update');
-Route::middleware('auth:api')->put('meals/{meal_id}/notpaid', 'MealControllerAPI@notPaid');
+
 //--------------------------------------------------------------------------------------------//
 //------------------------------------ORDER---------------------------------------------------//
 //--------------------------------------------------------------------------------------------//
@@ -81,8 +80,8 @@ Route::middleware('auth:api')->get('invoices/all/{state}', 'InvoiceControllerAPI
 Route::middleware('auth:api', 'manager')->get('invoices/filter', 'InvoiceControllerAPI@filter');
 Route::middleware('auth:api')->get('invoices/{invoice_id}/items', 'InvoiceControllerAPI@items');
 Route::middleware('auth:api')->get('invoices/{invoice_id}/download', 'InvoiceControllerAPI@downloadPDF');
-Route::middleware('auth:api')->put('invoices/{invoice_id}', 'InvoiceControllerAPI@update');
 Route::middleware('auth:api')->put('invoices/{invoice_id}/notpaid', 'InvoiceControllerAPI@notPaid');
+Route::middleware('auth:api')->put('invoices/{invoice_id}', 'InvoiceControllerAPI@update');
 //--------------------------------------------------------------------------------------------//
 //----------------------------------INVOICES_ITEMS--------------------------------------------//
 //--------------------------------------------------------------------------------------------//

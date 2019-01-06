@@ -145,6 +145,8 @@ export default {
             if (date <= dateStart) {
                 axios.delete('/api/orders/'+order.id)
                     .then(response => {
+                        order.state = 'deleted';
+                        soft.$socket.emit('managerUpdateOrders', order);
                         order = response.data.data;
                         soft.messageTitle = "Order Deleted!";
                         soft.message = "Order "+order.id+" as been deleted on the meal "+order.meal_id+"!";
@@ -175,6 +177,7 @@ export default {
                             soft.selectedItem = null;
                             soft.$emit('clickUpdateKitchen');
                             soft.$emit('clickUpdateOrder', order);
+                            soft.$socket.emit('managerUpdateOrders', order);
                         })
                         .catch(function (error) {
                             console.log("needToBeConfirmed->"+error);

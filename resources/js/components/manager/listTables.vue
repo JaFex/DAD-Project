@@ -30,7 +30,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="table in tables">
+                            <tr v-for="table in tables" :key="table.table_number">
                                 <td>{{table.table_number}}</td>
                                 <td>
                                     <i class="fas fa-check" v-if="table.deleted"></i>
@@ -101,7 +101,7 @@ export default {
                 });
         },
         deleteTable(id){
-            axios.delete('api/restaurantTables/'+id)
+            axios.delete('/api/restaurantTables/'+id)
                 .then(response => {
                     this.loadTables('restaurantTables/all');
                     this.$socket.emit('msg_update_tables_from_client');
@@ -117,7 +117,7 @@ export default {
                 });
         },
         restoreTable(id){
-            axios.put('api/restaurantTables/'+id)
+            axios.put('/api/restaurantTables/'+id)
                 .then(response => {
                     this.loadTables('restaurantTables/all');
                     this.$socket.emit('msg_update_tables_from_client');

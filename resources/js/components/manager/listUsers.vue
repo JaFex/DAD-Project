@@ -22,7 +22,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="user in users">
+                            <tr v-for="user in users" :key="user.id">
                                 <td><img class="rounded img-fluid" :src="imagePath(user.photo_url)" alt="profile photo" style="width: 25px;"></td>
                                 <td>{{user.username}}</td>
                                 <td>{{user.name}}</td>
@@ -86,7 +86,7 @@ export default {
                 });
         },
         deleteUser(id){
-            axios.delete('api/users/'+id)
+            axios.delete('/api/users/'+id)
                 .then(response => {
                     this.loadUsers('users');
                     //this.$socket.emit('msg_update_tables_from_client');
@@ -102,7 +102,7 @@ export default {
                 });
         },
         restoreUser(id){
-            axios.put('api/users/'+id+'/restore')
+            axios.put('/api/users/'+id+'/restore')
                 .then(response => {
                     this.loadUsers('users');
                     //this.$socket.emit('msg_update_tables_from_client');
@@ -118,7 +118,7 @@ export default {
                 });
         },
         block(id){
-            axios.put('api/users/'+id+'/block')
+            axios.put('/api/users/'+id+'/block')
                 .then(response => {
                     this.loadUsers('users');
                     //this.$socket.emit('msg_update_tables_from_client');
@@ -134,7 +134,7 @@ export default {
                 });
         },
         unblock(id){
-            axios.put('api/users/'+id+'/unblock')
+            axios.put('/api/users/'+id+'/unblock')
                 .then(response => {
                     this.loadUsers('users');
                     //this.$socket.emit('msg_update_tables_from_client');

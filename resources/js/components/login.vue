@@ -59,11 +59,8 @@ export default {
                         if(this.$store.state.user.shift_active){
                             this.$socket.emit('user_enter', this.$store.state.user);
                         }
-                        if(this.user.type === "manager"){
-                            this.$router.push("/dashboardManagers");
-                        }else{
-                            this.$router.push("/dashboard");
-                        }
+                        
+                        this.$router.push("/dashboard");
                         
                     })
                     .catch(error => {
