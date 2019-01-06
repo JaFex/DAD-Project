@@ -154,6 +154,14 @@ export default {
                         }
                     ).then(response => {
                         this.meals = response.data.data;
+                        if(this.meals.length <= 0) {
+                            this.$toasted.show('No meals found!', {
+                                theme: "bubble",
+                                position: "bottom-center",
+                                duration: 5000,
+                                className: ['error']
+                            });
+                        }
                         this.links = {
                             prev: response.data.links.prev,
                             next: response.data.links.next,

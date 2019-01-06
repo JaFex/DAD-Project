@@ -177,7 +177,27 @@ export default {
                     }
                 });
             }
-        }
+        },
+        mealTERMINATEDandPAID(received){
+            if(this.isAuthManager()) {
+            var mealID = received[0];
+            var mealState = received[1];
+            this.$toasted.show('Meal('+mealID+') is now '+mealState+'!', {
+                    theme: "bubble",
+                    position: "bottom-center",
+                    duration: 5000,
+                    className: ['show'],
+                    action : {
+                        text : 'Show me',
+                        onClick : (e, toastObject) => {
+                            toastObject.goAway(0);
+                            e.preventDefault();
+                            this.$router.push({ path: '/meals/filter'});
+                        }
+                    }
+                });
+            }
+        },
     }
 }
 </script>

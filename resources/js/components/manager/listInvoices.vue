@@ -151,6 +151,14 @@ export default {
                     )
                     .then(response => {
                         this.invoices = response.data.data;
+                        if(this.invoices.length <= 0) {
+                            this.$toasted.show('No invoices found!', {
+                                theme: "bubble",
+                                position: "bottom-center",
+                                duration: 5000,
+                                className: ['error']
+                            });
+                        }
                         this.links = {
                             prev: response.data.links.prev,
                             next: response.data.links.next,

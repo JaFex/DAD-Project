@@ -183,6 +183,7 @@ export default {
                     soft.showSuccess = true;
                     soft.message = 'The invoice is paid.';
                     soft.messageTitle = 'Paid Successful!';
+                    soft.$socket.emit('managerMeal', soft.currentInvoiceToPaid.meal_id, soft.currentInvoiceToPaid.state);
                     soft.hidePaidForm();
                     soft.$socket.emit('cashierWichoutMe');
                     soft.loadInvoicesSamePage('invoices/all/pending', this.links.currentPage);

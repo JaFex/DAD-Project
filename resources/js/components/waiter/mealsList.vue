@@ -273,6 +273,7 @@ export default {
                         soft.reloadMealAndOrder();
                         soft.$socket.emit('kitchen');
                         soft.$socket.emit('cashier');
+                        soft.$socket.emit('managerMeal', meal.id, meal.state);
                     })
                     .catch(function (error) {
                         console.log("sendUpdateToTerminateMeal->"+error);
